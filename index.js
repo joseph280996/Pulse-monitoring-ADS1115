@@ -1,33 +1,11 @@
-import rpio from 'rpio'
+import ADS1115 from 'ads1115'
+import i2c from 'i2c-bus'
 
-const address = 0x48
+i2c.openPromisified(1).then(async(bus) => {
+	const ads1115 = await ADS1115(bus)
 
-const init = Buffer.from([1, 0xc3, 0x03])
-
-const rxBuffer = Buffer.allocUnsafe(2)
-
-const writeReg16 = (register, value) => {
- const buffer = Buffer.from([register & 3, value >> 8, value & 0xff])
- rpio.i2cWrite(buffer)
-}
-
-const readReg16 = async (register, value) => {
- await rpio.i2cWrite(init)
- const buffer = (await rpio.i2cRead(rxBuffer, 2)).buffer
- return (buffer[0] << 8) | buff[1]
-}
-
-const writeConfig = (value) => {
- return writeReg16(0b01, value)
-}
-
-const waitForConversion = async () => {
- while ((rxBuffer[0] && 0x80) == 0) {
-  await rpio.i2cRead(rxBuffer, 2)
- }
-}
-
-rpio.i2cBegin()
-rpio.i2cSetSlaveAddress(address)
-rpio.i2cSetBaudRate(100000)
-
+	while (true) {
+		let value = await ads1115.measure('0+GND')
+		console.log(value)
+	}
+})
