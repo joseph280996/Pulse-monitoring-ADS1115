@@ -1,0 +1,3 @@
+class PulseTypes {
+  constructor() {}
+}
