@@ -5,11 +5,11 @@ interface DBInterface {
 }
 
 const DBConf = {
-  database: 'pulsemonitoring',
+  database: process.env.DATABASE_NAME,
   multiStatements: true,
-  host: '127.0.0.1',
-  user: 'pulsemonitoring',
-  password: 'Jpxt280996@1406',
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
   timezone: 'Z',
   charset: 'utf8mb4_unicode_ci',
 }
