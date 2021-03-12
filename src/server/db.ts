@@ -8,8 +8,8 @@ const DBConf = {
   database: 'pulsemonitoring',
   multiStatements: true,
   host: '127.0.0.1',
-  user: 'doctor',
-  password: '$2y$10$aC2Eqh1ix5J05Syd9lLoE.NAUOgIIdZm1IQjh0tgUu1ZoVIoAysCa',
+  user: 'pulsemonitoring',
+  password: 'Jpxt280996@1406',
   timezone: 'Z',
   charset: 'utf8mb4_unicode_ci',
 }
@@ -23,7 +23,7 @@ class DB implements DBInterface {
     }
   }
 
-  query(query: string, values: Array<any>) {
+  query(query: string, values?: Array<any>) {
     return new Promise<unknown>((resolve, reject) => {
       this.pool.query(
         query,
