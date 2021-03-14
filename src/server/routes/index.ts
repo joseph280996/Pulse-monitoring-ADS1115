@@ -1,17 +1,17 @@
-import { Handler } from 'express'
-import db from '../db'
+import PulseTypes from '../model/PulseTypes'
 
 export type RouteType = {
   method: string
   route: string
-  handler: Handler
+  handler: (param?: any) => any
 }
 export default [
   {
     method: 'get',
     route: '/pulse-type',
-    handler: (_, response) => {},
+    handler: async () => {
+      const pulseTypes = await PulseTypes.loadAll()
+      return pulseTypes
+    },
   },
 ] as RouteType[]
-
-export type WebsocketMessageTypeType = {}

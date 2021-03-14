@@ -2,6 +2,7 @@
 import ADS1115 from 'ads1115'
 import i2c from 'i2c-bus'
 import moment, { Moment } from 'moment'
+import WebSocket from 'ws'
 
 export type WebsocketMessageTypeHandler = {
   regExp: RegExp

@@ -17,6 +17,10 @@ const DBConf = {
 class DB implements DBInterface {
   private pool!: Pool
 
+  hasPoolOpened = () => {
+    return Boolean(this.pool)
+  }
+
   constuctor() {
     if (!this.pool) {
       this.pool = createPool(DBConf)
@@ -36,6 +40,11 @@ class DB implements DBInterface {
         },
       )
     })
+  }
+  cleanUp = () => {
+    if (this.pool) {
+      this.pool.end()
+    }
   }
 }
 

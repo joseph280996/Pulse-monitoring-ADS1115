@@ -1,43 +1,17 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-constant-condition */
-// <reference path="@types/index.d.ts"/>
-import http from 'http'
-import ADS1115 from 'ads1115'
-import Express from 'express'
-import i2c from 'i2c-bus'
+import dotenv from 'dotenv'
+import Server from './server'
+import routes from './server/routes'
 
-import moment, { Moment } from 'moment'
-import { Server } from 'ws'
+dotenv.config()
 
-const app = Express()
+Server.registerRoutes(routes)
+Server.registerWebsocketMessageTypes()
+Server.start(8000)
 
-const server = http.createServer(app)
-
-const wss = new Server({ server })
-
-type StoreType = {
-  timeStamp: Moment
-  data: number
-}
-
-wss.on('connection', (ws: WebSocket) => {
-  console.log('connected')
-  let store: StoreType[] = []
-  setInterval(() => {
-    ws.send(JSON.stringify({ recordedData: store }))
-    store = []
-  }, 200)
-  i2c.openPromisified(1).then(async (bus) => {
-    const ads1115 = ADS1115(bus)
-    while (true) {
-      store.push({
-        timeStamp: moment.utc(),
-        data: await ads1115.measure('0+GND'),
-      })
-    }
-  })
+process.on('beforeExit', () => {
+  Server.cleanUp()
 })
 
-server.listen(8000, () => {
-  console.log('server ready')
+process.on('SIGINT', () => {
+  process.exit(2)
 })
