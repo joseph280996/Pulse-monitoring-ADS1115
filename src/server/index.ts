@@ -1,6 +1,9 @@
+/* eslint-disable no-await-in-loop */
 import http from 'http'
-import Express from 'express'
-import { Server as WebSocketServer } from 'ws'
+import cors from 'cors'
+import Express, { Handler, json, urlencoded } from 'express'
+import WebSocket, { Server as WebSocketServer } from 'ws'
+import db from './db'
 import { RouteType } from './routes'
 import { WebsocketMessageTypeHandler } from './wsMessageTypeHandlers'
 
@@ -23,11 +26,25 @@ class Server implements ServerInterface {
     this.app = Express()
     this.server = http.createServer(this.app)
     this.wss = new WebSocketServer({ server: this.server })
+    this.app.use(cors())
+    this.app.use(json())
+    this.app.use(
+      urlencoded({
+        extended: true,
+      }),
+    )
   }
 
-  registerRoute(routes: RouteType[]) {
+  registerRoutes(routes: RouteType[]) {
     routes.forEach(({ method, route, handler }) => {
-      this.app[method](route, handler)
+      this.app[method](route, (async (_req, res) => {
+        try {
+          const result = await handler()
+          res.status(200).send(result)
+        } catch (error) {
+          throw Error(error)
+        }
+      }) as Handler)
     })
   }
 
@@ -48,6 +65,15 @@ class Server implements ServerInterface {
     if (this.wss) {
       this.wss.close()
     }
+    if (db.hasPoolOpened()) {
+      db.cleanUp()
+    }
+  }
+
+  start = (port: number) => {
+    this.server.listen(port, () => {
+      console.log(`Server started at localhost port ${port}`)
+    })
   }
 }
 export default new Server()
