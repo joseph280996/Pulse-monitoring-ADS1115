@@ -1,0 +1,7 @@
+CREATE TABLE DoctorVisit (
+	  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    PatientID INT UNSIGNED,
+    RecordID INT UNSIGNED,
+    FOREIGN KEY (RecordID) REFERENCES Record(id),
+    FOREIGN KEY (PatientID) REFERENCES Patient(id)
+);
