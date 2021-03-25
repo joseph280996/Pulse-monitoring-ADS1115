@@ -3,6 +3,7 @@ import ADS1115 from 'ads1115'
 import i2c from 'i2c-bus'
 import moment, { Moment } from 'moment'
 import WebSocket from 'ws'
+import IntervalController from './IntervalController'
 
 export type WebsocketMessageTypeHandler = {
   regExp: RegExp
@@ -16,7 +17,6 @@ type RecordedData = {
 
 let isLoopStart = false
 let store: RecordedData[] = []
-let interval: NodeJS.Timeout
 
 export default [
   {
@@ -32,19 +32,20 @@ export default [
           })
         }
       })
-      interval = setInterval(() => {
-        ws.send(JSON.stringify({ recordedData: store }))
-        store = []
-      }, 200)
+      IntervalController.registerInterval(
+        'sendingDataInterval',
+        setInterval(() => {
+          ws.send(JSON.stringify({ recordedData: store }))
+          store = []
+        }, 200),
+      )
     },
   },
   {
     regExp: /stop/i,
     handler: () => {
       isLoopStart = false
-      if (interval) {
-        clearInterval(interval)
-      }
+      IntervalController.clear('sendingDataInterval')
     },
   },
 ] as WebsocketMessageTypeHandler[]
