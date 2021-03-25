@@ -17,9 +17,7 @@ const DBConf = {
 class DB implements DBInterface {
   private pool!: Pool
 
-  hasPoolOpened = () => {
-    return Boolean(this.pool)
-  }
+  hasPoolOpened = () => Boolean(this.pool)
 
   constuctor() {
     if (!this.pool) {
@@ -28,11 +26,11 @@ class DB implements DBInterface {
   }
 
   query(query: string, values?: Array<any>) {
-    return new Promise<unknown>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       this.pool.query(
         query,
         values,
-        (error: MysqlError | null, result: unknown) => {
+        (error: MysqlError | null, result: any) => {
           if (error) {
             return reject(error)
           }
@@ -41,6 +39,7 @@ class DB implements DBInterface {
       )
     })
   }
+
   cleanUp = () => {
     if (this.pool) {
       this.pool.end()
