@@ -5,16 +5,18 @@ type PulseTypeConstructor = {
   pulseName: string
 }
 
-class PulseTypes {
+class PulseType {
   private static sqlFields = 'id, pulseName'
 
   _id!: number
-  get id() {
+
+  get id(): number {
     return this._id
   }
 
   _pulseName!: string
-  get pulseName() {
+
+  get pulseName(): string {
     return this._pulseName
   }
 
@@ -23,12 +25,15 @@ class PulseTypes {
     this._pulseName = obj.pulseName
   }
 
-  static loadAll = async () =>
+  static loadAll = async (): Promise<PulseType[]> =>
     db
-      .query(`SELECT ${PulseTypes.sqlFields} FROM PulseType`)
+      .query(`SELECT ${PulseType.sqlFields} FROM PulseType`)
       .then((result: any) => {
-        result?.length > 0 ? result.map((row: any) => new PulseTypes(row)) : []
+        if (result?.length > 0) {
+          return result.map((row: any) => new PulseType(row))
+        }
+        return []
       })
 }
 
-export default PulseTypes
+export default PulseType
