@@ -8,21 +8,29 @@ type PulseTypeConstructor = {
 class PulseType {
   private static sqlFields = 'id, pulseName'
 
-  _id!: number
+  id!: number
 
-  get id(): number {
-    return this._id
+  get pulseID(): number {
+    return this.id
   }
 
-  _pulseName!: string
+  set pulseID(id: number) {
+    this.id = id
+  }
+
+  name!: string
 
   get pulseName(): string {
-    return this._pulseName
+    return this.name
+  }
+
+  set pulseName(pulseName: string) {
+    this.name = pulseName
   }
 
   constructor(obj: PulseTypeConstructor) {
-    this._id = obj.id
-    this._pulseName = obj.pulseName
+    this.id = obj.id
+    this.pulseName = obj.pulseName
   }
 
   static loadAll = async (): Promise<PulseType[]> =>

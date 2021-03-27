@@ -13,11 +13,6 @@ interface RecordInterface {
 }
 
 class Record implements RecordInterface {
-  private static fields = `
-    id, dateTimeCreated, dateTimeUpdated, PulseTypeID as pulseTypeID,
-    HandPositionID as handPositionID, PatientID as patientID, data
-  `
-
   private _id: number | undefined
 
   get id(): number | undefined {

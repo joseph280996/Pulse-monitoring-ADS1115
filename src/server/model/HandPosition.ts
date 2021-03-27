@@ -7,21 +7,29 @@ type HandPositionConstructorParamType = {
 
 class HandPosition {
   private static fields = `id, name`
-  private _id!: number
+  private id!: number
 
-  get id(): number {
-    return this._id
+  get handPosID(): number {
+    return this.id
   }
 
-  private _name!: string
+  set handPosID(id: number) {
+    this.id = id
+  }
 
-  get name(): string {
-    return this._name
+  private name!: string
+
+  get handPosName(): string {
+    return this.name
+  }
+
+  set handPosName(name: string) {
+    this.name = name
   }
 
   constructor(obj: HandPositionConstructorParamType) {
-    this._id = obj.id
-    this._name = obj.name
+    this.handPosID = obj.id
+    this.handPosName = obj.name
   }
 
   static async loadAll() {
