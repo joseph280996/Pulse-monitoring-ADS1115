@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import http from 'http'
 import cors from 'cors'
-import Express, { Handler, json, urlencoded } from 'express'
+import Express, { json, urlencoded } from 'express'
 import WebSocket, { Server as WebSocketServer } from 'ws'
 import db from './db'
 import { RouteType } from './routes'
@@ -37,19 +37,13 @@ class Server implements ServerInterface {
 
   registerRoutes(routes: RouteType[]) {
     routes.forEach(({ method, route, handler }) => {
-      this.app[method](route, (async (_req, res) => {
-        try {
-          const result = await handler()
-          res.status(200).send(result)
-        } catch (error) {
-          throw Error(error)
-        }
-      }) as Handler)
+      this.app[method](route, handler)
     })
   }
 
   registerWebsocketMessageTypes(messageTypes: WebsocketMessageTypeHandler[]) {
     this.wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
+      // eslint-disable-next-line no-console
       console.log(`Connection from ${req.socket.remoteAddress}`)
       ws.on('message', (message: string) => {
         messageTypes.forEach(({ regExp, handler }) => {
