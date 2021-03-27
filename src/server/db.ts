@@ -1,8 +1,11 @@
 import { Pool, createPool, MysqlError } from 'mysql'
+import dotenv from 'dotenv'
 
 interface DBInterface {
   query(query: string, values: unknown): Promise<unknown>
 }
+
+dotenv.config()
 
 const DBConf = {
   database: process.env.DATABASE_NAME,
@@ -15,19 +18,24 @@ const DBConf = {
 }
 
 class DB implements DBInterface {
-  private pool!: Pool
+  private _pool?: Pool
+
+  get pool(): Pool | undefined {
+    if (!this._pool) {
+      this.pool = createPool(DBConf)
+    }
+    return this._pool
+  }
+
+  set pool(pool: Pool | undefined) {
+    this._pool = pool
+  }
 
   hasPoolOpened = () => Boolean(this.pool)
 
-  constuctor() {
-    if (!this.pool) {
-      this.pool = createPool(DBConf)
-    }
-  }
-
   query(query: string, values?: Array<any>) {
     return new Promise<any>((resolve, reject) => {
-      this.pool.query(
+      this.pool?.query(
         query,
         values,
         (error: MysqlError | null, result: any) => {
@@ -47,4 +55,6 @@ class DB implements DBInterface {
   }
 }
 
-export default new DB()
+const singletonInstance = new DB()
+
+export default singletonInstance
