@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import ADS1115 from 'ads1115'
-import i2c from 'i2c-bus'
+import dotenv from 'dotenv'
 import moment, { Moment } from 'moment'
 import WebSocket from 'ws'
 import IntervalController from './IntervalController'
@@ -15,15 +14,20 @@ type RecordedData = {
   data: number
 }
 
+dotenv.config()
+
 let isLoopStart = false
 let store: RecordedData[] = []
 
 export default [
   {
     regExp: /start/i,
-    handler: (_: string, ws: WebSocket) => {
+    handler: async (_: string, ws: WebSocket) => {
       isLoopStart = true
-      i2c.openPromisified(1).then(async (bus) => {
+      if (process.env.NODE_ENV === 'production') {
+        const i2c = await import('i2c-bus')
+        const ADS1115 = await import('ads1115')
+        const bus = i2c.openPromisified(1)
         const ads1115 = ADS1115(bus)
         while (isLoopStart) {
           store.push({
@@ -31,14 +35,26 @@ export default [
             data: await ads1115.measure('0+GND'),
           })
         }
-      })
-      IntervalController.registerInterval(
-        'sendingDataInterval',
-        setInterval(() => {
-          ws.send(JSON.stringify({ recordedData: store }))
-          store = []
-        }, 200),
-      )
+      } else {
+        while (isLoopStart) {
+          store.push({
+            timeStamp: moment.utc(),
+            data: Math.random(),
+          })
+        }
+      }
+      try {
+        IntervalController.registerInterval(
+          'sendingDataInterval',
+          setInterval(() => {
+            ws.send(JSON.stringify({ recordedData: store }))
+            store = []
+          }, 200),
+        )
+      } catch (error) {
+        IntervalController.clear('sendingDataInterval')
+        console.error(error)
+      }
     },
   },
   {

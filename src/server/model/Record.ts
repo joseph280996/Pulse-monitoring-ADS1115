@@ -1,7 +1,7 @@
 import db from '../db'
 
 type RecordConstructorParamType = {
-  id: number | undefined
+  id?: number
   pulseTypeID: number
   handPositionID: number
   data: string

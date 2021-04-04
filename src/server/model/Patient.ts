@@ -10,20 +10,24 @@ interface PatientInterface {
 }
 
 class Patient implements PatientInterface {
-  private static fields = `id, name`
+  private static fields = 'id, name'
 
   private _id!: number | undefined
+
   get id(): number | undefined {
     return this._id
   }
+
   set id(id: number | undefined) {
     this._id = id
   }
 
   private _name!: string
+
   get name(): string {
     return this._name
   }
+
   set name(name: string) {
     this._name = name
   }
@@ -44,7 +48,7 @@ class Patient implements PatientInterface {
     return new Patient({ ...this, id: result.insertId })
   }
 
-  static async findPatientByName(name: string) {
+  static async findPatientByName(name: string): Promise<Patient | null> {
     const results = await db.query(
       `
       SELECT ${Patient.fields}

@@ -1,5 +1,5 @@
-import { Pool, createPool, MysqlError } from 'mysql'
 import dotenv from 'dotenv'
+import { Pool, createPool, MysqlError } from 'mysql'
 
 interface DBInterface {
   query(query: string, values: unknown): Promise<unknown>
@@ -15,6 +15,7 @@ const DBConf = {
   password: process.env.DATABASE_PASSWORD,
   timezone: 'Z',
   charset: 'utf8mb4_unicode_ci',
+  debug: process.env.NODE_ENV === 'development' ? ['ComQueryPacket'] : false,
 }
 
 class DB implements DBInterface {

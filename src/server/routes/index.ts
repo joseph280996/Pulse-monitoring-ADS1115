@@ -1,5 +1,7 @@
 import { RequestHandler } from 'express'
+import { pick } from 'lodash'
 import HandPosition from '../model/HandPosition'
+import Patient from '../model/Patient'
 import PulseTypes from '../model/PulseTypes'
 import Record from '../model/Record'
 
@@ -36,7 +38,15 @@ export default [
     route: '/record',
     handler: async (req, res) => {
       try {
-        const newRecord = new Record(req.body)
+        let foundPatient = await Patient.findPatientByName(req.body.patientName)
+        if (!foundPatient) {
+          foundPatient = new Patient(req.body.patientName)
+          await foundPatient.save()
+        }
+        const newRecord = new Record({
+          patientID: foundPatient.id as number,
+          ...pick(req.body, ['id', 'pulseTypeID', 'handPositionID', 'data']),
+        })
         const savedRecord = await newRecord.save()
         res.status(200).send(savedRecord)
       } catch (err) {
