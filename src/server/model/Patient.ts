@@ -6,7 +6,7 @@ type PatientConstructorParamType = {
 }
 
 interface PatientInterface {
-  save(): Promise<Patient>
+  save(): void
 }
 
 class Patient implements PatientInterface {
@@ -37,7 +37,7 @@ class Patient implements PatientInterface {
     this.name = obj.name
   }
 
-  async save(): Promise<Patient> {
+  async save(): Promise<void> {
     const result = await db.query(
       `
         INSERT INTO Patient(id, name)
@@ -45,7 +45,7 @@ class Patient implements PatientInterface {
       `,
       [[this.id, this.name]],
     )
-    return new Patient({ ...this, id: result.insertId })
+    this.id = result.insertId
   }
 
   static async findPatientByName(name: string): Promise<Patient | null> {

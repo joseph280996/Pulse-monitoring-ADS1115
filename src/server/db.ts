@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { Pool, createPool, MysqlError } from 'mysql'
+import { Pool, createPool, MysqlError, PoolConfig } from 'mysql'
 
 interface DBInterface {
   query(query: string, values: unknown): Promise<unknown>
@@ -7,9 +7,9 @@ interface DBInterface {
 
 dotenv.config()
 
-const DBConf = {
+const DBConf: PoolConfig = {
   database: process.env.DATABASE_NAME,
-  multiStatements: true,
+  port: process.env.PORT ? +process.env.PORT : 3306,
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,

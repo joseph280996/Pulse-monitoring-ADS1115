@@ -22,32 +22,38 @@ let store: RecordedData[] = []
 export default [
   {
     regExp: /start/i,
-    handler: async (_: string, ws: WebSocket) => {
+    handler: (_: string, ws: WebSocket) => {
       isLoopStart = true
       if (process.env.NODE_ENV === 'production') {
-        const i2c = await import('i2c-bus')
-        const ADS1115 = await import('ads1115')
-        const bus = i2c.openPromisified(1)
-        const ads1115 = ADS1115(bus)
-        while (isLoopStart) {
-          store.push({
-            timeStamp: moment.utc(),
-            data: await ads1115.measure('0+GND'),
-          })
-        }
-      } else {
-        while (isLoopStart) {
-          store.push({
-            timeStamp: moment.utc(),
-            data: Math.random(),
-          })
-        }
+        // eslint-disable-next-line @typescript-eslint/no-extra-semi
+        ;(async () => {
+          const i2c = await import('i2c-bus')
+          const ADS1115 = await import('ads1115')
+          const bus = i2c.openPromisified(1)
+          const ads1115 = ADS1115(bus)
+          while (isLoopStart) {
+            store.push({
+              timeStamp: moment.utc(),
+              data: await ads1115.measure('0+GND'),
+            })
+          }
+        })()
       }
       try {
         IntervalController.registerInterval(
           'sendingDataInterval',
           setInterval(() => {
-            ws.send(JSON.stringify({ recordedData: store }))
+            ws.send(
+              JSON.stringify({
+                recordedData:
+                  process.env.NODE_ENV === 'development'
+                    ? Array.from({ length: 20 }, () => ({
+                        timeStamp: moment.utc(),
+                        data: Math.random(),
+                      }))
+                    : store,
+              }),
+            )
             store = []
           }, 200),
         )

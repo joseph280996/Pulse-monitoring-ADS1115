@@ -40,7 +40,7 @@ export default [
       try {
         let foundPatient = await Patient.findPatientByName(req.body.patientName)
         if (!foundPatient) {
-          foundPatient = new Patient(req.body.patientName)
+          foundPatient = new Patient({ name: req.body.patientName })
           await foundPatient.save()
         }
         const newRecord = new Record({

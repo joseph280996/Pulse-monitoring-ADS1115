@@ -22,6 +22,7 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": ["error"],
     "@typescript-eslint/semi": ["error", "never"],
+    "@typescript-eslint/indent": "off",
     "import/order": [
       "error",
       {
@@ -43,6 +44,7 @@
     "max-len": "off",
     "no-unused-vars": "off",
     "no-underscore-dangle": "off",
+    "object-curly-newline": "off",
     "semi": "off"
   }
 }
