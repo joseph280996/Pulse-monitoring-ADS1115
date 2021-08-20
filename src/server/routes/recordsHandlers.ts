@@ -1,4 +1,6 @@
 import fs from 'fs'
+import os from 'os'
+import path from 'path'
 import { RequestHandler } from 'express'
 import { pick } from 'lodash'
 import Patient from '../model/Patient'
@@ -28,16 +30,25 @@ export default recordData
 
 export const exportData: RequestHandler = async (req, res) => {
   try {
-    if (req.body.export) {
-      const { startDate, endDate } = req.body
-
-      const records = await Record.getByDateRange({ startDate, endDate })
-      Promise.all(
-        records.map(async (record) => Patient.getById(record.patientID)),
-      )
-      const stringifiedRecords = JSON.stringify(records)
-      fs.writeFileSync('./data.json', stringifiedRecords)
+    const { startDate, endDate } = req.body
+    if (!startDate || !endDate) {
+      throw new Error('Time range for export must be provided')
     }
+    const records = await Record.getByDateRange({ startDate, endDate })
+    Promise.all(
+      records.map(async (record) => Patient.getById(record.patientID)),
+    )
+    const stringifiedRecords = JSON.stringify(records)
+    fs.writeFile(
+      path.join(os.homedir(), 'data.json'),
+      stringifiedRecords,
+      (e) => {
+        if (e) {
+          throw e
+        }
+        console.log('Exported!')
+      },
+    )
     res.status(200).send({ status: 200 })
   } catch (err) {
     console.error(err)
