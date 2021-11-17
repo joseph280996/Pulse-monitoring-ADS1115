@@ -42,6 +42,7 @@ class Patient implements IPatient {
     return !!result.insertId
   }
 
+
   static async getAll(): Promise<Patient[]> {
     const result = await db.query(`
     SELECT ${Patient.sqlFields}
