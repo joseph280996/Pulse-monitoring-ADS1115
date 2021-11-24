@@ -13,7 +13,7 @@ type PatientNameType = {
   lastName: string
 }
 class Patient implements IPatient {
-  private static sqlFields = 'Patient.id, Patient.name'
+  private static sqlFields = 'Patient.id, Patient.firstName, Patient.lastName'
 
   public id?: number | undefined
 
