@@ -42,7 +42,6 @@ class Patient implements IPatient {
     return !!result.insertId
   }
 
-
   static async getAll(): Promise<Patient[]> {
     const result = await db.query(`
     SELECT ${Patient.sqlFields}
@@ -74,7 +73,7 @@ class Patient implements IPatient {
       `
       SELECT ${Patient.sqlFields}, User.firstName as firstName, User.lastName as lastName
       FROM Patient INNER JOIN User ON Patient.UserID = User.id
-      WHERE firstName = ? AND lastName = ?
+      WHERE firstName LIKE ? AND lastName LIKE ?
       LIMIT 1;
       `,
       [firstName, lastName],
