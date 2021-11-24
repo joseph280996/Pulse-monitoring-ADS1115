@@ -33,10 +33,10 @@ class Patient implements IPatient {
   async save(): Promise<boolean> {
     const result = await db.query(
       `
-        INSERT INTO Patient(name)
-        VALUES (?)
+        INSERT INTO Patient(firstName, lastName)
+        VALUES ?
       `,
-      [[this.userID]],
+      [[this.firstName, this.lastName]],
     )
     this.id = result.insertId
     return !!result.insertId
