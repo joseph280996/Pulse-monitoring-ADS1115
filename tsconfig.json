@@ -5,7 +5,6 @@
     "module": "commonjs",
     "lib": ["ES6", "ESNext", "ES2015"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
-    "rootDir": "./src",
     "baseUrl": "./",
     "outDir": "./build",
     "declaration": true,
@@ -28,6 +27,6 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["**/src/**/*.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

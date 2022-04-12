@@ -5,20 +5,13 @@
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "import"],
+  "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
-    "plugin:prettier/recommended",
+    "prettier",
     "airbnb-typescript/base",
-    "plugin:import/typescript",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/eslint-recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
-  "settings": {
-    "import/parser": {
-      "@typescript-eslint/parser": [".ts"]
-    }
-  },
   "rules": {
     "@typescript-eslint/no-unused-vars": ["error"],
     "@typescript-eslint/semi": ["error", "never"],
