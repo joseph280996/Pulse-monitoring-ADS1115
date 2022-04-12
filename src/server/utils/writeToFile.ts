@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import fastCSV from 'fast-csv'
 // import Patient from '../model/Patient'
-import Record from '../model/Record'
+import Record from '../models/Record'
 
 type WriteToFileConfigType = {
   formatType: 'JSON' | 'CSV'

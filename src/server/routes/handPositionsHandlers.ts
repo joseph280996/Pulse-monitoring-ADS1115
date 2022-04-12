@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import HandPosition from '../model/HandPosition'
+import HandPosition from '../models/HandPosition'
 
 const getHandPositions: RequestHandler = async (_req, res) => {
   try {
