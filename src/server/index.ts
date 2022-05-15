@@ -5,7 +5,7 @@ import Express, { json, urlencoded } from 'express'
 import WebSocket, { Server as WebSocketServer } from 'ws'
 import db from './db'
 import { RouteType } from './routes'
-import { WebsocketMessageTypeHandler } from './wsMessageTypeHandlers'
+import { WebsocketMessageTypeHandler } from './ws/wsMessageTypeHandlers'
 
 interface ServerInterface {
   cleanUp: () => void

@@ -1,4 +1,5 @@
 import db from '../db'
+import * as HandPositionSqls from '../sqls/handPositionSqls'
 
 type HandPositionConstructorParamType = {
   id: number
@@ -6,38 +7,17 @@ type HandPositionConstructorParamType = {
 }
 
 class HandPosition {
-  private static fields = 'id, name'
+  public id!: number
 
-  private id!: number
-
-  get handPosID(): number {
-    return this.id
-  }
-
-  set handPosID(id: number) {
-    this.id = id
-  }
-
-  private name!: string
-
-  get handPosName(): string {
-    return this.name
-  }
-
-  set handPosName(name: string) {
-    this.name = name
-  }
+  public name!: string
 
   constructor(obj: HandPositionConstructorParamType) {
-    this.handPosID = obj.id
-    this.handPosName = obj.name
+    this.id = obj.id
+    this.name = obj.name
   }
 
   static async loadAll(): Promise<HandPosition[] | undefined[]> {
-    const result = await db.query(`
-    SELECT ${HandPosition.fields}
-    FROM HandPosition
-    `)
+    const result = await db.query(HandPositionSqls.GET_ALL)
     return result?.length > 0
       ? result.map((row: any) => new HandPosition(row))
       : []

@@ -1,5 +1,5 @@
-import Patient from '../model/Patient'
-import User from '../model/User'
+import Patient from '../server/models/Patient'
+import User from '../server/models/User'
 
 console.log('potato')
 try {

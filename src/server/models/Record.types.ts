@@ -1,11 +1,12 @@
 import { Moment } from 'moment'
+import { RecordedData } from '../types'
 
 export type RecordFieldsType = {
   id?: number
-  pulseTypeID: number
+  pulseTypeID?: number
   handPositionID: number
-  data: string
-  patientID: number
+  data: RecordedData[]
+  patientID?: number
 }
 
 export type GetRecordByRangeInputType = {

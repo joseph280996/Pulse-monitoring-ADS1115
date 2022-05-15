@@ -1,60 +1,19 @@
 import IRecord from 'src/server/types/interface/IRecord'
 import db from '../db'
-import { GetRecordByRangeInputType, RecordFieldsType } from './RecordTypes'
+import * as RecordSqls from '../sqls/recordSqls'
+import { RecordedData } from '../types'
+import { GetRecordByRangeInputType, RecordFieldsType } from './Record.types'
 
 class Record implements IRecord {
-  private static fields =
-    'id, data, dateTimeCreated, dateTimeUpdated, PulseTypeID, HandPositionID, PatientID'
+  public id: number | undefined
 
-  private _id: number | undefined
+  public pulseTypeID: number | undefined
 
-  get id(): number | undefined {
-    return this._id
-  }
+  public handPositionID!: number
 
-  set id(id: number | undefined) {
-    this._id = id
-  }
+  public data!: RecordedData[]
 
-  private _pulseTypeID!: number
-
-  get pulseTypeID(): number {
-    return this._pulseTypeID
-  }
-
-  set pulseTypeID(pulseTypeID: number) {
-    this._pulseTypeID = pulseTypeID
-  }
-
-  private _handPositionID!: number
-
-  get handPositionID(): number {
-    return this._handPositionID
-  }
-
-  set handPositionID(handPositionID: number) {
-    this._handPositionID = handPositionID
-  }
-
-  private _data!: string
-
-  get data(): string {
-    return this._data
-  }
-
-  set data(data: string) {
-    this._data = data
-  }
-
-  private _patientID!: number
-
-  get patientID(): number {
-    return this._patientID
-  }
-
-  set patientID(patientID: number) {
-    this._patientID = patientID
-  }
+  public patientID: number | undefined
 
   constructor(obj: RecordFieldsType) {
     this.id = obj.id
@@ -65,28 +24,34 @@ class Record implements IRecord {
   }
 
   async save(): Promise<Record> {
-    const result = await db.query(
-      `
-      INSERT INTO Record(data, PulseTypeID, HandPositionID, PatientID)
-      VALUES (?)
-      `,
-      [[this.data, this.pulseTypeID, this.handPositionID, this.patientID]],
-    )
-    return new Record({ ...this, id: result.insertId })
+    const result = await db.query(RecordSqls.CREATE_RECORD, [
+      [this.data, this.pulseTypeID, this.handPositionID, this.patientID],
+    ])
+    return new Record({
+      ...this,
+      data: JSON.stringify(this.data),
+      id: result.insertId,
+    })
+  }
+
+  static async getByID(id: number) {
+    const res = await db.query(RecordSqls.GET_BY_ID, [id])
+    return res ? new Record(res) : null
   }
 
   static async getByDateRange({
     startDate,
     endDate,
   }: GetRecordByRangeInputType): Promise<[Record]> {
-    const res = await db.query(
-      `
-      SELECT ${Record.fields} FROM Record WHERE dateTimeCreated >= ? AND dateTimeCreated <= ?;
-      `,
-      [startDate, endDate],
-    )
+    const res = await db.query(RecordSqls.GET_BY_DATE_RANGE, [
+      startDate,
+      endDate,
+    ])
     return res && res.length > 0
-      ? res.map((row: any) => new Record(row as RecordFieldsType))
+      ? res.map((row: any) => {
+          const parsedRowData: RecordedData[] = JSON.parse(row.data)
+          return new Record({ ...row, data: parsedRowData })
+        })
       : []
   }
 }

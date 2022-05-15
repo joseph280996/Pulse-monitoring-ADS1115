@@ -1,13 +1,33 @@
 import { RequestHandler } from 'express'
 import { pick } from 'lodash'
-import moment from 'moment'
 import Patient from '../models/Patient'
 import Record from '../models/Record'
-import createIfNotExistFolder from '../utils/createIfNotExistFolder'
-import splitNameForDB from '../utils/splitNameForDB'
-import writeToFile from '../utils/writeToFile'
+import createIfNotExistFolder from '../utils/functions/createIfNotExistFolder'
+import formatInputDateForExport from '../utils/functions/formatInputDateForExport'
+import splitNameForDB from '../utils/functions/splitNameForDB'
+import writeToFile from '../utils/functions/writeToFile'
 
-const recordData: RequestHandler = async (req, res) => {
+/**
+ * #########################
+ * # Get Request Handlers #
+ * #########################
+ */
+
+export const getByID: RequestHandler = async (req, res) => {
+  const { id: recordId } = req.params
+  const record = await Record.getByID(Number(recordId))
+  if (!record) {
+    res.status(400).send('The request record id does not exist')
+  }
+  res.status(200).send(record)
+}
+
+/**
+ * #########################
+ * # Post Request Handlers #
+ * #########################
+ */
+export const createRecord: RequestHandler = async (req, res) => {
   try {
     const [firstName, lastName] = splitNameForDB(req.body.patientName)
     let foundPatient = await Patient.findPatientByName({ firstName, lastName })
@@ -27,12 +47,6 @@ const recordData: RequestHandler = async (req, res) => {
   }
 }
 
-export default recordData
-
-const formatInputDateForExport = (startDate: string, endDate: string) => ({
-  formattedStartDate: moment(startDate).format('DD-MM-YYYY'),
-  formattedEndDate: moment(endDate).format('DD-MM-YYYY'),
-})
 export const exportData: RequestHandler = async (req, res) => {
   try {
     const { startDate, endDate } = req.body

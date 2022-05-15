@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import getHandPositions from './handPositionsHandlers'
 import getPulseTypes from './pulseTypesHandlers'
-import recordData, { exportData } from './recordsHandlers'
+import * as RecordHandler from './recordsHandlers'
 
 export type RouteType = {
   method: string
@@ -9,6 +9,7 @@ export type RouteType = {
   handler: RequestHandler
 }
 export default [
+  // Get Requests
   {
     method: 'get',
     route: '/pulse-type',
@@ -20,13 +21,19 @@ export default [
     handler: getHandPositions,
   },
   {
+    method: 'get',
+    route: '/record/:id',
+    handler: RecordHandler.getByID,
+  },
+  // Post Request
+  {
     method: 'post',
     route: '/record',
-    handler: recordData,
+    handler: RecordHandler.createRecord,
   },
   {
     method: 'post',
     route: '/data',
-    handler: exportData,
+    handler: RecordHandler.exportData,
   },
 ] as RouteType[]

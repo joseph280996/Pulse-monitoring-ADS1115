@@ -1,12 +1,13 @@
-import { RecordFieldsType } from 'src/server/model/RecordTypes'
+import { RecordedData } from '..'
+import { RecordFieldsType } from '../../models/Record.types'
 import IModel from './IModel'
 
 export interface IRecord extends IModel<RecordFieldsType> {
   id?: number
-  pulseTypeID: number
+  pulseTypeID?: number
   handPositionID: number
-  data: string
-  patientID: number
+  data: RecordedData[]
+  patientID?: number
 }
 
 export default IRecord

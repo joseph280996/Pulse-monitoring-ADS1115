@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import Server from './server'
 import routes from './server/routes'
-import wsMessageTypeHandlers from './server/wsMessageTypeHandlers'
+import wsMessageTypeHandlers from './server/ws/wsMessageTypeHandlers'
 
 dotenv.config()
 

@@ -1,4 +1,5 @@
 import db from '../db'
+import * as PatientSqls from '../sqls/patientSqls'
 import IPatient from '../types/interface/IPatient'
 
 type PatientInputType = {
@@ -13,8 +14,6 @@ type PatientNameType = {
   lastName: string
 }
 class Patient implements IPatient {
-  private static sqlFields = 'Patient.id, Patient.firstName, Patient.lastName'
-
   public id?: number | undefined
 
   public userID?: number
@@ -31,37 +30,22 @@ class Patient implements IPatient {
   }
 
   async save(): Promise<boolean> {
-    const result = await db.query(
-      `
-        INSERT INTO Patient(firstName, lastName)
-        VALUES (?)
-      `,
-      [[this.firstName, this.lastName]],
-    )
+    const result = await db.query(PatientSqls.CREATE_PATIENT, [
+      [this.firstName, this.lastName],
+    ])
     this.id = result.insertId
     return !!result.insertId
   }
 
   static async getAll(): Promise<Patient[]> {
-    const result = await db.query(`
-    SELECT ${Patient.sqlFields}
-    FROM Patient
-    WHERE id > 0;
-    `)
+    const result = await db.query(PatientSqls.GET_ALL)
     return result && result.length > 0
       ? result.map((row: any) => new Patient(row))
       : []
   }
 
   static async getById(id: number): Promise<Patient | null> {
-    const result = await db.query(
-      `
-      SELECT ${Patient.sqlFields}
-      FROM Patient
-      WHERE id = ?;
-    `,
-      [id],
-    )
+    const result = await db.query(PatientSqls.GET_BY_ID, [id])
     return result ? new Patient(result) : null
   }
 
@@ -69,15 +53,10 @@ class Patient implements IPatient {
     firstName,
     lastName,
   }: PatientNameType): Promise<Patient | null> {
-    const results = await db.query(
-      `
-      SELECT ${Patient.sqlFields}
-      FROM Patient
-      WHERE firstName LIKE ? AND lastName LIKE ?
-      LIMIT 1;
-      `,
-      [firstName, lastName],
-    )
+    const results = await db.query(PatientSqls.GET_BY_FIRST_LAST_NAME, [
+      firstName,
+      lastName,
+    ])
     return results && results.length ? new Patient(results[0]) : null
   }
 }

@@ -1,9 +1,8 @@
 import db from '../db'
-import { PulseTypeFieldsType } from './PulseTypesType'
+import * as PulseTypeSqls from '../sqls/pulseTypeSqls'
+import { PulseTypeFieldsType } from './PulseTypes.type'
 
 class PulseType {
-  private static sqlFields = 'id, name, chineseName, features '
-
   id!: number
 
   name!: string
@@ -20,14 +19,12 @@ class PulseType {
   }
 
   static loadAll = async (): Promise<PulseType[] | undefined[]> =>
-    db
-      .query(`SELECT ${PulseType.sqlFields} FROM PulseType`)
-      .then((result: any) => {
-        if (result?.length > 0) {
-          return result.map((row: any) => new PulseType(row))
-        }
-        return []
-      })
+    db.query(PulseTypeSqls.GET_ALL).then((result: any) => {
+      if (result?.length > 0) {
+        return result.map((row: any) => new PulseType(row))
+      }
+      return []
+    })
 }
 
 export default PulseType
