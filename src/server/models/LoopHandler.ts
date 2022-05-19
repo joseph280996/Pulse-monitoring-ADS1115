@@ -1,7 +1,4 @@
-export const SENSOR_LOOP_STATUS = {
-  STARTED: 'started',
-  STOPPED: 'stopped',
-}
+import { SENSOR_LOOP_STATUS } from '../types'
 
 class SensorLoopHandler {
   private isStarted: boolean

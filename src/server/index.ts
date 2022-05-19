@@ -47,6 +47,7 @@ class Server implements ServerInterface {
       console.log(`Connection from ${req.socket.remoteAddress}`)
       ws.on('message', (message: string) => {
         messageTypes.forEach(({ regExp, handler }) => {
+          console.log(`Received message [${message}]`)
           if (regExp.test(message)) {
             handler(message.replace(regExp, ''), ws)
           }

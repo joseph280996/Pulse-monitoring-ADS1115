@@ -1,8 +1,12 @@
-import moment,{Moment} from 'moment'
+import moment, { Moment } from 'moment'
 import { RecordedData } from 'src/server/types'
 
-export default (store:RecordedData[][], startTimeMoment:Moment, endTimeMoment:Moment)=> {
-    const recordedValues: RecordedData[] = []
+export default (
+  store: RecordedData[][],
+  startTimeMoment: Moment,
+  endTimeMoment: Moment,
+) => {
+  const recordedValues: RecordedData[] = []
   store.forEach((row) =>
     row.forEach((value) => {
       const valueTimeStampMoment = moment.utc(value.timeStamp)
