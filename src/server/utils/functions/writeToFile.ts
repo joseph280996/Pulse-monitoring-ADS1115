@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import fastCSV from 'fast-csv'
 // import Patient from '../model/Patient'
-import Record from '../../models/Record'
+import Diagnosis from '../../models/Diagnosis'
 
 type WriteToFileConfigType = {
   formatType: 'JSON' | 'CSV'
@@ -14,7 +14,7 @@ export const FORMAT_TYPE = {
 }
 
 const writeToJSONFile = async (
-  records: Record[],
+  records: Diagnosis[],
   pathToDesktop: string,
   fileName: string,
   { formatType }: WriteToFileConfigType,

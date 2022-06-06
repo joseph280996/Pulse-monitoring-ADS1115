@@ -1,10 +1,8 @@
-const fields = `
-  id, data, dateTimeCreated, dateTimeUpdated, PulseTypeID, HandPositionID, PatientID
-  `
-export const GET_BY_ID = `SELECT ${fields} FROM Record WHERE id = ?;`
-export const GET_BY_DATE_RANGE = `SELECT ${fields} FROM Record WHERE dateTimeCreated >= ? AND dateTimeCreated <= ?;`
+export const fields = 'id, data, typeID, DiagnosisID as diagnosisID'
+export const GET_BY_ID = `SELECT ${fields} FROM RecordData WHERE id = ?;`
+export const GET_BY_DIAGNOSIS_ID = `SELECT ${fields} FROM Record WHERE DiagnosisID = ?;`
 
-export const CREATE_RECORD = `
-      INSERT INTO Record(data, PulseTypeID, HandPositionID, PatientID)
-      VALUES (?)
-      `
+export const CREATE_RECORD_DATA = 'INSERT INTO Record VALUES (?);'
+export const UPDATE_DIAGNOSIS_ID = `
+  UPDATE Record SET DiagnosisID = ? WHERE id = ?;
+`

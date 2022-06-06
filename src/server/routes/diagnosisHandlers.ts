@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express'
 import { pick } from 'lodash'
+import Diagnosis from '../models/Diagnosis'
 import Patient from '../models/Patient'
 import Record from '../models/Record'
 import createIfNotExistFolder from '../utils/functions/createIfNotExistFolder'
@@ -15,7 +16,7 @@ import writeToFile from '../utils/functions/writeToFile'
 
 export const getByID: RequestHandler = async (req, res) => {
   const { id: recordId } = req.params
-  const record = await Record.getByID(Number(recordId))
+  const record = await Diagnosis.getByID(Number(recordId))
   if (!record) {
     res.status(400).send('The request record id does not exist')
   }
@@ -27,20 +28,39 @@ export const getByID: RequestHandler = async (req, res) => {
  * # Post Request Handlers #
  * #########################
  */
-export const createRecord: RequestHandler = async (req, res) => {
+
+/**
+ * Diagnosis Creation Request Handler
+ * Handles creating patient, new diagnosis + update record with new diagnosis id
+ *
+ * @param req HTTP Request with information to create Diagnosis
+ * @param res Express Response object
+ */
+export const createDiagnosis: RequestHandler = async (req, res) => {
   try {
     const [firstName, lastName] = splitNameForDB(req.body.patientName)
+
     let foundPatient = await Patient.findPatientByName({ firstName, lastName })
     if (!foundPatient) {
       foundPatient = new Patient({ firstName, lastName })
       await foundPatient.save()
     }
-    const newRecord = new Record({
+
+    const newDiagnosis = new Diagnosis({
       patientID: foundPatient.id as number,
-      ...pick(req.body, ['id', 'pulseTypeID', 'handPositionID', 'data']),
+      ...pick(req.body, ['id', 'pulseTypeID']),
     })
-    const savedRecord = await newRecord.save()
-    res.status(200).send(savedRecord)
+    const savedDiagnosis = await newDiagnosis.save()
+
+    const { recordID } = req.body
+    const record = await Record.getByID(recordID)
+    if (!record) {
+      throw new Error(`Cannot find Record with ID [${recordID}]`)
+    }
+    record.diagnosisID = newDiagnosis.id
+    await record.updateDiagnosisID()
+
+    res.status(200).send(savedDiagnosis)
   } catch (err) {
     console.error(err)
     res.status(500).send('Internal Error')
@@ -53,14 +73,16 @@ export const exportData: RequestHandler = async (req, res) => {
     if (!startDate || !endDate) {
       throw new Error('Time range for export must be provided')
     }
-    const records = await Record.getByDateRange({ startDate, endDate })
+    const diagnoses = await Diagnosis.getByDateRange({ startDate, endDate })
+    await Promise.all(diagnoses.map((diagnosis) => diagnosis.getRecords()))
+
     const { formattedStartDate, formattedEndDate } = formatInputDateForExport(
       startDate,
       endDate,
     )
     const pathToDesktop = await createIfNotExistFolder('export-data')
     await writeToFile(
-      records,
+      diagnoses,
       pathToDesktop,
       `${formattedStartDate}-${formattedEndDate}`,
       { formatType: 'CSV' },

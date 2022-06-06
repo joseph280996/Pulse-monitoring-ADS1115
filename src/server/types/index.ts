@@ -1,7 +1,5 @@
-import { Moment } from 'moment'
-
 export type RecordedData = {
-  timeStamp: Moment
+  timeStamp: number
   data: number
 }
 

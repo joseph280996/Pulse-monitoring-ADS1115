@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+import * as dotenv from 'dotenv'
 import Server from './server'
 import routes from './server/routes'
 import wsMessageTypeHandlers from './server/ws/wsMessageTypeHandlers'

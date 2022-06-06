@@ -9,7 +9,6 @@
     "outDir": "./build",
     "declaration": true,
     "declarationMap": true,
-    "noEmit": true,
     "strict": true,
     "pretty": true,
     "sourceMap": true,
@@ -18,14 +17,13 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
     "esModuleInterop": true,
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["**/src/**/*.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]

@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import http from 'http'
+import * as http from 'http'
 import cors from 'cors'
 import Express, { json, urlencoded } from 'express'
 import WebSocket, { Server as WebSocketServer } from 'ws'
