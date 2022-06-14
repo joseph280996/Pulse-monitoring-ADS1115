@@ -1,6 +1,4 @@
-import IModel from './IModel'
-
-interface IUser extends IModel<boolean> {
+interface IUser {
   id?: number
   firstName: string
   lastName?: string

@@ -1,6 +1,4 @@
-import IModel from './IModel'
-
-interface IPatient extends IModel<boolean> {
+interface IPatient {
   id?: number
   userID?: number
   firstName?: string
