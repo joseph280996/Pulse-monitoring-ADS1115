@@ -16,7 +16,7 @@ const DBConf = {
   charset: 'utf8mb4_unicode_ci',
 }
 
-class DB implements DBInterface {
+export class DB implements DBInterface {
   private _pool?: Pool
 
   private getPool(): Pool | undefined {
@@ -37,12 +37,12 @@ class DB implements DBInterface {
 
   hasPoolOpened = () => Boolean(this._pool)
 
-  query(query: string, values?: Array<any>) {
-    return new Promise<any>((resolve, reject) => {
+  query<T, K>(query: string, values?: Array<K>) {
+    return new Promise<T>((resolve, reject) => {
       this.getPool()?.query(
         query,
         values,
-        (error: MysqlError | null, result: any) => {
+        (error: MysqlError | null, result: T) => {
           if (error) {
             return reject(error)
           }
@@ -60,6 +60,4 @@ class DB implements DBInterface {
   }
 }
 
-const singletonInstance = new DB()
-
-export default singletonInstance
+export default new DB()
