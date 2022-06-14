@@ -1,17 +1,13 @@
 import db from '../db'
 import * as HandPositionSqls from '../sqls/handPositionSqls'
-
-type HandPositionConstructorParamType = {
-  id: number
-  name: string
-}
+import { HandPositionType } from './HandPosition.types'
 
 class HandPosition {
   public id!: number
 
   public name!: string
 
-  constructor(obj: HandPositionConstructorParamType) {
+  constructor(obj: HandPositionType) {
     this.id = obj.id
     this.name = obj.name
   }

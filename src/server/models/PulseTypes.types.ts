@@ -1,4 +1,4 @@
-export type PulseTypeFieldsType = {
+export type PulseTypeDataType = {
   id: number
   name: string
   chineseName: string
