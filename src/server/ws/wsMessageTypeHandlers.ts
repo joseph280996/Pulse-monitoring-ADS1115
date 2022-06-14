@@ -2,7 +2,6 @@
 import dotenv from 'dotenv'
 import WebSocket from 'ws'
 import {
-  startGettingSensorValueLoop,
   startSendingSensorValueLoop,
   stopGetSensorValueLoop,
 } from './sensorValueHandler'
@@ -15,10 +14,6 @@ export type WebsocketMessageTypeHandler = {
 dotenv.config()
 
 export default [
-  {
-    regExp: /getSensorData/i,
-    handler: startGettingSensorValueLoop,
-  },
   {
     regExp: /start/i,
     handler: startSendingSensorValueLoop,
