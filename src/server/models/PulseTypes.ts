@@ -1,4 +1,4 @@
-import { PulseTypeType } from './PulseTypes.type'
+import { PulseTypeDataType } from './PulseTypes.types'
 
 class PulseType {
   id!: number
@@ -9,7 +9,7 @@ class PulseType {
 
   features!: string
 
-  constructor(obj: PulseTypeType) {
+  constructor(obj: PulseTypeDataType) {
     this.chineseName = obj.chineseName
     this.id = obj.id
     this.name = obj.name

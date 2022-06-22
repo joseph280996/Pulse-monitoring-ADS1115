@@ -38,6 +38,7 @@
     "no-unused-vars": "off",
     "no-underscore-dangle": "off",
     "object-curly-newline": "off",
-    "semi": "off"
+    "semi": "off",
+    "no-linebreak": "before"
   }
 }

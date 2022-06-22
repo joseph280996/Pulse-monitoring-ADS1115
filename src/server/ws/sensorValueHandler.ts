@@ -1,9 +1,11 @@
 import moment from 'moment'
 import WebSocket from 'ws'
+import LoopController from '../controllers/LoopController'
 import IntervalController from '../IntervalController'
-import LoopHandler from '../models/LoopHandler'
-import Record from '../models/Record'
+import RecordRepository from '../repositories/RecordRepository'
+import RecordSessionRepository from '../repositories/RecordSessionRepository'
 import { RecordedData, SENSOR_LOOP_STATUS } from '../types'
+import fakeGenerateRandomData from '../utils/functions/fakeGenerateRandomData'
 import getLastNElementsFromRecordedData from '../utils/functions/getLastNElementsFromRecordedData'
 import getRecordedDataBetweenTimeStamp from '../utils/functions/getRecordedDataBetweenTimeStamp'
 import RECORD_TYPES from '../utils/variables/recordTypes'
@@ -18,54 +20,13 @@ const INTERVAL_NAME = 'sendingDataInterval'
 let store: RecordedData[][] = [[]]
 let storeIdx = 0
 
-const fakeGenerateRandomData = () =>
-  new Promise((resolve: (param: number) => void) => {
-    setTimeout(() => resolve(Math.random()), 100)
-  })
-
-export const startGettingSensorValueLoop = () => {
-  LoopHandler.start()
-  if (process.env.NODE_ENV === 'production') {
-    // eslint-disable-next-line @typescript-eslint/no-extra-semi
-    ;(async () => {
-      // eslint-disable-next-line import/no-extraneous-dependencies
-      const i2c = await import('i2c-bus')
-      // eslint-disable-next-line import/no-extraneous-dependencies
-      const ADS1115 = await import('ads1115')
-      const bus = i2c.openPromisified(1)
-      const ads1115 = ADS1115(bus)
-      while (LoopHandler.status() === SENSOR_LOOP_STATUS.STARTED) {
-        if (store[storeIdx].length >= 10) {
-          store.push([])
-          storeIdx += 1
-        }
-        store[storeIdx].push({
-          timeStamp: moment.utc().valueOf(),
-          // eslint-disable-next-line no-await-in-loop
-          data: await ads1115.measure('0+GND'),
-        })
-      }
-    })()
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-extra-semi
-    ;(async () => {
-      while (LoopHandler.status() === SENSOR_LOOP_STATUS.STARTED) {
-        if (store[storeIdx].length >= 10) {
-          store.push([])
-          storeIdx += 1
-        }
-        store[storeIdx].push({
-          timeStamp: moment.utc().valueOf(),
-          // eslint-disable-next-line no-await-in-loop
-          data: await fakeGenerateRandomData(),
-        })
-      }
-    })()
-  }
-}
-
+/**
+ * Handler to start getting and sending value from the sensor
+ * @param _ WS message
+ * @param ws WS instance
+ */
 export const startSendingSensorValueLoop = (_: string, ws: WebSocket) => {
-  LoopHandler.start()
+  LoopController.start()
 
   // eslint-disable-next-line @typescript-eslint/no-extra-semi
   // eslint-disable-next-line semi-style
@@ -78,7 +39,7 @@ export const startSendingSensorValueLoop = (_: string, ws: WebSocket) => {
       const ADS1115 = await import('ads1115')
       const bus = i2c.openPromisified(1)
       const ads1115 = ADS1115(bus)
-      while (LoopHandler.status() === SENSOR_LOOP_STATUS.STARTED) {
+      while (LoopController.status() === SENSOR_LOOP_STATUS.STARTED) {
         if (store[storeIdx].length >= 10) {
           store.push([])
           storeIdx += 1
@@ -93,7 +54,7 @@ export const startSendingSensorValueLoop = (_: string, ws: WebSocket) => {
   } else {
     // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;(async () => {
-      while (LoopHandler.status() === SENSOR_LOOP_STATUS.STARTED) {
+      while (LoopController.status() === SENSOR_LOOP_STATUS.STARTED) {
         if (store[storeIdx].length >= 10) {
           store.push([])
           storeIdx += 1
@@ -110,7 +71,6 @@ export const startSendingSensorValueLoop = (_: string, ws: WebSocket) => {
     IntervalController.registerInterval(
       INTERVAL_NAME,
       setInterval(() => {
-        console.log(store)
         console.log('Sending RecordedData')
         ws.send(
           JSON.stringify({
@@ -133,11 +93,12 @@ export const startSendingSensorValueLoop = (_: string, ws: WebSocket) => {
     console.error(error)
   }
 }
+
 export const stopGetSensorValueLoop = async (
   message: string,
   ws: WebSocket,
 ) => {
-  LoopHandler.stop()
+  LoopController.stop()
   IntervalController.clear(INTERVAL_NAME)
   const trimmedJSONValues = message.trim()
   const parsedRecordedTime: StopGetSensorValueLoopRequestData = JSON.parse(
@@ -151,18 +112,24 @@ export const stopGetSensorValueLoop = async (
     endTimeMoment,
   )
 
-  const newRecord = new Record({
+  console.log('recordedValues', recordedValues)
+  const newRecord = await RecordRepository.create({
     typeID: RECORD_TYPES.PIEZOELECTRIC_SENSOR,
-    handPositionID: parsedRecordedTime.handPositionID,
     data: recordedValues,
   })
-  const savedRecord = await newRecord.save()
+  if (!newRecord) {
+    throw new Error('Error create piezoelectric record')
+  }
+  const session = await RecordSessionRepository.create({
+    handPositionID: parsedRecordedTime.handPositionID,
+    piezoelectricRecordID: newRecord.id as number,
+  })
 
   store = [[]]
   ws.send(
     JSON.stringify({
       type: WS_MESSAGE_TYPE.RECORD_ID,
-      recordID: savedRecord.id,
+      sessionID: session.id,
     }),
   )
 }

@@ -37,7 +37,7 @@ export class DB implements DBInterface {
 
   hasPoolOpened = () => Boolean(this._pool)
 
-  query<T, K>(query: string, values?: Array<K>) {
+  query<T, K>(query: string, values?: K) {
     return new Promise<T>((resolve, reject) => {
       this.getPool()?.query(
         query,

@@ -18,6 +18,9 @@ class Record {
     this.dateTimeCreated = record.dateTimeCreated
     this.dateTimeUpdated = record.dateTimeUpdated
   }
+  clone() {
+    return new Record(this)
+  }
 }
 
 export default Record

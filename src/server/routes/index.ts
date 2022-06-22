@@ -2,6 +2,7 @@ import { RequestHandler } from 'express'
 import * as DiagnosisHandler from './diagnosisHandlers'
 import getHandPositions from './handPositionsHandlers'
 import getPulseTypes from './pulseTypesHandlers'
+import * as RecordHandlers from './recordHandlers'
 
 export type RouteType = {
   method: string
@@ -23,13 +24,18 @@ export default [
   {
     method: 'get',
     route: '/record/:id',
-    handler: DiagnosisHandler.getByID,
+    handler: RecordHandlers.getByID,
   },
   // Post Request
   {
     method: 'post',
     route: '/diagnosis',
     handler: DiagnosisHandler.createDiagnosis,
+  },
+  {
+    method: 'post',
+    route: '/record',
+    handler: RecordHandlers.createEcgRecord,
   },
   {
     method: 'post',

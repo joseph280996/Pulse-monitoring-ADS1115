@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express'
-import { pick } from 'lodash'
 import Diagnosis from '../models/Diagnosis'
 import Patient from '../models/Patient'
-import Record from '../models/Record'
+import DiagnosisRepository from '../repositories/DiagnosisRepository'
+import PatientRepository from '../repositories/PatientRepository'
+import RecordSessionRepository from '../repositories/RecordSessionRepository'
 import createIfNotExistFolder from '../utils/functions/createIfNotExistFolder'
 import formatInputDateForExport from '../utils/functions/formatInputDateForExport'
 import splitNameForDB from '../utils/functions/splitNameForDB'
@@ -16,7 +17,7 @@ import writeToFile from '../utils/functions/writeToFile'
 
 export const getByID: RequestHandler = async (req, res) => {
   const { id: recordId } = req.params
-  const record = await Diagnosis.getByID(Number(recordId))
+  const record = await DiagnosisRepository.getByID(Number(recordId))
   if (!record) {
     res.status(400).send('The request record id does not exist')
   }
@@ -37,28 +38,29 @@ export const getByID: RequestHandler = async (req, res) => {
  * @param res Express Response object
  */
 export const createDiagnosis: RequestHandler = async (req, res) => {
+  const { patientName, sessionID, pulseTypeID } = req.body
   try {
-    const [firstName, lastName] = splitNameForDB(req.body.patientName)
+    const [firstName, lastName] = splitNameForDB(patientName)
 
-    let foundPatient = await Patient.findPatientByName({ firstName, lastName })
+    const foundPatient = await PatientRepository.findPatientByName({
+      firstName,
+      lastName,
+    })
     if (!foundPatient) {
-      foundPatient = new Patient({ firstName, lastName })
-      await foundPatient.save()
+      await PatientRepository.create(new Patient({ firstName, lastName }))
+    }
+
+    const record = await RecordSessionRepository.getByID(sessionID)
+    if (!record) {
+      throw new Error(`Cannot find Record sesssion with ID [${sessionID}]`)
     }
 
     const newDiagnosis = new Diagnosis({
-      patientID: foundPatient.id as number,
-      ...pick(req.body, ['id', 'pulseTypeID']),
+      pulseTypeID,
+      patientID: foundPatient?.id as number,
+      recordSessionID: sessionID,
     })
-    const savedDiagnosis = await newDiagnosis.save()
-
-    const { recordID } = req.body
-    const record = await Record.getByID(recordID)
-    if (!record) {
-      throw new Error(`Cannot find Record with ID [${recordID}]`)
-    }
-    record.diagnosisID = newDiagnosis.id
-    await record.updateDiagnosisID()
+    const savedDiagnosis = await DiagnosisRepository.update(newDiagnosis)
 
     res.status(200).send(savedDiagnosis)
   } catch (err) {
@@ -67,14 +69,24 @@ export const createDiagnosis: RequestHandler = async (req, res) => {
   }
 }
 
+/**
+ * Export Data Request Handler
+ * Handles exporting data within date range
+ *
+ * @param req HTTP Request with information to create Diagnosis
+ * @param res Express Response object
+ */
 export const exportData: RequestHandler = async (req, res) => {
   try {
     const { startDate, endDate } = req.body
     if (!startDate || !endDate) {
       throw new Error('Time range for export must be provided')
     }
-    const diagnoses = await Diagnosis.getByDateRange({ startDate, endDate })
-    await Promise.all(diagnoses.map((diagnosis) => diagnosis.getRecords()))
+    const diagnoses = await DiagnosisRepository.getByDateRange({
+      startDate,
+      endDate,
+    })
+    // await Promise.all(diagnoses.map((diagnosis) => diagnosis.getRecords()))
 
     const { formattedStartDate, formattedEndDate } = formatInputDateForExport(
       startDate,
@@ -85,7 +97,7 @@ export const exportData: RequestHandler = async (req, res) => {
       diagnoses,
       pathToDesktop,
       `${formattedStartDate}-${formattedEndDate}`,
-      { formatType: 'CSV' },
+      { formatType: 'JSON' },
     )
     res.status(200).send({ status: 200 })
   } catch (err) {

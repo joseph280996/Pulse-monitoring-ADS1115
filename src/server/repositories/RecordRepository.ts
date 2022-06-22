@@ -12,7 +12,7 @@ class RecordRepository {
   }
 
   async getByID(id: number) {
-    const res = await this.db.query<RecordDataType, number>(
+    const res = await this.db.query<RecordDataType, [number]>(
       RecordSqls.GET_BY_ID,
       [id],
     )
@@ -23,7 +23,7 @@ class RecordRepository {
     if (!diagnosisID) {
       return []
     }
-    const res = await this.db.query<RecordDataType[], number>(
+    const res = await this.db.query<RecordDataType[], [number]>(
       RecordSqls.GET_BY_DIAGNOSIS_ID,
       [diagnosisID],
     )
@@ -39,7 +39,7 @@ class RecordRepository {
     if (!diagnosisID) {
       return []
     }
-    const res = await this.db.query<RecordDataType[], number>(
+    const res = await this.db.query<RecordDataType[], number[]>(
       RecordSqls.GET_BY_DIAGNOSIS_ID_AND_TYPE,
       [diagnosisID, typeID],
     )
@@ -56,7 +56,7 @@ class RecordRepository {
 
     const result = await this.db.query<{ insertId: number }, [number, string]>(
       RecordSqls.CREATE_RECORD_DATA,
-      [[record.typeID, serializedData]],
+      [record.typeID, serializedData],
     )
     return new Record({
       ...record,
@@ -71,7 +71,7 @@ class RecordRepository {
 
     const result = await this.db.query<
       { changedRows: number },
-      number | undefined
+      [number | undefined]
     >(RecordSqls.UPDATE_DIAGNOSIS_ID, [updatedRecord.id])
     return result && result.changedRows > 1
   }
@@ -96,4 +96,4 @@ class RecordRepository {
   }
 }
 
-export default RecordRepository
+export default new RecordRepository()

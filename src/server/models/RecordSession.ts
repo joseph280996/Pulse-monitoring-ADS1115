@@ -4,15 +4,15 @@ import { RecordSessionDataType } from './RecordSession.types'
 class RecordSession {
   public id!: number
 
-  public piezoelectricRecordID?: number
+  public piezoelectricRecordID!: number
 
   public ecgRecordID?: number
 
   public handPositionID!: number
 
-  public dateTimeCreated!: string
+  public dateTimeCreated?: string
 
-  public dateTimeUpdated!: string
+  public dateTimeUpdated?: string
 
   public piezoelectricRecord?: Record
 
@@ -27,21 +27,21 @@ class RecordSession {
     this.dateTimeUpdated = session.dateTimeUpdated
   }
 
-  public async records(): Promise<void> {
-    if (!this.id) {
-      throw new Error(
-        `Cannot get Record for unsaved Diagnosis - pulseTypeID [${this.pulseTypeID}], patientID [${this.patientID}]`,
-      )
-    }
-    this.piezoelectricRecord = await RecordRepository.getByDiagnosisIDAndType(
-      this.id,
-      RECORD_TYPE.PIEZOELECTRIC_SENSOR,
-    )
-    this.ecgRecord = await RecordRepository.getByDiagnosisIDAndType(
-      this.id,
-      RECORD_TYPE.ECG_SENSOR,
-    )
-  }
+  // public async records(): Promise<void> {
+  //   if (!this.id) {
+  //     throw new Error(
+  //       `Cannot get Record for unsaved Diagnosis - pulseTypeID [${this.pulseTypeID}], patientID [${this.patientID}]`,
+  //     )
+  //   }
+  //   this.piezoelectricRecord = await RecordRepository.getByDiagnosisIDAndType(
+  //     this.id,
+  //     RECORD_TYPE.PIEZOELECTRIC_SENSOR,
+  //   )
+  //   this.ecgRecord = await RecordRepository.getByDiagnosisIDAndType(
+  //     this.id,
+  //     RECORD_TYPE.ECG_SENSOR,
+  //   )
+  // }
 }
 
 export default RecordSession
