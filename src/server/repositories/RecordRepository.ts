@@ -16,6 +16,7 @@ class RecordRepository {
       RecordSqls.GET_BY_ID,
       [id],
     )
+    console.log(res.data)
     return res ? new Record({ ...res, data: JSON.parse(res.data) }) : null
   }
 
@@ -53,11 +54,11 @@ class RecordRepository {
 
   async create(record: RecordDto): Promise<Record> {
     const serializedData = JSON.stringify(record.data)
+    const result = await this.db.query<
+      { insertId: number },
+      [[number, string]]
+    >(RecordSqls.CREATE_RECORD_DATA, [[record.typeID, serializedData]])
 
-    const result = await this.db.query<{ insertId: number }, [number, string]>(
-      RecordSqls.CREATE_RECORD_DATA,
-      [record.typeID, serializedData],
-    )
     return new Record({
       ...record,
       data: serializedData,

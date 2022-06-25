@@ -23,13 +23,17 @@ class RecordSessionRepository {
     RecordSessionRepository.guardAgainstInvalidCreateRecordSession(
       recordSession,
     )
+    console.log(recordSession)
+    console.log(recordSession.handPositionID)
     const result = await this.db.query<
       { insertId: number },
-      Array<number | undefined>
+      [[number, number | undefined, number]]
     >(RecordSessionSqls.CREATE_RECORD_SESSION, [
-      recordSession.piezoelectricRecordID,
-      recordSession.ecgRecordID,
-      recordSession.handPositionID,
+      [
+        recordSession.piezoelectricRecordID,
+        recordSession.ecgRecordID,
+        recordSession.handPositionID,
+      ],
     ])
     return new RecordSession({
       ...recordSession,

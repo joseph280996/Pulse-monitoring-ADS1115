@@ -120,6 +120,7 @@ export const stopGetSensorValueLoop = async (
   if (!newRecord) {
     throw new Error('Error create piezoelectric record')
   }
+  console.log(newRecord.id)
   const session = await RecordSessionRepository.create({
     handPositionID: parsedRecordedTime.handPositionID,
     piezoelectricRecordID: newRecord.id as number,

@@ -3,7 +3,10 @@ class IntervalController {
 
   static registerInterval(name: string, interval: NodeJS.Timeout): void {
     if (this.intervals.has(name)) {
-      throw Error('An interval is already exist with the given name')
+      console.warn(
+        `An interval is registered with the same name detected [${name}]`,
+      )
+      clearInterval(this.intervals.get(name) as NodeJS.Timeout)
     }
     this.intervals.set(name, interval)
   }
