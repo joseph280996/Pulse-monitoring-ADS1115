@@ -38,9 +38,11 @@ export const getByID: RequestHandler = async (req, res) => {
  * @param res Express Response object
  */
 export const createDiagnosis: RequestHandler = async (req, res) => {
-  const { patientName, sessionID, pulseTypeID } = req.body
+  const { patientName, recordSessionID, pulseTypeID } = req.body
   try {
     const [firstName, lastName] = splitNameForDB(patientName)
+    console.log(firstName)
+    console.log(lastName)
 
     const foundPatient = await PatientRepository.findPatientByName({
       firstName,
@@ -50,17 +52,19 @@ export const createDiagnosis: RequestHandler = async (req, res) => {
       await PatientRepository.create(new Patient({ firstName, lastName }))
     }
 
-    const record = await RecordSessionRepository.getByID(sessionID)
+    const record = await RecordSessionRepository.getByID(recordSessionID)
     if (!record) {
-      throw new Error(`Cannot find Record sesssion with ID [${sessionID}]`)
+      throw new Error(
+        `Cannot find Record sesssion with ID [${recordSessionID}]`,
+      )
     }
 
     const newDiagnosis = new Diagnosis({
       pulseTypeID,
       patientID: foundPatient?.id as number,
-      recordSessionID: sessionID,
+      recordSessionID,
     })
-    const savedDiagnosis = await DiagnosisRepository.update(newDiagnosis)
+    const savedDiagnosis = await DiagnosisRepository.create(newDiagnosis)
 
     res.status(200).send(savedDiagnosis)
   } catch (err) {

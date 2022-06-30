@@ -26,16 +26,23 @@ function guardAgainstInvalidRecordSession(
  * #########################
  */
 export const getByID: RequestHandler = async (req, res) => {
-  const { id: recordID } = req.params
+  const { id: recordSessionID } = req.params
   try {
-    const record = await RecordRepository.getByID(Number(recordID))
-    res.status(200).send(record)
+    const recordSession = await RecordSessionRepository.getByIDWithRecords(
+      Number(recordSessionID),
+    )
+    res.status(200).send(recordSession)
   } catch (err) {
-    console.error(`Record cannot be found with ID [${recordID}]`)
-    res.status(400).send(`Record cannot be found with ID [${recordID}]`)
+    console.error(`Record cannot be found with ID [${recordSessionID}]`)
+    res.status(400).send(`Record cannot be found with ID [${recordSessionID}]`)
   }
 }
 
+/**
+ * #########################
+ * # Post Request Handlers #
+ * #########################
+ */
 export const createEcgRecord: RequestHandler = async (req, res) => {
   const { sessionID, data, typeID } = req.body
   try {

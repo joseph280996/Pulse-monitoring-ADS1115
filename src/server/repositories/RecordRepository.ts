@@ -61,7 +61,6 @@ class RecordRepository {
 
     return new Record({
       ...record,
-      data: serializedData,
       id: result.insertId,
     })
   }

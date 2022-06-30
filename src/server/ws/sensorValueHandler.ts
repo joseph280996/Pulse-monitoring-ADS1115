@@ -127,6 +127,7 @@ export const stopGetSensorValueLoop = async (
   })
 
   store = [[]]
+  storeIdx = 0
   ws.send(
     JSON.stringify({
       type: WS_MESSAGE_TYPE.RECORD_ID,

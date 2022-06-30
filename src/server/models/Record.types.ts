@@ -8,6 +8,6 @@ export type RecordDataType = {
   dateTimeUpdated?: string
 }
 
-export interface RecordSessionType extends Omit<RecordDataType, 'data'> {
+export interface RecordType extends Omit<RecordDataType, 'data'> {
   data: RecordedData[]
 }

@@ -1,5 +1,6 @@
 import DBInstance, { DB } from '../db'
 import RecordSessionDto from '../dtos/RecordSessionDto'
+import recordSessionWithRecordMapper from '../mapper/recordSessionWithRecordMapper'
 import RecordSession from '../models/RecordSession'
 import { RecordSessionDataType } from '../models/RecordSession.types'
 import * as RecordSessionSqls from '../sqls/recordSessionSqls'
@@ -17,6 +18,16 @@ class RecordSessionRepository {
       [id],
     )
     return result ? new RecordSession(result) : null
+  }
+
+  async getByIDWithRecords(id: number) {
+    console.log(id)
+    const result = await this.db.query<any, [number]>(
+      RecordSessionSqls.GET_BY_ID_WITH_RECORD,
+      [id],
+    )
+    console.log(result)
+    return result ? recordSessionWithRecordMapper(result[0]) : null
   }
 
   async create(recordSession: RecordSessionDto) {
