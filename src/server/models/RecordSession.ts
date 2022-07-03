@@ -6,8 +6,6 @@ class RecordSession {
 
   public piezoelectricRecordID!: number
 
-  public ecgRecordID?: number
-
   public handPositionID!: number
 
   public dateTimeCreated?: string
@@ -16,12 +14,9 @@ class RecordSession {
 
   public piezoelectricRecord?: Record
 
-  public ecgRecord?: Record
-
   constructor(session: RecordSessionDataType) {
     this.id = session.id
     this.piezoelectricRecordID = session.piezoelectricRecordID
-    this.ecgRecordID = session.ecgRecordID
     this.handPositionID = session.handPositionID
     this.dateTimeCreated = session.dateTimeCreated
     this.dateTimeUpdated = session.dateTimeUpdated
@@ -36,10 +31,6 @@ class RecordSession {
   //   this.piezoelectricRecord = await RecordRepository.getByDiagnosisIDAndType(
   //     this.id,
   //     RECORD_TYPE.PIEZOELECTRIC_SENSOR,
-  //   )
-  //   this.ecgRecord = await RecordRepository.getByDiagnosisIDAndType(
-  //     this.id,
-  //     RECORD_TYPE.ECG_SENSOR,
   //   )
   // }
 }

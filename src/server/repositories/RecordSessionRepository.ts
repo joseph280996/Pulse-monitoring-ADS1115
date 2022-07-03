@@ -27,13 +27,9 @@ class RecordSessionRepository {
     console.log(recordSession.handPositionID)
     const result = await this.db.query<
       { insertId: number },
-      [[number, number | undefined, number]]
+      [[number, number]]
     >(RecordSessionSqls.CREATE_RECORD_SESSION, [
-      [
-        recordSession.piezoelectricRecordID,
-        recordSession.ecgRecordID,
-        recordSession.handPositionID,
-      ],
+      [recordSession.piezoelectricRecordID, recordSession.handPositionID],
     ])
     return new RecordSession({
       ...recordSession,

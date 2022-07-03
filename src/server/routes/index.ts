@@ -34,11 +34,6 @@ export default [
   },
   {
     method: 'post',
-    route: '/record',
-    handler: RecordHandlers.createEcgRecord,
-  },
-  {
-    method: 'post',
     route: '/data',
     handler: DiagnosisHandler.exportData,
   },

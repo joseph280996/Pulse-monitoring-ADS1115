@@ -8,7 +8,6 @@ import { RecordedData, SENSOR_LOOP_STATUS } from '../types'
 import fakeGenerateRandomData from '../utils/functions/fakeGenerateRandomData'
 import getLastNElementsFromRecordedData from '../utils/functions/getLastNElementsFromRecordedData'
 import getRecordedDataBetweenTimeStamp from '../utils/functions/getRecordedDataBetweenTimeStamp'
-import RECORD_TYPES from '../utils/variables/recordTypes'
 import WS_MESSAGE_TYPE from '../utils/variables/wsMessageType'
 
 type StopGetSensorValueLoopRequestData = {
@@ -114,7 +113,6 @@ export const stopGetSensorValueLoop = async (
 
   console.log('recordedValues', recordedValues)
   const newRecord = await RecordRepository.create({
-    typeID: RECORD_TYPES.PIEZOELECTRIC_SENSOR,
     data: recordedValues,
   })
   if (!newRecord) {

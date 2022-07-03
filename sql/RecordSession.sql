@@ -3,9 +3,7 @@ CREATE TABLE RecordSession(
     dateTimeCreated DATETIME DEFAULT CURRENT_TIMESTAMP,
     dateTimeUpdated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PiezoelectricRecordID INT UNSIGNED NULL,
-    EcgRecordID INT UNSIGNED NULL,
     HandPositionID INT UNSIGNED NULL,
     FOREIGN KEY (piezoelectricRecordID) REFERENCES Record(id),
-    FOREIGN KEY (ecgRecordID) REFERENCES Record(id),
     FOREIGN KEY (HandPositionID) REFERENCES HandPosition(id)
 )

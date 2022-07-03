@@ -54,10 +54,10 @@ class RecordRepository {
 
   async create(record: RecordDto): Promise<Record> {
     const serializedData = JSON.stringify(record.data)
-    const result = await this.db.query<
-      { insertId: number },
-      [[number, string]]
-    >(RecordSqls.CREATE_RECORD_DATA, [[record.typeID, serializedData]])
+    const result = await this.db.query<{ insertId: number }, [[string]]>(
+      RecordSqls.CREATE_RECORD_DATA,
+      [[serializedData]],
+    )
 
     return new Record({
       ...record,
@@ -81,7 +81,6 @@ class RecordRepository {
     return this.db.query(RecordSqls.AUDIT_RECORD, [
       record.id,
       record.data,
-      record.typeID,
       record.dateTimeCreated,
       record.dateTimeUpdated,
     ])
