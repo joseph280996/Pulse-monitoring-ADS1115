@@ -20,7 +20,7 @@ class DiagnosisRepository {
     >(DiagnosisSqls.CREATE_DIAGNOSIS, [
       diagnosis.pulseTypeID,
       diagnosis.patientID,
-      diagnosis.recordSessionID,
+      diagnosis.piezoelectricRecordID,
     ])
     return new Diagnosis({
       ...diagnosis,

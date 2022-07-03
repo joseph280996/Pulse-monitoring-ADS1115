@@ -3,7 +3,6 @@ import WebSocket from 'ws'
 import LoopController from '../controllers/LoopController'
 import IntervalController from '../IntervalController'
 import RecordRepository from '../repositories/RecordRepository'
-import RecordSessionRepository from '../repositories/RecordSessionRepository'
 import { RecordedData, SENSOR_LOOP_STATUS } from '../types'
 import fakeGenerateRandomData from '../utils/functions/fakeGenerateRandomData'
 import getLastNElementsFromRecordedData from '../utils/functions/getLastNElementsFromRecordedData'
@@ -111,24 +110,19 @@ export const stopGetSensorValueLoop = async (
     endTimeMoment,
   )
 
-  console.log('recordedValues', recordedValues)
   const newRecord = await RecordRepository.create({
     data: recordedValues,
   })
+
   if (!newRecord) {
     throw new Error('Error create piezoelectric record')
   }
-  console.log(newRecord.id)
-  const session = await RecordSessionRepository.create({
-    handPositionID: parsedRecordedTime.handPositionID,
-    piezoelectricRecordID: newRecord.id as number,
-  })
 
   store = [[]]
   ws.send(
     JSON.stringify({
       type: WS_MESSAGE_TYPE.RECORD_ID,
-      sessionID: session.id,
+      recordID: newRecord.id,
     }),
   )
 }

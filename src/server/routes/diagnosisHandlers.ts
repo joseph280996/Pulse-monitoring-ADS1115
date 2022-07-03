@@ -3,7 +3,7 @@ import Diagnosis from '../models/Diagnosis'
 import Patient from '../models/Patient'
 import DiagnosisRepository from '../repositories/DiagnosisRepository'
 import PatientRepository from '../repositories/PatientRepository'
-import RecordSessionRepository from '../repositories/RecordSessionRepository'
+import RecordRepository from '../repositories/RecordRepository'
 import createIfNotExistFolder from '../utils/functions/createIfNotExistFolder'
 import formatInputDateForExport from '../utils/functions/formatInputDateForExport'
 import splitNameForDB from '../utils/functions/splitNameForDB'
@@ -38,7 +38,7 @@ export const getByID: RequestHandler = async (req, res) => {
  * @param res Express Response object
  */
 export const createDiagnosis: RequestHandler = async (req, res) => {
-  const { patientName, sessionID, pulseTypeID } = req.body
+  const { patientName, recordID, pulseTypeID } = req.body
   try {
     const [firstName, lastName] = splitNameForDB(patientName)
 
@@ -50,17 +50,18 @@ export const createDiagnosis: RequestHandler = async (req, res) => {
       await PatientRepository.create(new Patient({ firstName, lastName }))
     }
 
-    const record = await RecordSessionRepository.getByID(sessionID)
-    if (!record) {
-      throw new Error(`Cannot find Record sesssion with ID [${sessionID}]`)
+    const isRecordExist = await RecordRepository.getByID(recordID)
+    if (!isRecordExist) {
+      res.status(400).send(`Cannot find Record with ID [${recordID}]`)
+      return
     }
 
     const newDiagnosis = new Diagnosis({
       pulseTypeID,
       patientID: foundPatient?.id as number,
-      recordSessionID: sessionID,
+      piezoelectricRecordID: recordID as number,
     })
-    const savedDiagnosis = await DiagnosisRepository.update(newDiagnosis)
+    const savedDiagnosis = await DiagnosisRepository.create(newDiagnosis)
 
     res.status(200).send(savedDiagnosis)
   } catch (err) {

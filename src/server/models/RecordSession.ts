@@ -1,3 +1,4 @@
+import RecordRepository from '../repositories/RecordRepository'
 import Record from './Record'
 import { RecordSessionDataType } from './RecordSession.types'
 
@@ -12,7 +13,7 @@ class RecordSession {
 
   public dateTimeUpdated?: string
 
-  public piezoelectricRecord?: Record
+  public piezoelectricRecord?: Record[]
 
   constructor(session: RecordSessionDataType) {
     this.id = session.id
@@ -22,17 +23,11 @@ class RecordSession {
     this.dateTimeUpdated = session.dateTimeUpdated
   }
 
-  // public async records(): Promise<void> {
-  //   if (!this.id) {
-  //     throw new Error(
-  //       `Cannot get Record for unsaved Diagnosis - pulseTypeID [${this.pulseTypeID}], patientID [${this.patientID}]`,
-  //     )
-  //   }
-  //   this.piezoelectricRecord = await RecordRepository.getByDiagnosisIDAndType(
-  //     this.id,
-  //     RECORD_TYPE.PIEZOELECTRIC_SENSOR,
-  //   )
-  // }
+  public async records(): Promise<void> {
+    this.piezoelectricRecord = await RecordRepository.getByDiagnosisIDAndType(
+      this.id,
+    )
+  }
 }
 
 export default RecordSession

@@ -7,7 +7,7 @@ class Diagnosis {
 
   public patientID?: number
 
-  public recordSessionID?: number
+  public piezoelectricRecordID!: number
 
   public dateTimeCreated?: string
 
@@ -17,6 +17,7 @@ class Diagnosis {
     this.id = obj.id
     this.pulseTypeID = obj.pulseTypeID
     this.patientID = obj.patientID
+    this.piezoelectricRecordID = obj.piezoelectricRecordID
     this.dateTimeCreated = obj.dateTimeCreated
     this.dateTimeUpdated = obj.dateTimeUpdated
   }

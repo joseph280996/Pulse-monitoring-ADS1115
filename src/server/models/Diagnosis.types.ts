@@ -2,7 +2,7 @@ export type DiagnosisDataType = {
   id?: number
   pulseTypeID?: number
   patientID?: number
-  recordSessionID?: number
+  piezoelectricRecordID: number
   dateTimeCreated?: string
   dateTimeUpdated?: string
 }

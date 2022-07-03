@@ -11,13 +11,24 @@ class RecordRepository {
     this.db = db
   }
 
+  async exist(id: number) {
+    try {
+      await this.getByID(id)
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
   async getByID(id: number) {
     const res = await this.db.query<RecordDataType, [number]>(
       RecordSqls.GET_BY_ID,
       [id],
     )
-    console.log(res.data)
-    return res ? new Record({ ...res, data: JSON.parse(res.data) }) : null
+    if (!res) {
+      throw new Error(`Cannot find Record with ID [${id}]`)
+    }
+    return new Record({ ...res, data: JSON.parse(res.data) })
   }
 
   async getByDiagnosisID(diagnosisID?: number) {
@@ -36,13 +47,13 @@ class RecordRepository {
       : []
   }
 
-  async getByDiagnosisIDAndType(typeID: number, diagnosisID: number) {
+  async getByDiagnosisIDAndType(diagnosisID: number) {
     if (!diagnosisID) {
       return []
     }
     const res = await this.db.query<RecordDataType[], number[]>(
       RecordSqls.GET_BY_DIAGNOSIS_ID_AND_TYPE,
-      [diagnosisID, typeID],
+      [diagnosisID],
     )
     return res && res.length > 0
       ? res.map(
