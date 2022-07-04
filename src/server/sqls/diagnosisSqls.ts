@@ -5,7 +5,7 @@ export const GET_BY_ID = `SELECT ${fields} FROM Diagnosis WHERE id = ?;`
 export const GET_BY_DATE_RANGE = `SELECT ${fields} FROM Diagnosis WHERE dateTimeCreated >= ? AND dateTimeCreated <= ?;`
 
 export const CREATE_DIAGNOSIS = `
-      INSERT INTO Diagnosis(PulseTypeID, PatientID,RecordSessionID)
+      INSERT INTO Diagnosis(PulseTypeID, PatientID, PiezoelectricRecordID)
       VALUES (?)
       `
 

@@ -21,14 +21,14 @@ class RecordRepository {
   }
 
   async getByID(id: number) {
-    const res = await this.db.query<RecordDataType, [number]>(
+    const res = await this.db.query<[RecordDataType], [number]>(
       RecordSqls.GET_BY_ID,
       [id],
     )
     if (!res) {
       throw new Error(`Cannot find Record with ID [${id}]`)
     }
-    return new Record({ ...res, data: JSON.parse(res.data) })
+    return new Record({ ...res[0], data: JSON.parse(res[0].data) })
   }
 
   async getByDiagnosisID(diagnosisID?: number) {
@@ -65,10 +65,10 @@ class RecordRepository {
 
   async create(record: RecordDto): Promise<Record> {
     const serializedData = JSON.stringify(record.data)
-    const result = await this.db.query<{ insertId: number }, [[string]]>(
-      RecordSqls.CREATE_RECORD_DATA,
-      [[serializedData]],
-    )
+    const result = await this.db.query<
+      { insertId: number },
+      [[number, string]]
+    >(RecordSqls.CREATE_RECORD_DATA, [[record.handPositionID, serializedData]])
 
     return new Record({
       ...record,

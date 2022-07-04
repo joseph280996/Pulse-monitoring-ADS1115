@@ -16,11 +16,13 @@ class DiagnosisRepository {
   async create(diagnosis: DiagnosisDataType): Promise<Diagnosis> {
     const result = await this.db.query<
       { insertId: number },
-      Array<number | undefined>
+      [Array<number | undefined>]
     >(DiagnosisSqls.CREATE_DIAGNOSIS, [
-      diagnosis.pulseTypeID,
-      diagnosis.patientID,
-      diagnosis.piezoelectricRecordID,
+      [
+        diagnosis.pulseTypeID,
+        diagnosis.patientID,
+        diagnosis.piezoelectricRecordID,
+      ],
     ])
     return new Diagnosis({
       ...diagnosis,

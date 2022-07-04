@@ -56,6 +56,9 @@ export const createDiagnosis: RequestHandler = async (req, res) => {
       return
     }
 
+    console.log(foundPatient)
+    console.log(recordID)
+
     const newDiagnosis = new Diagnosis({
       pulseTypeID,
       patientID: foundPatient?.id as number,

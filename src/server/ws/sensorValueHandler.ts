@@ -102,8 +102,9 @@ export const stopGetSensorValueLoop = async (
   const parsedRecordedTime: StopGetSensorValueLoopRequestData = JSON.parse(
     trimmedJSONValues,
   )
-  const startTimeMoment = moment.utc(parsedRecordedTime.startTime)
-  const endTimeMoment = moment.utc(parsedRecordedTime.endTime)
+  const { startTime, endTime, handPositionID } = parsedRecordedTime
+  const startTimeMoment = moment.utc(startTime)
+  const endTimeMoment = moment.utc(endTime)
   const recordedValues: RecordedData[] = getRecordedDataBetweenTimeStamp(
     store,
     startTimeMoment,
@@ -112,6 +113,7 @@ export const stopGetSensorValueLoop = async (
 
   const newRecord = await RecordRepository.create({
     data: recordedValues,
+    handPositionID,
   })
 
   if (!newRecord) {

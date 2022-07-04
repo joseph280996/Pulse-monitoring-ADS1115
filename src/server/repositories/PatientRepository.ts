@@ -10,10 +10,12 @@ class PatientRepository {
     this.db = db
   }
   async create(patient: Patient): Promise<Patient> {
+    console.log(patient.firstName)
+    console.log(patient.lastName)
     const result = await this.db.query<
       { insertedId: number },
-      Array<string | undefined>
-    >(PatientSqls.CREATE_PATIENT, [patient.firstName, patient.lastName])
+      [Array<string | undefined>]
+    >(PatientSqls.CREATE_PATIENT, [[patient.firstName, patient.lastName]])
     return new Patient({
       ...patient,
       id: result.insertedId,
