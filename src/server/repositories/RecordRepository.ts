@@ -1,4 +1,4 @@
-import DBInstance, { DB } from '../db'
+import DBInstance, { DB } from '../models/DbConnectionModel'
 import RecordDto from '../dtos/RecordDto'
 import Record from '../models/Record'
 import { RecordDataType } from '../models/Record.types'

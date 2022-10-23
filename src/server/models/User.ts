@@ -1,6 +1,6 @@
 import { genSalt, hash } from 'bcrypt'
 import IUser from 'src/server/interface/IUser'
-import DB from '../db'
+import DB from './DbConnectionModel'
 
 type UserInputType = {
   id?: number
