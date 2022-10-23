@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import DBInstance from '../db'
+import DBInstance from '../models/DbConnectionModel'
 import HandPosition from '../models/HandPosition'
 import { HandPositionType } from '../models/HandPosition.types'
 import * as HandPositionSqls from '../sqls/handPositionSqls'

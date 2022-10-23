@@ -1,4 +1,4 @@
-import DBInstance, { DB } from '../db'
+import DBInstance, { DB } from '../models/DbConnectionModel'
 import Patient from '../models/Patient'
 import { PatientDataType, PatientNameType } from '../models/Patient.types'
 import * as PatientSqls from '../sqls/patientSqls'

@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import db from '../db'
+import db from '../models/DbConnectionModel'
 import PulseType from '../models/PulseTypes'
 import { PulseTypeDataType } from '../models/PulseTypes.types'
 import * as PulseTypeSqls from '../sqls/pulseTypeSqls'

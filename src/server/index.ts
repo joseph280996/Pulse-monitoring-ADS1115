@@ -3,9 +3,9 @@ import * as http from 'http'
 import cors from 'cors'
 import Express, { json, urlencoded } from 'express'
 import WebSocket, { Server as WebSocketServer } from 'ws'
-import db from './db'
+import db from './models/DbConnectionModel'
 import { RouteType } from './routes'
-import { WebsocketMessageTypeHandler } from './ws/wsMessageTypeHandlers'
+import { WebsocketMessageTypeHandler } from './handlers/wsMessageTypeHandlers'
 
 interface ServerInterface {
   cleanUp: () => void

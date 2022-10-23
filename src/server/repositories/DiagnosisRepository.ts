@@ -1,4 +1,4 @@
-import DBInstance, { DB } from '../db'
+import DBInstance, { DB } from '../models/DbConnectionModel'
 import Diagnosis from '../models/Diagnosis'
 import {
   DiagnosisDataType,

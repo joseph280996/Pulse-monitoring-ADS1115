@@ -6,7 +6,7 @@ export const GET_BY_DIAGNOSIS_ID = `SELECT ${fields} FROM Record WHERE Diagnosis
 export const GET_BY_DIAGNOSIS_ID_AND_TYPE = `SELECT ${fields} FROM Record WHERE DiagnosisID = ? AND typeID = ?;`
 
 export const CREATE_RECORD_DATA =
-  'INSERT INTO Record(handPositionID, data) VALUES (?);'
+  'INSERT INTO Record(data, HandPositionID) VALUES (?);'
 export const UPDATE_DIAGNOSIS_ID = `
   UPDATE Record SET DiagnosisID = ? WHERE id = ?;
 `

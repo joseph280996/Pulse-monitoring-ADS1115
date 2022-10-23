@@ -1,4 +1,4 @@
-import DBInstance, { DB } from '../db'
+import DBInstance, { DB } from '../models/DbConnectionModel'
 import RecordDto from '../dtos/RecordDto'
 import Record from '../models/Record'
 import { RecordDataType } from '../models/Record.types'
@@ -67,8 +67,8 @@ class RecordRepository {
     const serializedData = JSON.stringify(record.data)
     const result = await this.db.query<
       { insertId: number },
-      [[number, string]]
-    >(RecordSqls.CREATE_RECORD_DATA, [[record.handPositionID, serializedData]])
+      [[string, number]]
+    >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.handPositionID]])
 
     return new Record({
       ...record,
