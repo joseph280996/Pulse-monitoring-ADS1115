@@ -1,6 +1,7 @@
+import ILoopHandler from '../interface/ILoopHandler'
 import { SENSOR_LOOP_STATUS } from '../types'
 
-class SensorLoopHandler {
+class SensorLoopHandler implements ILoopHandler {
   private isStarted: boolean
 
   constructor() {

@@ -1,3 +1,4 @@
+import IRepository from '../interface/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import Diagnosis from '../models/Diagnosis'
 import {
@@ -6,31 +7,36 @@ import {
 } from '../models/Diagnosis.types'
 import * as DiagnosisSqls from '../sqls/diagnosisSqls'
 
-class DiagnosisRepository {
+class DiagnosisRepository
+  implements IRepository<DiagnosisDataType, Diagnosis | null> {
   db!: DB
 
   constructor(db = DBInstance) {
     this.db = db
   }
 
-  async create(diagnosis: DiagnosisDataType): Promise<Diagnosis> {
-    const result = await this.db.query<
-      { insertId: number },
-      [Array<number | undefined>]
-    >(DiagnosisSqls.CREATE_DIAGNOSIS, [
-      [
-        diagnosis.pulseTypeID,
-        diagnosis.patientID,
-        diagnosis.piezoelectricRecordID,
-      ],
-    ])
-    return new Diagnosis({
-      ...diagnosis,
-      id: result.insertId,
-    })
+  async create(diagnosis: DiagnosisDataType) {
+    try {
+      const result = await this.db.query<
+        { insertId: number },
+        [Array<number | undefined>]
+      >(DiagnosisSqls.CREATE_DIAGNOSIS, [
+        [
+          diagnosis.pulseTypeID,
+          diagnosis.patientID,
+          diagnosis.piezoelectricRecordID,
+        ],
+      ])
+      return new Diagnosis({
+        ...diagnosis,
+        id: result.insertId,
+      })
+    } catch (error) {
+      return null
+    }
   }
 
-  async update(updateDiagnosis: DiagnosisDataType): Promise<boolean> {
+  async update(updateDiagnosis: DiagnosisDataType) {
     const result = await this.db.query<
       { affectedRows: number },
       [DiagnosisDataType, number]

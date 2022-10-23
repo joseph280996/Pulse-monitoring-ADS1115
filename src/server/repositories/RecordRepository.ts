@@ -3,13 +3,20 @@ import RecordDto from '../dtos/RecordDto'
 import Record from '../models/Record'
 import { RecordDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSqls'
+import IRepository from '../interface/IRepository'
 
-class RecordRepository {
+class RecordRepository implements IRepository<RecordDto, Record | null> {
+  // Private Properties
   private db: DB
+  // End of Private Properties
 
+  // Constructor
   constructor(db = DBInstance) {
     this.db = db
   }
+  // End of Constructor
+
+  // Public Functions
 
   async exist(id: number) {
     try {
@@ -77,9 +84,9 @@ class RecordRepository {
     })
   }
 
-  async update(updatedRecord: Record): Promise<boolean> {
+  async update(updatedRecord: RecordDto): Promise<boolean> {
     RecordRepository.guardAgaisntInvalidRecord(updatedRecord)
-    await this.auditRecord(updatedRecord as Record)
+    await this.auditRecord(updatedRecord)
 
     const result = await this.db.query<
       { changedRows: number },
@@ -88,7 +95,7 @@ class RecordRepository {
     return result && result.changedRows > 1
   }
 
-  auditRecord(record: Record): Promise<void> {
+  auditRecord(record: RecordDto): Promise<void> {
     return this.db.query(RecordSqls.AUDIT_RECORD, [
       record.id,
       record.data,
@@ -97,7 +104,10 @@ class RecordRepository {
     ])
   }
 
-  private static guardAgaisntInvalidRecord(record: Record | null) {
+  // End of Public Functions
+
+  // Private Functions
+  private static guardAgaisntInvalidRecord(record: RecordDto | null) {
     if (!record) {
       throw new Error(`Parameter is null (${Record.name})`)
     }
@@ -105,6 +115,7 @@ class RecordRepository {
       throw new Error(`Required field is missing for ${Record.name}`)
     }
   }
+  // End of Private Functions
 }
 
 export default new RecordRepository()

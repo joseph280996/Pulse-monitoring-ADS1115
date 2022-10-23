@@ -1,25 +1,35 @@
+import IRepository from '../interface/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import Patient from '../models/Patient'
 import { PatientDataType, PatientNameType } from '../models/Patient.types'
 import * as PatientSqls from '../sqls/patientSqls'
 
-class PatientRepository {
+class PatientRepository implements IRepository<Patient, Patient | null> {
   db!: DB
 
   constructor(db = DBInstance) {
     this.db = db
   }
-  async create(patient: Patient): Promise<Patient> {
-    console.log(patient.firstName)
-    console.log(patient.lastName)
-    const result = await this.db.query<
-      { insertedId: number },
-      [Array<string | undefined>]
-    >(PatientSqls.CREATE_PATIENT, [[patient.firstName, patient.lastName]])
-    return new Patient({
-      ...patient,
-      id: result.insertedId,
-    })
+
+  async create(patient: Patient) {
+    try {
+      console.log(patient.firstName)
+      console.log(patient.lastName)
+      const result = await this.db.query<
+        { insertedId: number },
+        [Array<string | undefined>]
+      >(PatientSqls.CREATE_PATIENT, [[patient.firstName, patient.lastName]])
+      return new Patient({
+        ...patient,
+        id: result.insertedId,
+      })
+    } catch (error) {
+      return null
+    }
+  }
+
+  async update(_: Patient): Promise<boolean> {
+    throw new Error(`Method not implemented`)
   }
 
   async getAll(): Promise<Patient[]> {
@@ -31,7 +41,7 @@ class PatientRepository {
       : []
   }
 
-  async getById(id: number): Promise<Patient | null> {
+  async getByID(id: number) {
     const result = await this.db.query<PatientDataType, number[]>(
       PatientSqls.GET_BY_ID,
       [id],

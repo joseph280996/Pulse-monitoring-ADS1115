@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express'
-import Diagnosis from '../models/Diagnosis'
-import Patient from '../models/Patient'
-import DiagnosisRepository from '../repositories/DiagnosisRepository'
-import PatientRepository from '../repositories/PatientRepository'
-import RecordRepository from '../repositories/RecordRepository'
-import createIfNotExistFolder from '../utils/functions/createIfNotExistFolder'
-import formatInputDateForExport from '../utils/functions/formatInputDateForExport'
-import splitNameForDB from '../utils/functions/splitNameForDB'
-import writeToFile from '../utils/functions/writeToFile'
+import Diagnosis from '../../models/Diagnosis'
+import Patient from '../../models/Patient'
+import DiagnosisRepository from '../../repositories/DiagnosisRepository'
+import PatientRepository from '../../repositories/PatientRepository'
+import RecordRepository from '../../repositories/RecordRepository'
+import createIfNotExistFolder from '../../utils/functions/createIfNotExistFolder'
+import formatInputDateForExport from '../../utils/functions/formatInputDateForExport'
+import splitNameForDB from '../../utils/functions/splitNameForDB'
+import writeToFile from '../../utils/functions/writeToFile'
 
 /**
  * #########################
