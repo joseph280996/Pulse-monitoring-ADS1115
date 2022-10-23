@@ -41,9 +41,9 @@ class RecordRepository {
     )
     return res && res.length > 0
       ? res.map(
-          (row: RecordDataType) =>
-            new Record({ ...row, data: JSON.parse(row.data) }),
-        )
+        (row: RecordDataType) =>
+          new Record({ ...row, data: JSON.parse(row.data) }),
+      )
       : []
   }
 
@@ -57,17 +57,17 @@ class RecordRepository {
     )
     return res && res.length > 0
       ? res.map(
-          (row: RecordDataType) =>
-            new Record({ ...row, data: JSON.parse(row.data) }),
-        )
+        (row: RecordDataType) =>
+          new Record({ ...row, data: JSON.parse(row.data) }),
+      )
       : []
   }
 
   async create(record: RecordDto): Promise<Record> {
     const serializedData = JSON.stringify(record.data)
-    const result = await this.db.query<{ insertId: number }, [[string]]>(
+    const result = await this.db.query<{ insertId: number }, [[string, number]]>(
       RecordSqls.CREATE_RECORD_DATA,
-      [[serializedData]],
+      [[serializedData, record.handPositionID]],
     )
 
     return new Record({
