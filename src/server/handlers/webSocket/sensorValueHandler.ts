@@ -1,14 +1,15 @@
 import moment from 'moment'
 import WebSocket from 'ws'
-import LoopController from '../../controllers/LoopController'
-import IntervalController from '../../IntervalController'
+import LoopService from '../../services/LoopService'
+import IntervalController from '../../services/TimeIntervalService'
 import RecordRepository from '../../repositories/RecordRepository'
-import { RecordedData, SENSOR_LOOP_STATUS } from '../../types'
 import getLastNElementsFromRecordedData from '../../utils/functions/getLastNElementsFromRecordedData'
 import getRecordedDataBetweenTimeStamp from '../../utils/functions/getRecordedDataBetweenTimeStamp'
 import WS_MESSAGE_TYPE from '../../utils/variables/wsMessageType'
 import i2c from 'i2c-bus'
 import ADS1115 from 'ads1115'
+import { SENSOR_LOOP_STATUS } from '../../services/LoopService.types'
+import { RecordedData } from './sensorValueHandler.types'
 
 type StopGetSensorValueLoopRequestData = {
   startTime: number
@@ -25,11 +26,11 @@ let storeIdx = 0
  * @param ws WS instance
  */
 export const startSendingSensorValueLoop = (_: string, ws: WebSocket) => {
-  LoopController.start()
+  LoopService.start()
   ;(async () => {
     const bus = await i2c.openPromisified(1)
     const ads1115 = await ADS1115(bus)
-    while (LoopController.status() === SENSOR_LOOP_STATUS.STARTED) {
+    while (LoopService.status() === SENSOR_LOOP_STATUS.STARTED) {
       if (store[storeIdx].length >= 10) {
         store.push([])
         storeIdx += 1
@@ -72,7 +73,7 @@ export const stopGetSensorValueLoop = async (
   message: string,
   ws: WebSocket,
 ) => {
-  LoopController.stop()
+  LoopService.stop()
   IntervalController.clear(INTERVAL_NAME)
   const trimmedJSONValues = message.trim()
   const parsedRecordedTime: StopGetSensorValueLoopRequestData = JSON.parse(

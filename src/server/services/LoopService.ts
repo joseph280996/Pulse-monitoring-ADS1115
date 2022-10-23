@@ -1,7 +1,7 @@
-import ILoopHandler from '../interface/ILoopHandler'
-import { SENSOR_LOOP_STATUS } from '../types'
+import ILoopService from '../interfaces/ILoopService'
+import { SENSOR_LOOP_STATUS } from './LoopService.types'
 
-class SensorLoopHandler implements ILoopHandler {
+class SensorLoopService implements ILoopService {
   private isStarted: boolean
 
   constructor() {
@@ -24,4 +24,4 @@ class SensorLoopHandler implements ILoopHandler {
   }
 }
 
-export default new SensorLoopHandler()
+export default new SensorLoopService()

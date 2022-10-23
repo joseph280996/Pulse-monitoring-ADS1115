@@ -3,7 +3,7 @@ import RecordDto from '../dtos/RecordDto'
 import Record from '../models/Record'
 import { RecordDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSqls'
-import IRepository from '../interface/IRepository'
+import IRepository from '../interfaces/IRepository'
 
 class RecordRepository implements IRepository<RecordDto, Record | null> {
   // Private Properties

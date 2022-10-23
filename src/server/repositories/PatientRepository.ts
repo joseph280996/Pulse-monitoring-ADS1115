@@ -1,17 +1,18 @@
-import IRepository from '../interface/IRepository'
+import { PatientDto } from '../dtos/PatientDto'
+import IRepository from '../interfaces/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import Patient from '../models/Patient'
 import { PatientDataType, PatientNameType } from '../models/Patient.types'
 import * as PatientSqls from '../sqls/patientSqls'
 
-class PatientRepository implements IRepository<Patient, Patient | null> {
+class PatientRepository implements IRepository<PatientDto, Patient | null> {
   db!: DB
 
   constructor(db = DBInstance) {
     this.db = db
   }
 
-  async create(patient: Patient) {
+  async create(patient: PatientDto) {
     try {
       console.log(patient.firstName)
       console.log(patient.lastName)
@@ -28,7 +29,7 @@ class PatientRepository implements IRepository<Patient, Patient | null> {
     }
   }
 
-  async update(_: Patient): Promise<boolean> {
+  async update(_: PatientDto): Promise<boolean> {
     throw new Error(`Method not implemented`)
   }
 

@@ -1,14 +1,9 @@
-import { RequestHandler } from 'express'
-import * as DiagnosisHandler from './diagnosisHandlers'
-import getHandPositions from './handPositionsHandlers'
-import getPulseTypes from './pulseTypesHandlers'
-import * as RecordHandlers from './recordHandlers'
+import * as DiagnosisHandler from '../handlers/http/diagnosisHandlers'
+import getHandPositions from '../handlers/http/handPositionsHandlers'
+import getPulseTypes from '../handlers/http/pulseTypesHandlers'
+import * as RecordHandlers from '../handlers/http/recordHandlers'
+import { RouteType } from './httpController.types'
 
-export type RouteType = {
-  method: string
-  route: string
-  handler: RequestHandler
-}
 export default [
   // Get Requests
   {

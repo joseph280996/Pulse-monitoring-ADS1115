@@ -1,15 +1,10 @@
 /* eslint-disable no-await-in-loop, import/no-extraneous-dependencies */
 import dotenv from 'dotenv'
-import WebSocket from 'ws'
 import {
   startSendingSensorValueLoop,
   stopGetSensorValueLoop,
-} from './sensorValueHandler'
-
-export type WebsocketMessageTypeHandler = {
-  regExp: RegExp
-  handler: (message: string, ws: WebSocket) => void
-}
+} from '../handlers/webSocket/sensorValueHandler'
+import { WebsocketMessageTypeHandler } from './wsController.types'
 
 dotenv.config()
 

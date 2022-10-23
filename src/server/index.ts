@@ -4,8 +4,8 @@ import cors from 'cors'
 import Express, { json, urlencoded } from 'express'
 import WebSocket, { Server as WebSocketServer } from 'ws'
 import db from './models/DbConnectionModel'
-import { RouteType } from './routes'
-import { WebsocketMessageTypeHandler } from './handlers/wsMessageTypeHandlers'
+import { RouteType } from './controllers/httpController.types'
+import { WebsocketMessageTypeHandler } from './controllers/wsController.types'
 
 interface ServerInterface {
   cleanUp: () => void

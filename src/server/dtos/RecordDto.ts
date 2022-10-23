@@ -1,4 +1,4 @@
-import { RecordedData } from '../types'
+import { RecordedData } from '../handlers/webSocket/sensorValueHandler.types'
 
 type RecordDto = {
   id?: number

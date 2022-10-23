@@ -1,4 +1,4 @@
-import IPatient from '../interface/IPatient'
+import IPatient from '../interfaces/IPatient'
 import { PatientDataType } from './Patient.types'
 
 class Patient implements IPatient {

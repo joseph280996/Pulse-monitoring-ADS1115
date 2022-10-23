@@ -1,9 +1,6 @@
 import { config } from 'dotenv'
 import { Pool, createPool, MysqlError } from 'mysql'
-
-interface DBInterface {
-  query(query: string, values: unknown): Promise<unknown>
-}
+import IDb from '../interfaces/IDb'
 
 config()
 const DBConf = {
@@ -16,7 +13,7 @@ const DBConf = {
   charset: 'utf8mb4_unicode_ci',
 }
 
-export class DB implements DBInterface {
+export class DB implements IDb {
   private _pool?: Pool
 
   private getPool(): Pool | undefined {
