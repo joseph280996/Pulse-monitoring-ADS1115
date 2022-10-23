@@ -1,12 +1,12 @@
 import * as dotenv from 'dotenv'
 import Server from './server'
-import routes from './server/routes'
-import wsMessageTypeHandlers from './server/handlers/wsMessageTypeHandlers'
+import httpController from './server/controllers/httpController'
+import wsController from './server/controllers/wsController'
 
 dotenv.config()
 
-Server.registerRoutes(routes)
-Server.registerWebsocketMessageTypes(wsMessageTypeHandlers)
+Server.registerRoutes(httpController)
+Server.registerWebsocketMessageTypes(wsController)
 Server.start(8000)
 
 process.on('beforeExit', () => {

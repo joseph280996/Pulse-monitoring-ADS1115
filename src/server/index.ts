@@ -36,7 +36,10 @@ class Server implements ServerInterface {
   }
 
   registerRoutes(routes: RouteType[]) {
-    routes.forEach(({ method, route, handler }) => {
+    routes.forEach(({ method, route, handler, validator }) => {
+      if (validator) {
+        this.app.use(route, validator)
+      }
       this.app[method](route, handler)
     })
   }

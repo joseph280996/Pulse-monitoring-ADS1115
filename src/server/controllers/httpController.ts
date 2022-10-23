@@ -2,6 +2,7 @@ import * as DiagnosisHandler from '../handlers/http/diagnosisHandlers'
 import getHandPositions from '../handlers/http/handPositionsHandlers'
 import getPulseTypes from '../handlers/http/pulseTypesHandlers'
 import * as RecordHandlers from '../handlers/http/recordHandlers'
+import createDiagnosisValidator from '../validators/httpRequests/createDiagnosisValidator'
 import { RouteType } from './httpController.types'
 
 export default [
@@ -26,6 +27,7 @@ export default [
     method: 'post',
     route: '/diagnosis',
     handler: DiagnosisHandler.createDiagnosis,
+    validator: createDiagnosisValidator,
   },
   {
     method: 'post',

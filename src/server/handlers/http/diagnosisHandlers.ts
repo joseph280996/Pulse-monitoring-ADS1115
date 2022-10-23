@@ -1,13 +1,11 @@
 import { RequestHandler } from 'express'
-import Diagnosis from '../../models/Diagnosis'
-import Patient from '../../models/Patient'
+import { DiagnosisDto } from 'src/server/dtos/DiagnosisDto'
+import Diagnosis from 'src/server/models/Diagnosis'
+import FileSystemService from 'src/server/services/FileSystemService'
 import DiagnosisRepository from '../../repositories/DiagnosisRepository'
 import PatientRepository from '../../repositories/PatientRepository'
-import RecordRepository from '../../repositories/RecordRepository'
-import createIfNotExistFolder from '../../utils/functions/createIfNotExistFolder'
 import formatInputDateForExport from '../../utils/functions/formatInputDateForExport'
 import splitNameForDB from '../../utils/functions/splitNameForDB'
-import writeToFile from '../../utils/functions/writeToFile'
 
 /**
  * #########################
@@ -42,28 +40,16 @@ export const createDiagnosis: RequestHandler = async (req, res) => {
   try {
     const [firstName, lastName] = splitNameForDB(patientName)
 
-    const foundPatient = await PatientRepository.findPatientByName({
+    const patient = await PatientRepository.createIfNotExist({
       firstName,
       lastName,
     })
-    if (!foundPatient) {
-      await PatientRepository.create(new Patient({ firstName, lastName }))
-    }
 
-    const isRecordExist = await RecordRepository.getByID(recordID)
-    if (!isRecordExist) {
-      res.status(400).send(`Cannot find Record with ID [${recordID}]`)
-      return
-    }
-
-    console.log(foundPatient)
-    console.log(recordID)
-
-    const newDiagnosis = new Diagnosis({
+    const newDiagnosis: DiagnosisDto = {
       pulseTypeID,
-      patientID: foundPatient?.id as number,
+      patientID: patient?.id as number,
       piezoelectricRecordID: recordID as number,
-    })
+    }
     const savedDiagnosis = await DiagnosisRepository.create(newDiagnosis)
 
     res.status(200).send(savedDiagnosis)
@@ -90,19 +76,14 @@ export const exportData: RequestHandler = async (req, res) => {
       startDate,
       endDate,
     })
-    // await Promise.all(diagnoses.map((diagnosis) => diagnosis.getRecords()))
-
     const { formattedStartDate, formattedEndDate } = formatInputDateForExport(
       startDate,
       endDate,
     )
-    const pathToDesktop = await createIfNotExistFolder('export-data')
-    await writeToFile(
-      diagnoses,
-      pathToDesktop,
+    const fileService = new FileSystemService<Diagnosis[]>(
       `${formattedStartDate}-${formattedEndDate}`,
-      { formatType: 'JSON' },
     )
+    await fileService.write(diagnoses, { formatType: 'JSON' })
     res.status(200).send({ status: 200 })
   } catch (err) {
     console.error(err)

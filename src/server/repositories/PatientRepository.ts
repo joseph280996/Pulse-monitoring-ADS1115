@@ -14,8 +14,6 @@ class PatientRepository implements IRepository<PatientDto, Patient | null> {
 
   async create(patient: PatientDto) {
     try {
-      console.log(patient.firstName)
-      console.log(patient.lastName)
       const result = await this.db.query<
         { insertedId: number },
         [Array<string | undefined>]
@@ -59,6 +57,22 @@ class PatientRepository implements IRepository<PatientDto, Patient | null> {
       [firstName, lastName],
     )
     return results && results.length ? new Patient(results[0]) : null
+  }
+
+  async createIfNotExist({
+    firstName,
+    lastName,
+  }: PatientNameType): Promise<Patient> {
+    let foundPatient = await this.findPatientByName({
+      firstName,
+      lastName,
+    })
+
+    if (!foundPatient) {
+      foundPatient = await this.create(new Patient({ firstName, lastName }))
+    }
+
+    return foundPatient as Patient
   }
 }
 

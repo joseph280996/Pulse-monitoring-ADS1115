@@ -1,7 +1,7 @@
-import { DiagnosisDataType } from '../models/Diagnosis.types'
+import { DiagnosisDto } from '../dtos/DiagnosisDto'
 import Record from '../models/Record'
 
-export interface IDiagnosis extends DiagnosisDataType {
+export interface IDiagnosis extends DiagnosisDto {
   id?: number
   pulseTypeID?: number
   patientID?: number

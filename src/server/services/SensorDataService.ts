@@ -1,0 +1,3 @@
+class SensorDataService {
+  constructor() {}
+}
