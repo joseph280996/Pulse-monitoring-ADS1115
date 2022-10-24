@@ -22,6 +22,11 @@ export default [
     route: '/record/:id',
     handler: RecordHandlers.getByID,
   },
+  {
+    method: 'get',
+    route: '/record-latest',
+    handler: RecordHandlers.getMostRecentRecord,
+  },
   // Post Request
   {
     method: 'post',

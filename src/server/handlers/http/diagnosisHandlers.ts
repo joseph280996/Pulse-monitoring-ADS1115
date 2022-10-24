@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import { DiagnosisDto } from 'src/server/dtos/DiagnosisDto'
 import Diagnosis from 'src/server/models/Diagnosis'
-import FileSystemService from 'src/server/services/FileSystemService'
+import FileSystemService from '../../services/FileSystemService'
 import DiagnosisRepository from '../../repositories/DiagnosisRepository'
 import PatientRepository from '../../repositories/PatientRepository'
 import formatInputDateForExport from '../../utils/functions/formatInputDateForExport'

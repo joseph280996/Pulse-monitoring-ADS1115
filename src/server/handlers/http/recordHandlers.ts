@@ -17,7 +17,7 @@ export const getByID: RequestHandler = async (req, res) => {
   }
 }
 
-export const getMostRecentRecord: RequestHandler = async (req, res) => {
+export const getMostRecentRecord: RequestHandler = async (_, res) => {
   try {
     const record = await RecordRepository.getLatest()
     res.status(200).send(record)

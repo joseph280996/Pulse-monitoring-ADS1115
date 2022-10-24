@@ -104,6 +104,15 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     ])
   }
 
+  async getLatest(): Promise<Record | null> {
+    const result = await this.db.query<RecordDataType[], undefined>(
+      RecordSqls.GET_LATEST,
+    )
+    return result?.length > 0
+      ? new Record({ ...result[0], data: JSON.parse(result[0].data) })
+      : null
+  }
+
   // End of Public Functions
 
   // Private Functions
