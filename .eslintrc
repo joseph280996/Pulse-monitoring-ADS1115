@@ -5,40 +5,48 @@
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
     "prettier",
     "airbnb-typescript/base",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended"
   ],
+  "settings": {
+    "import/parser": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      }
+    }
+  },
   "rules": {
+    "import/no-named-as-default-member": "off",
+    "import/newline-after-import": ["error", { "count": 1 }],
     "@typescript-eslint/no-unused-vars": ["error"],
     "@typescript-eslint/semi": ["error", "never"],
     "@typescript-eslint/indent": "off",
-    "import/order": [
+    "@typescript-eslint/lines-between-class-members": [
       "error",
-      {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index"
-        ],
-        "alphabetize": {
-          "order": "asc" /* sort in ascending order. Options: ["ignore", "asc", "desc"] */,
-          "caseInsensitive": true /* ignore case. Options: [true, false] */
-        }
-      }
+      "always",
+      { "exceptAfterSingleLine": true }
     ],
+    "lines-between-class-members": "off",
     "implicit-arrow-linebreak": "off",
     "max-len": "off",
     "no-unused-vars": "off",
     "no-underscore-dangle": "off",
     "object-curly-newline": "off",
     "semi": "off",
-    "no-linebreak": "before"
+    "linebreak-style": ["error", "unix"],
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ]
   }
 }
