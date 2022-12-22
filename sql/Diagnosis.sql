@@ -5,8 +5,7 @@ CREATE TABLE Diagnosis (
     HandPositionID INT UNSIGNED NULL,
     PulseTypeID INT UNSIGNED NULL,
     PatientID INT UNSIGNED NULL,
-    PiezoelectricRecordID INT UNSIGNED,
     FOREIGN KEY (PatientID) REFERENCES Patient(id),
     FOREIGN KEY (PulseTypeID) REFERENCES PulseType(id),
-    FOREIGN KEY (PiezoelectricRecordID) REFERENCES Record(id)
+    FOREIGN KEY (HandPositionID) REFERENCES HandPosition(id)
 );
