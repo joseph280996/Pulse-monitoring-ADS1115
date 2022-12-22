@@ -1,9 +1,6 @@
 /* eslint-disable no-await-in-loop*/
 import dotenv from 'dotenv'
-import {
-  startSendingSensorValueLoop,
-  stopGetSensorValueLoop,
-} from 'src/server/application/handlers/webSocket/sensorValueHandler'
+import * as sensorHandler from 'src/server/application/handlers/webSocket/sensorValueHandler'
 import { WebsocketMessageTypeHandler } from './wsController.types'
 
 dotenv.config()
@@ -11,10 +8,10 @@ dotenv.config()
 export default [
   {
     regExp: /start/i,
-    handler: startSendingSensorValueLoop,
+    handler: sensorHandler.startSendingSensorValueLoop,
   },
   {
     regExp: /stop/i,
-    handler: stopGetSensorValueLoop,
+    handler: sensorHandler.stopGetSensorValueLoop,
   },
 ] as WebsocketMessageTypeHandler[]

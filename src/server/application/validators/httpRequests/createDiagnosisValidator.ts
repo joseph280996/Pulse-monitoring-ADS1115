@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import RecordRepository from 'src/server/domain/repositories/RecordRepository'
 
+const recordRepo = RecordRepository.instance
+
 export default async (req: Request, res: Response, next: NextFunction) => {
   const { recordID } = req.body
   try {
@@ -12,7 +14,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 }
 
 async function validateRecordID(recordID: number) {
-  const isRecordExist = await RecordRepository.getByID(recordID)
+  const isRecordExist = await recordRepo.getByID(recordID)
   if (!isRecordExist) {
     throw new Error(`Cannot find Record with ID [${recordID}]`)
   }

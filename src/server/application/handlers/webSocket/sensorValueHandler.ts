@@ -3,10 +3,11 @@ import IntervalController from 'src/server/infrastructure/services/TimeIntervalS
 import WS_MESSAGE_TYPE from 'src/server/infrastructure/variables/wsMessageType'
 import PiezoElectricSensorService from 'src/server/domain/services/PiezoElectricSensorService'
 
+const piezoSensorService = PiezoElectricSensorService.instance
 
 const sendData = (ws: WebSocket) => {
   try {
-    const singleBatchData = PiezoElectricSensorService.getSingleBatchData()
+    const singleBatchData = piezoSensorService.getSingleBatchData()
     const sendDataInterval = setInterval(() => {
       ws.send(
         JSON.stringify({
@@ -64,17 +65,13 @@ const sendData = (ws: WebSocket) => {
  * @param ws WS instance
  */
 export const startSendingSensorValueLoop = async (_: string, ws: WebSocket) => {
-  await PiezoElectricSensorService.init()
-  PiezoElectricSensorService.start()
+  await piezoSensorService.init()
+  piezoSensorService.start()
   sendData(ws)
 }
 
-
-export const stopGetSensorValueLoop = async (
-  _: string,
-  ws: WebSocket,
-) => {
-  PiezoElectricSensorService.stop()
+export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
+  piezoSensorService.stop()
   IntervalController.clear(PiezoElectricSensorService.name)
   ws.send(
     JSON.stringify({
@@ -82,4 +79,3 @@ export const stopGetSensorValueLoop = async (
     }),
   )
 }
-
