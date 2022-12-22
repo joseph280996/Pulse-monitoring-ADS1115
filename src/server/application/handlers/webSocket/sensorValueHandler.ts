@@ -1,27 +1,8 @@
-import moment from 'moment'
 import WebSocket from 'ws'
 import IntervalController from 'src/server/infrastructure/services/TimeIntervalService'
-import RecordRepository from 'src/server/domain/repositories/RecordRepository'
-import getRecordedDataBetweenTimeStamp from 'src/server/infrastructure/utils/functions/getRecordedDataBetweenTimeStamp'
 import WS_MESSAGE_TYPE from 'src/server/infrastructure/variables/wsMessageType'
-import {
-  EnrichedStopRequestData,
-  RecordedData,
-  StopGetSensorValueLoopRequestData,
-} from './sensorValueHandler.types'
 import PiezoElectricSensorService from 'src/server/domain/services/PiezoElectricSensorService'
 
-const enrichMessage = (message: string): EnrichedStopRequestData => {
-  const trimmedJSONValues = message.trim()
-  const parsedRecordedTime: StopGetSensorValueLoopRequestData =
-    JSON.parse(trimmedJSONValues)
-  const { startTime, endTime, handPositionID } = parsedRecordedTime
-  return {
-    startTime: moment.utc(startTime),
-    endTime: moment.utc(endTime),
-    handPositionID,
-  }
-}
 
 const sendData = (ws: WebSocket) => {
   try {
@@ -46,6 +27,37 @@ const sendData = (ws: WebSocket) => {
   }
 }
 
+// TODO: Decide what to do with the stop handler
+// const getRecords = async (): Promise<Record[]> => {
+//   const records = await recordRepo.getByDiagnosisID(PiezoElectricSensorService.diagnosisID)
+
+//   if (records.length === 0) {
+//     throw new Error(`Can't find records with diagnosis ID [${PiezoElectricSensorService.diagnosisID}]`)
+//   }
+//   return records
+// }
+
+// const getRecordedData = (records, startTime, endTime) => {
+//   const recordedData = records.flat().map((record: Record) => record.data)
+//   return getRecordedDataBetweenTimeStamp(
+//     recordedData,
+//     startTime,
+//     endTime,
+//   )
+// }
+//
+// const enrichMessage = (message: string): EnrichedStopRequestData => {
+//   const trimmedJSONValues = message.trim()
+//   const parsedRecordedTime: StopGetSensorValueLoopRequestData =
+//     JSON.parse(trimmedJSONValues)
+//   const { startTime, endTime, handPositionID } = parsedRecordedTime
+//   return {
+//     startTime: moment.utc(startTime),
+//     endTime: moment.utc(endTime),
+//     handPositionID,
+//   }
+// }
+
 /**
  * Handler to start getting and sending value from the sensor
  * @param _ WS message
@@ -59,31 +71,14 @@ export const startSendingSensorValueLoop = async (_: string, ws: WebSocket) => {
 
 
 export const stopGetSensorValueLoop = async (
-  message: string,
+  _: string,
   ws: WebSocket,
 ) => {
+  PiezoElectricSensorService.stop()
   IntervalController.clear(PiezoElectricSensorService.name)
-  const { startTime, endTime, handPositionID } = enrichMessage(message)
-  const recordedValues: RecordedData[] = getRecordedDataBetweenTimeStamp(
-    store,
-    startTime,
-    endTime,
-  )
-
-  const newRecord = await RecordRepository.create({
-    data: recordedValues,
-    handPositionID,
-  })
-
-  if (!newRecord) {
-    throw new Error('Error create piezoelectric record')
-  }
-
-  store = [[]]
   ws.send(
     JSON.stringify({
       type: WS_MESSAGE_TYPE.RECORD_ID,
-      recordID: newRecord.id,
     }),
   )
 }
