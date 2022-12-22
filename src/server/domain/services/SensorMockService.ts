@@ -1,20 +1,16 @@
-/* eslint-disable import/no-extraneous-dependencies */
-// eslint-disable-next-line import/no-unresolved
-import i2c, { PromisifiedBus } from 'i2c-bus'
-import ADS1115 from 'ads1115'
 import moment from 'moment'
 import { RecordedData } from 'src/server/application/handlers/webSocket/sensorValueHandler.types'
 import LoopService from 'src/server/infrastructure/services/LoopService'
-import getLastNElementsFromRecordedData from '../../infrastructure/utils/functions/getLastNElementsFromRecordedData'
-import DiagnosisRepository from 'src/server/domain/repositories/DiagnosisRepository'
-import Diagnosis from 'src/server/domain/models/Diagnosis'
-import RecordRepository from 'src/server/domain/repositories/RecordRepository'
+import getLastNElementsFromRecordedData from 'src/server/infrastructure/utils/functions/getLastNElementsFromRecordedData'
+import Diagnosis from '../models/Diagnosis'
 import Record from '../models/Record'
+import DiagnosisRepository from '../repositories/DiagnosisRepository'
+import RecordRepository from '../repositories/RecordRepository'
 
-class PiezoElectricSensorService {
-  private static _instance: PiezoElectricSensorService
+class SensorMockService {
+  private static _instance: SensorMockService
 
-  private readonly SERVICE_NAME = 'piezoElectricService'
+  private readonly SERVICE_NAME = 'mockSensorService'
   private readonly BATCH_DATA_SIZE = 20
 
   private readonly loopService: LoopService = new LoopService()
@@ -23,8 +19,6 @@ class PiezoElectricSensorService {
   private secondaryStore: RecordedData[] = []
 
   private saveRecordPromise: Promise<Record> | null = null
-  private bus: PromisifiedBus | null = null
-  private ads1115: typeof ADS1115 = ADS1115
   private diagnosis: Diagnosis | null = null
 
   private diagnosisRepo!: DiagnosisRepository
@@ -36,7 +30,7 @@ class PiezoElectricSensorService {
 
   static get instance() {
     if (!this._instance) {
-      this._instance = new PiezoElectricSensorService()
+      this._instance = new SensorMockService()
     }
 
     return this._instance
@@ -49,8 +43,6 @@ class PiezoElectricSensorService {
 
   async init() {
     this.diagnosis = await this.diagnosisRepo.create({})
-    this.bus = await i2c.openPromisified(1)
-    this.ads1115 = await ADS1115(this.bus)
   }
 
   // Start Reading Values from Sensor
@@ -77,7 +69,7 @@ class PiezoElectricSensorService {
           this.secondaryStore = []
         }
 
-        const dataWithDateTime = await this.readADS1115Value()
+        const dataWithDateTime = await this.readData()
         this.store.push(dataWithDateTime)
       }
     })()
@@ -100,8 +92,17 @@ class PiezoElectricSensorService {
     return getLastNElementsFromRecordedData(this.store, this.BATCH_DATA_SIZE)
   }
 
-  private async readADS1115Value(): Promise<RecordedData> {
-    const data: number = await this.ads1115.measure('0+GND')
+  private async getMockData(): Promise<number> {
+    const promise = new Promise<number>((resolve, _) => {
+      setTimeout(() => {
+        resolve(Math.random())
+      }, 50)
+    })
+    return promise
+  }
+
+  private async readData(): Promise<RecordedData> {
+    const data: number = await this.getMockData()
     return {
       timeStamp: moment.utc().valueOf(),
       data,
@@ -115,4 +116,4 @@ class PiezoElectricSensorService {
   }
 }
 
-export default PiezoElectricSensorService
+export default SensorMockService
