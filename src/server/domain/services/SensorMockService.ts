@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { RecordedData } from 'src/server/application/handlers/webSocket/sensorValueHandler.types'
-import LoopService from 'src/server/infrastructure/services/LoopService'
-import getLastNElementsFromRecordedData from 'src/server/infrastructure/utils/functions/getLastNElementsFromRecordedData'
+import LoopService from '../../infrastructure/services/LoopService'
+import getLastNElementsFromRecordedData from '../../infrastructure/utils/functions/getLastNElementsFromRecordedData'
 import Diagnosis from '../models/Diagnosis'
 import Record from '../models/Record'
 import DiagnosisRepository from '../repositories/DiagnosisRepository'
@@ -48,31 +48,31 @@ class SensorMockService {
   // Start Reading Values from Sensor
   start() {
     this.loopService.start()
-    ;(async () => {
-      while (this.loopService.isStarted) {
-        // When store length is 1000, swap the secondary store to use
-        if (this.store.length === 1000) {
-          this.swapStore()
-          this.saveRecordPromise = this.recordRepo.create({
-            data: this.secondaryStore,
-            diagnosisID: this.diagnosis?.id as number,
-          })
-        }
+      ; (async () => {
+        while (this.loopService.isStarted) {
+          // When store length is 1000, swap the secondary store to use
+          if (this.store.length === 1000) {
+            this.swapStore()
+            this.saveRecordPromise = this.recordRepo.create({
+              data: this.secondaryStore,
+              diagnosisID: this.diagnosis?.id as number,
+            })
+          }
 
-        // When length of main data storage big enough to maintain on its own,
-        // we save reset secondary
-        if (
-          this.store.length > this.BATCH_DATA_SIZE &&
-          this.saveRecordPromise
-        ) {
-          await this.saveRecordPromise
-          this.secondaryStore = []
-        }
+          // When length of main data storage big enough to maintain on its own,
+          // we save reset secondary
+          if (
+            this.store.length > this.BATCH_DATA_SIZE &&
+            this.saveRecordPromise
+          ) {
+            await this.saveRecordPromise
+            this.secondaryStore = []
+          }
 
-        const dataWithDateTime = await this.readData()
-        this.store.push(dataWithDateTime)
-      }
-    })()
+          const dataWithDateTime = await this.readData()
+          this.store.push(dataWithDateTime)
+        }
+      })()
   }
 
   stop() {
@@ -93,7 +93,7 @@ class SensorMockService {
   }
 
   private async getMockData(): Promise<number> {
-    const promise = new Promise<number>((resolve, _) => {
+    const promise = new Promise<number>((resolve) => {
       setTimeout(() => {
         resolve(Math.random())
       }, 50)

@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "types": ["node"],
     "importHelpers": true,
-    "target": "ES6",
-    "module": "commonjs",
-    "lib": ["ES6", "ESNext", "ES2015"],
+    "target": "es2017",
+    "module": "node16",
+    "lib": ["es2022", "ESNext", "es7"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./",
     "outDir": "./build",
@@ -23,8 +24,11 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "src*": ["src*"]
+    }
   },
-  "include": ["**/src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/index.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

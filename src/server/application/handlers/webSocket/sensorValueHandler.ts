@@ -1,13 +1,15 @@
 import WebSocket from 'ws'
-import IntervalController from 'src/server/infrastructure/services/TimeIntervalService'
-import WS_MESSAGE_TYPE from 'src/server/infrastructure/variables/wsMessageType'
-import PiezoElectricSensorService from 'src/server/domain/services/PiezoElectricSensorService'
+import IntervalController from '../../../infrastructure/services/TimeIntervalService'
+import WS_MESSAGE_TYPE from '../../../infrastructure/variables/wsMessageType'
+import SensorServiceFactory from '../../../domain/factories/sensorDataServiceFactory'
 
-const piezoSensorService = PiezoElectricSensorService.instance
+const serviceFactory = SensorServiceFactory.instance
+const getServicePromise = serviceFactory.getService()
 
-const sendData = (ws: WebSocket) => {
+const sendData = async (ws: WebSocket) => {
+  const service = await getServicePromise
   try {
-    const singleBatchData = piezoSensorService.getSingleBatchData()
+    const singleBatchData = service.getSingleBatchData()
     const sendDataInterval = setInterval(() => {
       ws.send(
         JSON.stringify({
@@ -18,13 +20,13 @@ const sendData = (ws: WebSocket) => {
     }, 200)
 
     IntervalController.registerInterval(
-      PiezoElectricSensorService.name,
+      service.name,
       sendDataInterval,
     )
   } catch (error) {
     console.error(error)
   } finally {
-    IntervalController.clear(PiezoElectricSensorService.name)
+    IntervalController.clear(service.name)
   }
 }
 
@@ -65,14 +67,16 @@ const sendData = (ws: WebSocket) => {
  * @param ws WS instance
  */
 export const startSendingSensorValueLoop = async (_: string, ws: WebSocket) => {
-  await piezoSensorService.init()
-  piezoSensorService.start()
+  const service = await getServicePromise
+  await service.init()
+  service.start()
   sendData(ws)
 }
 
 export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
-  piezoSensorService.stop()
-  IntervalController.clear(PiezoElectricSensorService.name)
+  const service = await getServicePromise
+  service.stop()
+  IntervalController.clear(service.name)
   ws.send(
     JSON.stringify({
       type: WS_MESSAGE_TYPE.RECORD_ID,

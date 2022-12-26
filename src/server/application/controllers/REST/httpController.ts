@@ -1,8 +1,8 @@
-import * as DiagnosisHandler from 'src/server/application/handlers/http/diagnosisHandlers'
-import getHandPositions from 'src/server/application/handlers/http/handPositionsHandlers'
-import getPulseTypes from 'src/server/application/handlers/http/pulseTypesHandlers'
-import * as RecordHandlers from 'src/server/application/handlers/http/recordHandlers'
-import createDiagnosisValidator from 'src/server/application/validators/httpRequests/createDiagnosisValidator'
+import * as DiagnosisHandler from '../../handlers/http/diagnosisHandlers'
+import getHandPositions from '../../handlers/http/handPositionsHandlers'
+import getPulseTypes from '../../handlers/http/pulseTypesHandlers'
+import * as RecordHandlers from '../../handlers/http/recordHandlers'
+import createDiagnosisValidator from '../../validators/httpRequests/createDiagnosisValidator'
 import { RouteType } from './httpController.types'
 
 export default [

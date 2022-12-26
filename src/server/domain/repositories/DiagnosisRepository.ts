@@ -16,7 +16,7 @@ class DiagnosisRepository
   }
 
   static get instance(): DiagnosisRepository {
-    if (!this.instance) {
+    if (!this._instance) {
       this._instance = new DiagnosisRepository()
     }
     return this._instance

@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express'
-import { DiagnosisDto } from 'src/server/application/dtos/DiagnosisDto'
-import Diagnosis from 'src/server/domain/models/Diagnosis'
-import FileSystemService from 'src/server/infrastructure/services/FileSystemService'
-import DiagnosisRepository from 'src/server/domain/repositories/DiagnosisRepository'
-import PatientRepository from 'src/server/domain/repositories/PatientRepository'
-import formatInputDateForExport from 'src/server/infrastructure/utils/functions/formatInputDateForExport'
-import splitNameForDB from 'src/server/infrastructure/utils/functions/splitNameForDB'
+import { DiagnosisDto } from '../../dtos/DiagnosisDto'
+import Diagnosis from '../../../domain/models/Diagnosis'
+import FileSystemService from '../../../infrastructure/services/FileSystemService'
+import DiagnosisRepository from '../../../domain/repositories/DiagnosisRepository'
+import PatientRepository from '../../../domain/repositories/PatientRepository'
+import formatInputDateForExport from '../../../infrastructure/utils/functions/formatInputDateForExport'
+import splitNameForDB from '../../../infrastructure/utils/functions/splitNameForDB'
 
 const diagnosisRepo = DiagnosisRepository.instance
 /**

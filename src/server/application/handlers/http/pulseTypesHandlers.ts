@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express'
-import db from 'src/server/domain/models/DbConnectionModel'
-import PulseType from 'src/server/domain/models/PulseTypes'
-import { PulseTypeDataType } from 'src/server/domain/models/PulseTypes.types'
-import * as PulseTypeSqls from 'src/server/domain/sqls/pulseTypeSqls'
+import db from '../../../domain/models/DbConnectionModel'
+import PulseType from '../../../domain/models/PulseTypes'
+import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
+import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
 
 const getPulseTypes: RequestHandler = async (_req, res) => {
   const pulseTypes = await db

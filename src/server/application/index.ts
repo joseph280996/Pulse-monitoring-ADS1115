@@ -3,7 +3,7 @@ import * as http from 'http'
 import cors from 'cors'
 import Express, { json, urlencoded } from 'express'
 import WebSocket, { Server as WebSocketServer } from 'ws'
-import db from 'src/server/domain/models/DbConnectionModel'
+import db from '../domain/models/DbConnectionModel'
 import { RouteType } from './controllers/REST/httpController.types'
 import { WebsocketMessageTypeHandler } from './controllers/WebSocket/wsController.types'
 

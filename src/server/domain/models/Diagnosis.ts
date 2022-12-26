@@ -4,14 +4,11 @@ import Record from './Record'
 
 class Diagnosis {
   public id?: number
-
   public pulseTypeID?: number
-
   public patientID?: number
-
   public dateTimeCreated?: string
-
   public dateTimeUpdated?: string
+  private recordRepo!: RecordRepository
 
   constructor(obj: DiagnosisDto) {
     this.id = obj.id
@@ -19,13 +16,14 @@ class Diagnosis {
     this.patientID = obj.patientID
     this.dateTimeCreated = obj.dateTimeCreated
     this.dateTimeUpdated = obj.dateTimeUpdated
+    this.recordRepo = RecordRepository.instance
   }
 
   get piezoelectricRecords(): Promise<Array<Record>> {
     if (!this.id) {
       throw new Error('Diagnosis has not been initialized')
     }
-    return RecordRepository.getByDiagnosisID(this.id)
+    return this.recordRepo.getByDiagnosisID(this.id)
   }
 }
 

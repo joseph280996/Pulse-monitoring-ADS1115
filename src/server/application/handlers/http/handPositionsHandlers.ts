@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express'
-import DBInstance from 'src/server/domain/models/DbConnectionModel'
-import HandPosition from 'src/server/domain/models/HandPosition'
-import { HandPositionType } from 'src/server/domain/models/HandPosition.types'
-import * as HandPositionSqls from 'src/server/domain/sqls/handPositionSqls'
+import DBInstance from '../../../domain/models/DbConnectionModel'
+import HandPosition from '../../../domain/models/HandPosition'
+import { HandPositionType } from '../../../domain/models/HandPosition.types'
+import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
 
 const getHandPositions: RequestHandler = async (_req, res) => {
   try {

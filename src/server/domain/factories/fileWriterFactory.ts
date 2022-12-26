@@ -1,8 +1,16 @@
 import fs from 'fs'
 import fastCSV from 'fast-csv'
-import { FORMAT_TYPE } from 'src/server/infrastructure/variables/fileTypes'
+import { FORMAT_TYPE } from '../../infrastructure/variables/fileTypes'
 
 class FileWriterFactory {
+  private static _instance: FileWriterFactory
+  static get instance(): FileWriterFactory {
+    if (!this._instance) {
+      this._instance = new FileWriterFactory()
+    }
+    return this.instance
+  }
+
   getFileWriter(fileType: string) {
     if (fileType === FORMAT_TYPE.JSON) {
       return this.writeJSONFile
@@ -27,4 +35,4 @@ class FileWriterFactory {
   }
 }
 
-export default new FileWriterFactory()
+export default FileWriterFactory

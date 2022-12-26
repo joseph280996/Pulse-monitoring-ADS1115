@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import RecordRepository from 'src/server/domain/repositories/RecordRepository'
+import RecordRepository from '../../../domain/repositories/RecordRepository'
 
 const recordRepo = RecordRepository.instance
 /**

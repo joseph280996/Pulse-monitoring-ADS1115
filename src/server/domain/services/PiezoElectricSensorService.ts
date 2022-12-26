@@ -10,8 +10,9 @@ import DiagnosisRepository from 'src/server/domain/repositories/DiagnosisReposit
 import Diagnosis from 'src/server/domain/models/Diagnosis'
 import RecordRepository from 'src/server/domain/repositories/RecordRepository'
 import Record from '../models/Record'
+import ISensorService from '../interfaces/ISensorService'
 
-class PiezoElectricSensorService {
+class PiezoElectricSensorService implements ISensorService {
   private static _instance: PiezoElectricSensorService
 
   private readonly SERVICE_NAME = 'piezoElectricService'

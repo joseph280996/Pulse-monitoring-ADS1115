@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
-import Server from 'src/server/application'
-import httpController from 'src/server/application/controllers/REST/httpController'
-import wsController from 'src/server/application/controllers/WebSocket/wsController'
+import Server from './server/application'
+import httpController from './server/application/controllers/REST/httpController'
+import wsController from './server/application/controllers/WebSocket/wsController'
 
 dotenv.config()
 

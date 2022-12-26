@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment'
-import { RecordedData } from 'src/server/application/handlers/webSocket/sensorValueHandler.types'
+import { RecordedData } from '../../../application/handlers/webSocket/sensorValueHandler.types'
 
 export default (
   store: RecordedData[][],
