@@ -13,6 +13,7 @@ import Record from '../models/Record'
 import ISensorService from '../interfaces/ISensorService'
 
 class PiezoElectricSensorService implements ISensorService {
+  //#region properties
   private static _instance: PiezoElectricSensorService
 
   private readonly SERVICE_NAME = 'piezoElectricService'
@@ -30,7 +31,9 @@ class PiezoElectricSensorService implements ISensorService {
 
   private diagnosisRepo!: DiagnosisRepository
   private recordRepo!: RecordRepository
+  //#endregion properties
 
+  //#region getters
   get name() {
     return this.SERVICE_NAME
   }
@@ -42,12 +45,16 @@ class PiezoElectricSensorService implements ISensorService {
 
     return this._instance
   }
+  //#endregion getters
 
+  //#region constructor
   constructor() {
     this.diagnosisRepo = DiagnosisRepository.instance
     this.recordRepo = RecordRepository.instance
   }
+  //#endregion constructor
 
+  //#region pulic methods
   async init() {
     this.diagnosis = await this.diagnosisRepo.create({})
     this.bus = await i2c.openPromisified(1)
@@ -56,16 +63,13 @@ class PiezoElectricSensorService implements ISensorService {
 
   // Start Reading Values from Sensor
   start() {
+    console.log('Start Reading Values from Sensor')
     this.loopService.start()
     ;(async () => {
       while (this.loopService.isStarted) {
         // When store length is 1000, swap the secondary store to use
         if (this.store.length === 1000) {
-          this.swapStore()
-          this.saveRecordPromise = this.recordRepo.create({
-            data: this.secondaryStore,
-            diagnosisID: this.diagnosis?.id as number,
-          })
+          this.createRecordForPreviousStorage()
         }
 
         // When length of main data storage big enough to maintain on its own,
@@ -100,6 +104,16 @@ class PiezoElectricSensorService implements ISensorService {
     }
     return getLastNElementsFromRecordedData(this.store, this.BATCH_DATA_SIZE)
   }
+  //#endregion public methods
+
+  //#region private methods
+  private async createRecordForPreviousStorage() {
+    this.swapStore()
+    this.saveRecordPromise = this.recordRepo.create({
+      data: this.secondaryStore,
+      diagnosisID: this.diagnosis?.id as number,
+    })
+  }
 
   private async readADS1115Value(): Promise<RecordedData> {
     const data: number = await this.ads1115.measure('0+GND')
@@ -114,6 +128,7 @@ class PiezoElectricSensorService implements ISensorService {
     this.store = this.secondaryStore
     this.secondaryStore = temp
   }
+  //#endregion private methods
 }
 
 export default PiezoElectricSensorService

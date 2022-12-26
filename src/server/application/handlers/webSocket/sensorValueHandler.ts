@@ -3,6 +3,7 @@ import IntervalController from '../../../infrastructure/services/TimeIntervalSer
 import WS_MESSAGE_TYPE from '../../../infrastructure/variables/wsMessageType'
 import SensorServiceFactory from '../../../domain/factories/sensorDataServiceFactory'
 
+//#region private
 const serviceFactory = SensorServiceFactory.instance
 const getServicePromise = serviceFactory.getService()
 
@@ -11,6 +12,7 @@ const sendData = async (ws: WebSocket) => {
   try {
     const singleBatchData = service.getSingleBatchData()
     const sendDataInterval = setInterval(() => {
+            console.log(`Begin sending batch of [${singleBatchData.length}] data`)
       ws.send(
         JSON.stringify({
           type: WS_MESSAGE_TYPE.RECORDED_DATA,
@@ -30,37 +32,6 @@ const sendData = async (ws: WebSocket) => {
   }
 }
 
-// TODO: Decide what to do with the stop handler
-// const getRecords = async (): Promise<Record[]> => {
-//   const records = await recordRepo.getByDiagnosisID(PiezoElectricSensorService.diagnosisID)
-
-//   if (records.length === 0) {
-//     throw new Error(`Can't find records with diagnosis ID [${PiezoElectricSensorService.diagnosisID}]`)
-//   }
-//   return records
-// }
-
-// const getRecordedData = (records, startTime, endTime) => {
-//   const recordedData = records.flat().map((record: Record) => record.data)
-//   return getRecordedDataBetweenTimeStamp(
-//     recordedData,
-//     startTime,
-//     endTime,
-//   )
-// }
-//
-// const enrichMessage = (message: string): EnrichedStopRequestData => {
-//   const trimmedJSONValues = message.trim()
-//   const parsedRecordedTime: StopGetSensorValueLoopRequestData =
-//     JSON.parse(trimmedJSONValues)
-//   const { startTime, endTime, handPositionID } = parsedRecordedTime
-//   return {
-//     startTime: moment.utc(startTime),
-//     endTime: moment.utc(endTime),
-//     handPositionID,
-//   }
-// }
-
 /**
  * Handler to start getting and sending value from the sensor
  * @param _ WS message
@@ -73,6 +44,7 @@ export const startSendingSensorValueLoop = async (_: string, ws: WebSocket) => {
   sendData(ws)
 }
 
+//#region public
 export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
   const service = await getServicePromise
   service.stop()

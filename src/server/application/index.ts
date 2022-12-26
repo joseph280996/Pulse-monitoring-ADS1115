@@ -47,7 +47,7 @@ class Server implements ServerInterface {
   registerWebsocketMessageTypes(messageTypes: WebsocketMessageTypeHandler[]) {
     this.wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
       // eslint-disable-next-line no-console
-      console.log(`Connection from ${req.socket.remoteAddress}`)
+      console.log(`Connection from ${req.socket.remoteAddress} established`)
       ws.on('message', (message: string) => {
         messageTypes.forEach(({ regExp, handler }) => {
           console.log(`Received message [${message}]`)
