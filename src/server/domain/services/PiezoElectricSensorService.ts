@@ -31,7 +31,7 @@ class PiezoElectricSensorService implements ISensorService {
 
   private diagnosisRepo!: DiagnosisRepository
   private recordRepo!: RecordRepository
-  //#endregion properties
+  //#endregion
 
   //#region getters
   get name() {
@@ -45,14 +45,14 @@ class PiezoElectricSensorService implements ISensorService {
 
     return this._instance
   }
-  //#endregion getters
+  //#endregion
 
   //#region constructor
   constructor() {
     this.diagnosisRepo = DiagnosisRepository.instance
     this.recordRepo = RecordRepository.instance
   }
-  //#endregion constructor
+  //#endregion
 
   //#region pulic methods
   async init() {
@@ -104,7 +104,7 @@ class PiezoElectricSensorService implements ISensorService {
     }
     return getLastNElementsFromRecordedData(this.store, this.BATCH_DATA_SIZE)
   }
-  //#endregion public methods
+  //#endregion
 
   //#region private methods
   private async createRecordForPreviousStorage() {
@@ -128,7 +128,7 @@ class PiezoElectricSensorService implements ISensorService {
     this.store = this.secondaryStore
     this.secondaryStore = temp
   }
-  //#endregion private methods
+  //#endregion
 }
 
 export default PiezoElectricSensorService

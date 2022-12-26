@@ -6,22 +6,30 @@ import { GetDiagnosisByRangeInputType } from '../models/Diagnosis.types'
 import * as DiagnosisSqls from '../sqls/diagnosisSqls'
 
 class DiagnosisRepository
-  implements IRepository<DiagnosisDto, Diagnosis | null> {
+  implements IRepository<DiagnosisDto, Diagnosis | null>
+{
+  //#region properties
   db!: DB
 
   private static _instance: DiagnosisRepository
+  //#endregion
 
-  constructor(db = DBInstance) {
-    this.db = db
-  }
-
+  //#region getters
   static get instance(): DiagnosisRepository {
     if (!this._instance) {
       this._instance = new DiagnosisRepository()
     }
     return this._instance
   }
+  //#endregion
 
+  //#region constructor
+  constructor(db = DBInstance) {
+    this.db = db
+  }
+  //#endregion
+
+  //#region public methods
   async create(diagnosis: DiagnosisDto) {
     try {
       const result = await this.db.query<
@@ -70,5 +78,6 @@ class DiagnosisRepository
       ? res.map((row: DiagnosisDto) => new Diagnosis(row))
       : []
   }
+  //#endregion
 }
 export default DiagnosisRepository

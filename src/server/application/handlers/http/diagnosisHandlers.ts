@@ -7,13 +7,12 @@ import PatientRepository from '../../../domain/repositories/PatientRepository'
 import formatInputDateForExport from '../../../infrastructure/utils/functions/formatInputDateForExport'
 import splitNameForDB from '../../../infrastructure/utils/functions/splitNameForDB'
 
+//#region properties
 const diagnosisRepo = DiagnosisRepository.instance
-/**
- * #########################
- * # Get Request Handlers #
- * #########################
- */
+//#endregion
 
+
+//#region public methods
 export const getByID: RequestHandler = async (req, res) => {
   const { id: recordId } = req.params
   const record = await diagnosisRepo.getByID(Number(recordId))
@@ -22,12 +21,6 @@ export const getByID: RequestHandler = async (req, res) => {
   }
   res.status(200).send(record)
 }
-
-/**
- * #########################
- * # Post Request Handlers #
- * #########################
- */
 
 /**
  * Diagnosis Creation Request Handler
@@ -91,3 +84,4 @@ export const exportData: RequestHandler = async (req, res) => {
     res.status(500).send('Internal Error')
   }
 }
+//#endregion

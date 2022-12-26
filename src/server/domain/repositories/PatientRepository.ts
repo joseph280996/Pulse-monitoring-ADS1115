@@ -6,12 +6,17 @@ import { PatientDataType, PatientNameType } from '../models/Patient.types'
 import * as PatientSqls from '../sqls/patientSqls'
 
 class PatientRepository implements IRepository<PatientDto, Patient | null> {
+  //#region properties
   db!: DB
+  //#endregion
 
+  //#region constructor
   constructor(db = DBInstance) {
     this.db = db
   }
+  //#endregion
 
+  //#region public methods
   async create(patient: PatientDto) {
     try {
       const result = await this.db.query<
@@ -28,7 +33,7 @@ class PatientRepository implements IRepository<PatientDto, Patient | null> {
   }
 
   async update(_: PatientDto): Promise<boolean> {
-    throw new Error(`Method not implemented`)
+    throw new Error('Method not implemented')
   }
 
   async getAll(): Promise<Patient[]> {
@@ -74,6 +79,7 @@ class PatientRepository implements IRepository<PatientDto, Patient | null> {
 
     return foundPatient as Patient
   }
+  //#endregion
 }
 
 export default new PatientRepository()

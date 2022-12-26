@@ -1,12 +1,11 @@
 import { RequestHandler } from 'express'
 import RecordRepository from '../../../domain/repositories/RecordRepository'
 
+//#region properties
 const recordRepo = RecordRepository.instance
-/**
- * #########################
- * # Get Request Handlers #
- * #########################
- */
+//#endregion
+
+//#region public methods
 export const getByID: RequestHandler = async (req, res) => {
   const { id: recordID } = req.params
   try {
@@ -27,3 +26,4 @@ export const getMostRecentRecord: RequestHandler = async (_, res) => {
     res.status(500).send('Cannot get latest record')
   }
 }
+//#endregion

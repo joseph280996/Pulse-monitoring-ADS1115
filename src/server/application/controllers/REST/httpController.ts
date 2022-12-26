@@ -6,7 +6,7 @@ import createDiagnosisValidator from '../../validators/httpRequests/createDiagno
 import { RouteType } from './httpController.types'
 
 export default [
-  // Get Requests
+  //#region GET handlers
   {
     method: 'get',
     route: '/pulse-type',
@@ -27,7 +27,9 @@ export default [
     route: '/record-latest',
     handler: RecordHandlers.getMostRecentRecord,
   },
-  // Post Request
+  //#endregion
+
+  //#region POST handlers
   {
     method: 'post',
     route: '/diagnosis',
@@ -39,4 +41,5 @@ export default [
     route: '/data',
     handler: DiagnosisHandler.exportData,
   },
+  //#endregion
 ] as RouteType[]

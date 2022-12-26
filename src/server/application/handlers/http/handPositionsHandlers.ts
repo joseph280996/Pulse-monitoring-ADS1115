@@ -4,6 +4,7 @@ import HandPosition from '../../../domain/models/HandPosition'
 import { HandPositionType } from '../../../domain/models/HandPosition.types'
 import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
 
+//#region public methods
 const getHandPositions: RequestHandler = async (_req, res) => {
   try {
     const result = await DBInstance.query<HandPositionType[], void>(
@@ -19,5 +20,6 @@ const getHandPositions: RequestHandler = async (_req, res) => {
     res.status(500).send('Internal Error')
   }
 }
+//#endregion
 
 export default getHandPositions

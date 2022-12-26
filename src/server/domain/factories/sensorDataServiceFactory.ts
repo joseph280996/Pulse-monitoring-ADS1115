@@ -2,15 +2,13 @@ import dotenv from 'dotenv'
 import ISensorService from '../interfaces/ISensorService'
 
 class SensorDataServiceFactory {
+  //#region properties
   private static _instance: SensorDataServiceFactory
-
   private runningEnv!: string
   private service!: ISensorService
+  //#endregion
 
-  constructor(runningEnv: string) {
-    this.runningEnv = runningEnv
-  }
-
+  //#region getters
   static get instance() {
     dotenv.config()
     if (!this._instance && process.env.RUNNING_ENV) {
@@ -18,7 +16,15 @@ class SensorDataServiceFactory {
     }
     return this._instance
   }
+  //#endregion
 
+  //#region constructor
+  constructor(runningEnv: string) {
+    this.runningEnv = runningEnv
+  }
+  //#endregion
+
+  //#region public methods
   async getService() {
     if (this.service) {
       return this.service
@@ -32,6 +38,7 @@ class SensorDataServiceFactory {
     this.service = serviceImport.default.instance
     return this.service
   }
+  //#endregion
 }
 
 export default SensorDataServiceFactory

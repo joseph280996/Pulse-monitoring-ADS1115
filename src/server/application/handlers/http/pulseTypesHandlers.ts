@@ -4,6 +4,7 @@ import PulseType from '../../../domain/models/PulseTypes'
 import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
 import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
 
+//#region public methods
 const getPulseTypes: RequestHandler = async (_req, res) => {
   const pulseTypes = await db
     .query<PulseTypeDataType[], void>(PulseTypeSqls.GET_ALL)
@@ -15,5 +16,6 @@ const getPulseTypes: RequestHandler = async (_req, res) => {
     })
   res.status(200).send(pulseTypes)
 }
+//#endregion
 
 export default getPulseTypes

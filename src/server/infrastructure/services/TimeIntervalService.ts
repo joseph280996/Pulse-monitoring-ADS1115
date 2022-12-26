@@ -1,6 +1,9 @@
 class TimeIntervalService {
+  //#region properties
   private intervals: Map<string, NodeJS.Timeout | null> = new Map()
+  //#endregion
 
+  //#region public methods
   registerInterval(name: string, interval: NodeJS.Timeout): void {
     if (this.intervals.has(name)) {
       console.warn(
@@ -17,6 +20,7 @@ class TimeIntervalService {
       this.intervals.delete(name)
     }
   }
+  //#endregion
 }
 
 export default new TimeIntervalService()

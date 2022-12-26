@@ -6,28 +6,28 @@ import * as RecordSqls from '../sqls/recordSqls'
 import IRepository from '../interfaces/IRepository'
 
 class RecordRepository implements IRepository<RecordDto, Record | null> {
-  // Private Properties
+  //#region properties
   private static _instance: RecordRepository
 
   private db: DB
+  //#endregion
 
-  // End of Private Properties
-
-  // Constructor
+  //#region constructor
   constructor(db = DBInstance) {
     this.db = db
   }
-  // End of Constructor
+  //#endregion
 
-  // Public Functions
-
+  //#region getters
   static get instance() {
     if (!this._instance) {
       this._instance = new RecordRepository()
     }
     return this._instance
   }
+  //#endregion
 
+  //#region public methods
   async exist(id: number) {
     try {
       await this.getByID(id)
@@ -58,9 +58,9 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     )
     return res && res.length > 0
       ? res.map(
-        (row: RecordDataType) =>
-          new Record({ ...row, data: JSON.parse(row.data) }),
-      )
+          (row: RecordDataType) =>
+            new Record({ ...row, data: JSON.parse(row.data) }),
+        )
       : []
   }
 
@@ -74,9 +74,9 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     )
     return res && res.length > 0
       ? res.map(
-        (row: RecordDataType) =>
-          new Record({ ...row, data: JSON.parse(row.data) }),
-      )
+          (row: RecordDataType) =>
+            new Record({ ...row, data: JSON.parse(row.data) }),
+        )
       : []
   }
 
@@ -122,10 +122,9 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
       ? new Record({ ...result[0], data: JSON.parse(result[0].data) })
       : null
   }
+  //#endregion
 
-  // End of Public Functions
-
-  // Private Functions
+  //#region private methods
   private static guardAgaisntInvalidRecord(record: RecordDto | null) {
     if (!record) {
       throw new Error(`Parameter is null (${Record.name})`)
@@ -134,7 +133,7 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
       throw new Error(`Required field is missing for ${Record.name}`)
     }
   }
-  // End of Private Functions
+  //#endregion
 }
 
 export default RecordRepository

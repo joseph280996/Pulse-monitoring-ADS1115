@@ -3,35 +3,12 @@ import IntervalController from '../../../infrastructure/services/TimeIntervalSer
 import WS_MESSAGE_TYPE from '../../../infrastructure/variables/wsMessageType'
 import SensorServiceFactory from '../../../domain/factories/sensorDataServiceFactory'
 
-//#region private
+//#region properties
 const serviceFactory = SensorServiceFactory.instance
 const getServicePromise = serviceFactory.getService()
+//#endregion
 
-const sendData = async (ws: WebSocket) => {
-  const service = await getServicePromise
-  try {
-    const singleBatchData = service.getSingleBatchData()
-    const sendDataInterval = setInterval(() => {
-            console.log(`Begin sending batch of [${singleBatchData.length}] data`)
-      ws.send(
-        JSON.stringify({
-          type: WS_MESSAGE_TYPE.RECORDED_DATA,
-          recordedData: singleBatchData,
-        }),
-      )
-    }, 200)
-
-    IntervalController.registerInterval(
-      service.name,
-      sendDataInterval,
-    )
-  } catch (error) {
-    console.error(error)
-  } finally {
-    IntervalController.clear(service.name)
-  }
-}
-
+//#region public methods
 /**
  * Handler to start getting and sending value from the sensor
  * @param _ WS message
@@ -44,7 +21,6 @@ export const startSendingSensorValueLoop = async (_: string, ws: WebSocket) => {
   sendData(ws)
 }
 
-//#region public
 export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
   const service = await getServicePromise
   service.stop()
@@ -55,3 +31,28 @@ export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
     }),
   )
 }
+//#endregion
+
+//#region private methods
+const sendData = async (ws: WebSocket) => {
+  const service = await getServicePromise
+  try {
+    const singleBatchData = service.getSingleBatchData()
+    const sendDataInterval = setInterval(() => {
+      console.log(`Begin sending batch of [${singleBatchData.length}] data`)
+      ws.send(
+        JSON.stringify({
+          type: WS_MESSAGE_TYPE.RECORDED_DATA,
+          recordedData: singleBatchData,
+        }),
+      )
+    }, 200)
+
+    IntervalController.registerInterval(service.name, sendDataInterval)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    IntervalController.clear(service.name)
+  }
+}
+//#endregion

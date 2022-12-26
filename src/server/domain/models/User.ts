@@ -1,5 +1,5 @@
 import { genSalt, hash } from 'bcrypt'
-import IUser from 'src/server/interfaces/IUser'
+import IUser from '../interfaces/IUser'
 import DB from './DbConnectionModel'
 
 type UserInputType = {
@@ -10,48 +10,36 @@ type UserInputType = {
 }
 
 class User implements IUser {
-  private static sqlFields = 'id as userID, passwordHash, firstName, lastName'
+  //#region constant properties
+  private readonly saltRounds = 12
+  private static readonly sqlFields =
+    'id as userID, passwordHash, firstName, lastName'
+  //#endregion
 
+  //#region properties
   private passwordHash?: string
-
-  private saltRounds = 12
-
   public id?: number
-
   public password: string
-
   public firstName: string
-
   public lastName?: string
+  //#endregion
 
+  //#region constructor
   constructor(obj: UserInputType) {
     this.password = obj.password
     this.id = obj.id
     this.firstName = obj.firstName
     this.lastName = obj.lastName
   }
+  //#endregion
 
+  //#region public methods
   static async getUserByID(id: number): Promise<User | null> {
-    const result = await DB.query(
-      `SELECT ${User.sqlFields} FROM User WHERE id=?`,
+    const result = await DB.query<User, Array<number>>(
+      `SELECT ${User.sqlFields} FROM User WHERE id=?;`,
       [id],
     )
     return result ? new User(result) : null
-  }
-
-  private async encryptPassword() {
-    try {
-      if (!this.password) {
-        throw new Error('Password is required for encryption')
-      }
-      const { password } = this
-      const salt = await genSalt(this.saltRounds)
-      const hashedPassword = await hash(password, salt)
-      this.passwordHash = hashedPassword
-    } catch (err) {
-      console.error(err)
-      throw new Error('Error hashing password')
-    }
   }
 
   async save(): Promise<boolean> {
@@ -66,7 +54,10 @@ class User implements IUser {
       throw new Error('Password is required to create a user')
     }
     await this.encryptPassword()
-    const res = await DB.query(
+    const res = await DB.query<
+      { insertId: number },
+      Array<[string | undefined, string, string | undefined]>
+    >(
       `
       INSERT INTO User(passwordHash, firstName, lastName)
       VALUES (?)
@@ -75,6 +66,24 @@ class User implements IUser {
     )
     return !!res.insertId
   }
+  //#endregion
+
+  //#region private methods
+  private async encryptPassword() {
+    try {
+      if (!this.password) {
+        throw new Error('Password is required for encryption')
+      }
+      const { password } = this
+      const salt = await genSalt(this.saltRounds)
+      const hashedPassword = await hash(password, salt)
+      this.passwordHash = hashedPassword
+    } catch (err) {
+      console.error(err)
+      throw new Error('Error hashing password')
+    }
+  }
+  //#endregion
 }
 
 export default User
