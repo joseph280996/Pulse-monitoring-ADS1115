@@ -2,7 +2,7 @@
 import * as http from 'http'
 import cors from 'cors'
 import Express, { json, urlencoded } from 'express'
-import WebSocket, { Server as WebSocketServer } from 'ws'
+import WebSocket, { RawData, Server as WebSocketServer } from 'ws'
 import db from '../domain/models/DbConnectionModel'
 import { RouteType } from './controllers/REST/httpController.types'
 import { WebsocketMessageTypeHandler } from './controllers/WebSocket/wsController.types'
@@ -44,17 +44,16 @@ class Server implements ServerInterface {
     })
   }
 
-  registerWebsocketMessageTypes(messageTypes: WebsocketMessageTypeHandler[]) {
+  registerWebsocketMessageTypes(messageTypes: WebsocketMessageTypeHandler) {
     this.wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
       // eslint-disable-next-line no-console
       console.log(`Connection from ${req.socket.remoteAddress} established`)
-      ws.on('message', (message: string) => {
-        messageTypes.forEach(({ regExp, handler }) => {
-          console.log(`Received message [${message}]`)
-          if (regExp.test(message)) {
-            handler(message.replace(regExp, ''), ws)
-          }
-        })
+      ws.on('message', (rawMessage: RawData) => {
+        const message = rawMessage.toString()
+        const [operation, data] = message.split(';')
+        console.log(`Received command to [${operation}] with data [${data}]`)
+        const handler = messageTypes[operation]
+        handler(data, ws)
       })
     })
   }

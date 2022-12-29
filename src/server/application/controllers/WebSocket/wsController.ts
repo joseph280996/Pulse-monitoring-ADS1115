@@ -5,13 +5,7 @@ import { WebsocketMessageTypeHandler } from './wsController.types'
 
 dotenv.config()
 
-export default [
-  {
-    regExp: /start/i,
-    handler: sensorHandler.startSendingSensorValueLoop,
-  },
-  {
-    regExp: /stop/i,
-    handler: sensorHandler.stopGetSensorValueLoop,
-  },
-] as WebsocketMessageTypeHandler[]
+export default {
+    start: sensorHandler.startSendingSensorValueLoop,
+    stop: sensorHandler.stopGetSensorValueLoop,
+} as WebsocketMessageTypeHandler

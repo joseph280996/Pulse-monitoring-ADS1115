@@ -32,18 +32,19 @@ class DiagnosisRepository
   //#region public methods
   async create(diagnosis: DiagnosisDto) {
     try {
+      console.log(diagnosis)
       const result = await this.db.query<
         { insertId: number },
         [Array<number | undefined>]
       >(DiagnosisSqls.CREATE_DIAGNOSIS, [
-        [diagnosis.pulseTypeID || 0, diagnosis.patientID || 0],
+        [diagnosis.pulseTypeID, diagnosis.patientID],
       ])
       return new Diagnosis({
         ...diagnosis,
         id: result.insertId,
       })
     } catch (error) {
-      return null
+      throw new Error(`Error Creating Diagnosis: ${(error as Error).message}`)
     }
   }
 

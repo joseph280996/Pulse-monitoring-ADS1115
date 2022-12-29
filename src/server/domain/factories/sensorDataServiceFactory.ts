@@ -25,10 +25,7 @@ class SensorDataServiceFactory {
   //#endregion
 
   //#region public methods
-  async getService() {
-    if (this.service) {
-      return this.service
-    }
+  async init() {
     let serviceImport
     if (this.runningEnv === 'development') {
       serviceImport = await import('../services/SensorMockService')
@@ -36,6 +33,12 @@ class SensorDataServiceFactory {
       serviceImport = await import('../services/PiezoElectricSensorService')
     }
     this.service = serviceImport.default.instance
+  }
+
+  getService() {
+    if (!this.service) {
+      throw new Error('Please call init() before calling getService().')
+    }
     return this.service
   }
   //#endregion

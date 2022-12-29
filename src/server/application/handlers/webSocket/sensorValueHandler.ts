@@ -1,11 +1,13 @@
 import WebSocket from 'ws'
-import IntervalController from '../../../infrastructure/services/TimeIntervalService'
+import IntervalService from '../../../infrastructure/services/TimeIntervalService'
 import WS_MESSAGE_TYPE from '../../../infrastructure/variables/wsMessageType'
 import SensorServiceFactory from '../../../domain/factories/sensorDataServiceFactory'
+import ISensorService from '../../../domain/interfaces/ISensorService'
 
 //#region properties
 const serviceFactory = SensorServiceFactory.instance
-const getServicePromise = serviceFactory.getService()
+const factoryInitPromise = serviceFactory.init()
+const intervalService = IntervalService.instance
 //#endregion
 
 //#region public methods
@@ -15,16 +17,20 @@ const getServicePromise = serviceFactory.getService()
  * @param ws WS instance
  */
 export const startSendingSensorValueLoop = async (_: string, ws: WebSocket) => {
-  const service = await getServicePromise
+  await factoryInitPromise
+  const service = serviceFactory.getService()
+
+  // Initialize service to create diagnosis
   await service.init()
   service.start()
-  sendData(ws)
+  sendData(ws, service)
 }
 
 export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
-  const service = await getServicePromise
+  await factoryInitPromise
+  const service = serviceFactory.getService()
   service.stop()
-  IntervalController.clear(service.name)
+  intervalService.clear(service.name)
   ws.send(
     JSON.stringify({
       type: WS_MESSAGE_TYPE.RECORD_ID,
@@ -34,25 +40,24 @@ export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
 //#endregion
 
 //#region private methods
-const sendData = async (ws: WebSocket) => {
-  const service = await getServicePromise
-  try {
-    const singleBatchData = service.getSingleBatchData()
-    const sendDataInterval = setInterval(() => {
-      console.log(`Begin sending batch of [${singleBatchData.length}] data`)
-      ws.send(
-        JSON.stringify({
-          type: WS_MESSAGE_TYPE.RECORDED_DATA,
-          recordedData: singleBatchData,
-        }),
-      )
-    }, 200)
+const sendSingleBatchData = (ws: WebSocket, service: ISensorService) => () => {
+  const singleBatchData = service.getSingleBatchData()
+  console.log(`Begin sending batch of [${singleBatchData.length}] data`)
+  ws.send(
+    JSON.stringify({
+      type: WS_MESSAGE_TYPE.RECORDED_DATA,
+      recordedData: singleBatchData,
+    }),
+  )
+}
 
-    IntervalController.registerInterval(service.name, sendDataInterval)
+const sendData = async (ws: WebSocket, service: ISensorService) => {
+  try {
+    console.log('Registering interval to send data every cycle')
+    const sendDataInterval = setInterval(sendSingleBatchData(ws, service), 200)
+    intervalService.registerInterval(service.name, sendDataInterval)
   } catch (error) {
     console.error(error)
-  } finally {
-    IntervalController.clear(service.name)
   }
 }
 //#endregion

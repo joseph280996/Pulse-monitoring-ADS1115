@@ -81,17 +81,21 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
   }
 
   async create(record: RecordDto): Promise<Record> {
-    const serializedData = JSON.stringify(record.data)
-    const result = await this.db.query<
-      { insertId: number },
-      [[string, number]]
-    >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisID]])
+    try {
+      const serializedData = JSON.stringify(record.data)
+      const result = await this.db.query<
+        { insertId: number },
+        [[string, number]]
+      >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisID]])
 
-    return new Record({
-      ...record,
-      data: serializedData,
-      id: result.insertId,
-    })
+      return new Record({
+        ...record,
+        data: serializedData,
+        id: result.insertId,
+      })
+    } catch (error) {
+      throw new Error(`Error saving record: ${(error as Error).message}`)
+    }
   }
 
   async update(updatedRecord: RecordDto): Promise<boolean> {

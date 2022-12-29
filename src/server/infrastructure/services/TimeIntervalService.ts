@@ -1,7 +1,15 @@
 class TimeIntervalService {
   //#region properties
+  private static _instance: TimeIntervalService
   private intervals: Map<string, NodeJS.Timeout | null> = new Map()
   //#endregion
+
+  static get instance() {
+    if (!this._instance) {
+      this._instance = new TimeIntervalService()
+    }
+    return this._instance
+  }
 
   //#region public methods
   registerInterval(name: string, interval: NodeJS.Timeout): void {
@@ -23,4 +31,4 @@ class TimeIntervalService {
   //#endregion
 }
 
-export default new TimeIntervalService()
+export default TimeIntervalService
