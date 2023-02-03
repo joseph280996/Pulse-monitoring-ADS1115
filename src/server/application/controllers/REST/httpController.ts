@@ -27,6 +27,11 @@ export default [
     route: '/record-latest',
     handler: RecordHandlers.getMostRecentRecord,
   },
+  {
+    method: 'get',
+    route: '/diagnosis/:id/records',
+    handler: DiagnosisHandler.getByID,
+  },
   //#endregion
 
   //#region POST handlers

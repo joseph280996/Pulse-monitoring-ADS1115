@@ -48,7 +48,7 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     return new Record({ ...res[0], data: JSON.parse(res[0].data) })
   }
 
-  async getByDiagnosisID(diagnosisID?: number) {
+  async getByDiagnosisID(diagnosisID?: number): Promise<any> {
     if (!diagnosisID) {
       return []
     }
@@ -56,12 +56,16 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
       RecordSqls.GET_BY_DIAGNOSIS_ID,
       [diagnosisID],
     )
-    return res && res.length > 0
-      ? res.map(
-          (row: RecordDataType) =>
-            new Record({ ...row, data: JSON.parse(row.data) }),
-        )
-      : []
+
+    if (res && res.length > 0) {
+      return res.reduce(
+        (recordedData: any, row: RecordDataType) => {
+          const data = JSON.parse(row.data)
+          return [...recordedData, ...data]
+        }, []
+      )
+    }
+    return []
   }
 
   async getByDiagnosisIDAndType(diagnosisID: number) {
@@ -74,9 +78,9 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     )
     return res && res.length > 0
       ? res.map(
-          (row: RecordDataType) =>
-            new Record({ ...row, data: JSON.parse(row.data) }),
-        )
+        (row: RecordDataType) =>
+          new Record({ ...row, data: JSON.parse(row.data) }),
+      )
       : []
   }
 

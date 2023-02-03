@@ -1,1 +1,1 @@
-declare module 'ads1115'
+declare module 'ads1115';

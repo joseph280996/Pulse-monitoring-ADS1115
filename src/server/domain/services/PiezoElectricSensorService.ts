@@ -1,14 +1,16 @@
+/// <reference path="../../../types/ads1115/index.d.ts"/>
+
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-unresolved
 import i2c, { PromisifiedBus } from 'i2c-bus'
 import ADS1115 from 'ads1115'
 import moment from 'moment'
 import { RecordedData } from 'src/server/application/handlers/webSocket/sensorValueHandler.types'
-import LoopService from 'src/server/infrastructure/services/LoopService'
+import LoopService from '../../infrastructure/services/LoopService'
 import getLastNElementsFromRecordedData from '../../infrastructure/utils/functions/getLastNElementsFromRecordedData'
-import DiagnosisRepository from 'src/server/domain/repositories/DiagnosisRepository'
-import Diagnosis from 'src/server/domain/models/Diagnosis'
-import RecordRepository from 'src/server/domain/repositories/RecordRepository'
+import DiagnosisRepository from '../repositories/DiagnosisRepository'
+import Diagnosis from '../models/Diagnosis'
+import RecordRepository from '../repositories/RecordRepository'
 import Record from '../models/Record'
 import ISensorService from '../interfaces/ISensorService'
 
@@ -63,29 +65,30 @@ class PiezoElectricSensorService implements ISensorService {
 
   // Start Reading Values from Sensor
   start() {
+    this.store = []
     console.log('Start Reading Values from Sensor')
     this.loopService.start()
-    ;(async () => {
-      while (this.loopService.isStarted) {
-        // When store length is 1000, swap the secondary store to use
-        if (this.store.length === 1000) {
-          this.createRecordForPreviousStorage()
-        }
+      ; (async () => {
+        while (this.loopService.isStarted) {
+          // When store length is 1000, swap the secondary store to use
+          if (this.store.length === 1000) {
+            this.createRecordForPreviousStorage()
+          }
 
-        // When length of main data storage big enough to maintain on its own,
-        // we save reset secondary
-        if (
-          this.store.length > this.BATCH_DATA_SIZE &&
-          this.saveRecordPromise
-        ) {
-          await this.saveRecordPromise
-          this.secondaryStore = []
-        }
+          // When length of main data storage big enough to maintain on its own,
+          // we save reset secondary
+          if (
+            this.store.length > this.BATCH_DATA_SIZE &&
+            this.saveRecordPromise
+          ) {
+            await this.saveRecordPromise
+            this.secondaryStore = []
+          }
 
-        const dataWithDateTime = await this.readADS1115Value()
-        this.store.push(dataWithDateTime)
-      }
-    })()
+          const dataWithDateTime = await this.readADS1115Value()
+          this.store.push(dataWithDateTime)
+        }
+      })()
   }
 
   stop() {

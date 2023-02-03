@@ -32,7 +32,6 @@ class DiagnosisRepository
   //#region public methods
   async create(diagnosis: DiagnosisDto) {
     try {
-      console.log(diagnosis)
       const result = await this.db.query<
         { insertId: number },
         [Array<number | undefined>]

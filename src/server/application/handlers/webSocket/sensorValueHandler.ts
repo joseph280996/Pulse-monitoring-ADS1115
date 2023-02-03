@@ -42,7 +42,6 @@ export const stopGetSensorValueLoop = async (_: string, ws: WebSocket) => {
 //#region private methods
 const sendSingleBatchData = (ws: WebSocket, service: ISensorService) => () => {
   const singleBatchData = service.getSingleBatchData()
-  console.log(`Begin sending batch of [${singleBatchData.length}] data`)
   ws.send(
     JSON.stringify({
       type: WS_MESSAGE_TYPE.RECORDED_DATA,

@@ -6,20 +6,23 @@ import DiagnosisRepository from '../../../domain/repositories/DiagnosisRepositor
 import PatientRepository from '../../../domain/repositories/PatientRepository'
 import formatInputDateForExport from '../../../infrastructure/utils/functions/formatInputDateForExport'
 import splitNameForDB from '../../../infrastructure/utils/functions/splitNameForDB'
+import RecordRepository from '../../../domain/repositories/RecordRepository'
 
 //#region properties
 const diagnosisRepo = DiagnosisRepository.instance
+const recordRepo = RecordRepository.instance
 //#endregion
 
 
 //#region public methods
 export const getByID: RequestHandler = async (req, res) => {
-  const { id: recordId } = req.params
-  const record = await diagnosisRepo.getByID(Number(recordId))
-  if (!record) {
-    res.status(400).send('The request record id does not exist')
+  const { id: diagnosisId } = req.params
+  console.log(diagnosisId)
+  const records = await recordRepo.getByDiagnosisID(Number(diagnosisId))
+  if (!records) {
+    res.status(400).send('The request diagnosis id does not exist')
   }
-  res.status(200).send(record)
+  res.status(200).send(records)
 }
 
 /**
