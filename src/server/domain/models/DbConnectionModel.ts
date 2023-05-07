@@ -21,12 +21,12 @@ export class DB implements IDb {
   //#region public methods
   hasPoolOpened = () => Boolean(this._pool)
 
-  query<T, K>(query: string, values?: K) {
-    return new Promise<T>((resolve, reject) => {
+  query<TReturn, TInput>(query: string, values?: TInput) {
+    return new Promise<TReturn>((resolve, reject) => {
       this.getPool()?.query(
         query,
         values,
-        (error: MysqlError | null, result: T) => {
+        (error: MysqlError | null, result: TReturn) => {
           if (error) {
             return reject(error)
           }
