@@ -1,6 +1,6 @@
 export type PatientDto = {
   id?: number | undefined
-  userID?: number
+  userId?: number
   firstName?: string
   lastName?: string
 }

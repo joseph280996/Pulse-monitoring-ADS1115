@@ -1,6 +1,6 @@
 interface IPatient {
   id?: number
-  userID?: number
+  userId?: number
   firstName?: string
   lastName?: string
 }

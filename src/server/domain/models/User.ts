@@ -13,7 +13,7 @@ class User implements IUser {
   //#region constant properties
   private readonly saltRounds = 12
   private static readonly sqlFields =
-    'id as userID, passwordHash, firstName, lastName'
+    'id as userId, passwordHash, firstName, lastName'
   //#endregion
 
   //#region properties
@@ -34,7 +34,7 @@ class User implements IUser {
   //#endregion
 
   //#region public methods
-  static async getUserByID(id: number): Promise<User | null> {
+  static async getUserById(id: number): Promise<User | null> {
     const result = await DB.query<User, Array<number>>(
       `SELECT ${User.sqlFields} FROM User WHERE id=?;`,
       [id],
@@ -44,11 +44,11 @@ class User implements IUser {
 
   async save(): Promise<boolean> {
     if (this.id) {
-      const foundUser = await User.getUserByID(this.id)
+      const foundUser = await User.getUserById(this.id)
       if (foundUser) {
         return true
       }
-      throw new Error('Cannot find user with given ID')
+      throw new Error('Cannot find user with given Id')
     }
     if (!this.password) {
       throw new Error('Password is required to create a user')

@@ -8,18 +8,16 @@ import IRepository from '../interfaces/IRepository'
 class RecordRepository implements IRepository<RecordDto, Record | null> {
   //#region properties
   private static _instance: RecordRepository
-
-  private db: DB
   //#endregion
 
   //#region constructor
-  constructor(db = DBInstance) {
+  constructor(private db: DB = DBInstance) {
     this.db = db
   }
   //#endregion
 
   //#region getters
-  static get instance() {
+  public static get instance() {
     if (!this._instance) {
       this._instance = new RecordRepository()
     }
@@ -30,31 +28,31 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
   //#region public methods
   async exist(id: number) {
     try {
-      await this.getByID(id)
+      await this.getById(id)
       return true
     } catch (err) {
       return false
     }
   }
 
-  async getByID(id: number) {
+  async getById(id: number) {
     const res = await this.db.query<[RecordDataType], [number]>(
       RecordSqls.GET_BY_ID,
       [id],
     )
     if (!res) {
-      throw new Error(`Cannot find Record with ID [${id}]`)
+      throw new Error(`Cannot find Record with Id [${id}]`)
     }
     return new Record({ ...res[0], data: JSON.parse(res[0].data) })
   }
 
-  async getByDiagnosisID(diagnosisID?: number): Promise<any> {
-    if (!diagnosisID) {
+  async getByDiagnosisId(diagnosisId?: number): Promise<any> {
+    if (!diagnosisId) {
       return []
     }
     const res = await this.db.query<RecordDataType[], [number]>(
       RecordSqls.GET_BY_DIAGNOSIS_ID,
-      [diagnosisID],
+      [diagnosisId],
     )
 
     if (res && res.length > 0) {
@@ -68,13 +66,13 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     return []
   }
 
-  async getByDiagnosisIDAndType(diagnosisID: number) {
-    if (!diagnosisID) {
+  async getByDiagnosisIdAndType(diagnosisId: number) {
+    if (!diagnosisId) {
       return []
     }
     const res = await this.db.query<RecordDataType[], number[]>(
       RecordSqls.GET_BY_DIAGNOSIS_ID_AND_TYPE,
-      [diagnosisID],
+      [diagnosisId],
     )
     return res && res.length > 0
       ? res.map(
@@ -90,7 +88,7 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
       const result = await this.db.query<
         { insertId: number },
         [[string, number]]
-      >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisID]])
+      >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisId]])
 
       return new Record({
         ...record,

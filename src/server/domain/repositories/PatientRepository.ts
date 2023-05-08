@@ -45,7 +45,7 @@ class PatientRepository implements IRepository<PatientDto, Patient | null> {
       : []
   }
 
-  async getByID(id: number) {
+  async getById(id: number) {
     const result = await this.db.query<PatientDataType, number[]>(
       PatientSqls.GET_BY_ID,
       [id],

@@ -4,8 +4,10 @@ import cors from 'cors'
 import Express, { json, urlencoded } from 'express'
 import WebSocket, { RawData, Server as WebSocketServer } from 'ws'
 import db from '../domain/models/DbConnectionModel'
-import { RouteType } from './controllers/REST/httpController.types'
-import { WebsocketMessageTypeHandler } from './controllers/WebSocket/wsController.types'
+import DiagnosisController from './controllers/REST/diagnosisController'
+import HandPositionsController from './controllers/REST/handPositionsController'
+import PulseTypesController from './controllers/REST/pulseTypesController'
+import SensorController from './controllers/WebSocket/sensorController'
 
 interface ServerInterface {
   cleanUp: () => void
@@ -35,25 +37,18 @@ class Server implements ServerInterface {
     )
   }
 
-  registerRoutes(routes: RouteType[]) {
-    routes.forEach(({ method, route, handler, validator }) => {
-      if (validator) {
-        this.app.use(route, validator)
-      }
-      this.app[method](route, handler)
-    })
+  registerRouter() {
+    this.app.use('/diagnosis', DiagnosisController.instance.router)
+    this.app.use('/hand-position', HandPositionsController.instance.router)
+    this.app.use('/pulse-types', PulseTypesController.instance.router)
   }
 
-  registerWebsocketMessageTypes(messageTypes: WebsocketMessageTypeHandler) {
+  registerWebsocketMessageTypes() {
     this.wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
       // eslint-disable-next-line no-console
       console.log(`Connection from ${req.socket.remoteAddress} established`)
       ws.on('message', (rawMessage: RawData) => {
-        const message = rawMessage.toString()
-        const [operation, data] = message.split(';')
-        console.log(`Received command to [${operation}] with data [${data}]`)
-        const handler = messageTypes[operation]
-        handler(data, ws)
+        SensorController.instance.router(rawMessage, ws)
       })
     })
   }

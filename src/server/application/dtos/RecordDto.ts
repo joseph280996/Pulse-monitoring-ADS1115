@@ -3,7 +3,7 @@ import { RecordedData } from '../handlers/webSocket/sensorValueHandler.types'
 type RecordDto = {
   id?: number
   data: RecordedData[]
-  diagnosisID: number
+  diagnosisId: number
   dateTimeCreated?: string
   dateTimeUpdated?: string
 }

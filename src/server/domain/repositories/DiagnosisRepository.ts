@@ -1,13 +1,13 @@
-import { DiagnosisDto } from 'src/server/application/dtos/DiagnosisDto'
 import IRepository from '../interfaces/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import Diagnosis from '../models/Diagnosis'
-import { GetDiagnosisByRangeInputType } from '../models/Diagnosis.types'
+import {
+  GetDiagnosisByRangeInputType,
+} from '../models/Diagnosis.types'
 import * as DiagnosisSqls from '../sqls/diagnosisSqls'
+import RecordRepository from './RecordRepository'
 
-class DiagnosisRepository
-  implements IRepository<DiagnosisDto, Diagnosis | null>
-{
+class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
   //#region properties
   db!: DB
 
@@ -30,27 +30,33 @@ class DiagnosisRepository
   //#endregion
 
   //#region public methods
-  async create(diagnosis: DiagnosisDto) {
+  async create(diagnosis: Diagnosis) {
     try {
       const result = await this.db.query<
-        { insertId: number },
+        [{ insertId: number }, Diagnosis],
         [Array<number | undefined>]
       >(DiagnosisSqls.CREATE_DIAGNOSIS, [
-        [diagnosis.pulseTypeID, diagnosis.patientID],
+        [diagnosis.pulseTypeId, diagnosis.patientId],
       ])
-      return new Diagnosis({
-        ...diagnosis,
-        id: result.insertId,
-      })
+
+      const insertedDiagnosis = result[1]
+      return new Diagnosis(
+        insertedDiagnosis.patientId,
+        insertedDiagnosis.handPositionId,
+        insertedDiagnosis.pulseTypeId,
+        insertedDiagnosis.id,
+        insertedDiagnosis.dateTimeCreated,
+        insertedDiagnosis.dateTimeUpdated,
+      )
     } catch (error) {
       throw new Error(`Error Creating Diagnosis: ${(error as Error).message}`)
     }
   }
 
-  async update(updateDiagnosis: DiagnosisDto) {
+  async update(updateDiagnosis: Diagnosis) {
     const result = await this.db.query<
       { affectedRows: number },
-      [DiagnosisDto, number]
+      [Diagnosis, number]
     >(DiagnosisSqls.UPDATE_DIAGNOSIS, [
       updateDiagnosis,
       updateDiagnosis.id || 0,
@@ -58,25 +64,58 @@ class DiagnosisRepository
     return !!result && result.affectedRows > 0
   }
 
-  async getByID(id: number) {
-    const res: DiagnosisDto = await this.db.query<DiagnosisDto, [number]>(
+  async getAll(): Promise<Diagnosis[]> {
+    const res: any[] = await this.db.query<Diagnosis[], []>(
+      DiagnosisSqls.GET_ALL,
+      [],
+    )
+
+    if (!res || res.length == 0) {
+      return []
+    }
+
+    return res
+  }
+
+  public async getById(id: number) {
+    return this.getByIdWithRecord(id, false)
+  }
+
+  public async getByIdWithRecord(id: number, shouldPopulateRecords = true) {
+    const res = await this.db.query<Diagnosis[], [number]>(
       DiagnosisSqls.GET_BY_ID,
       [id],
     )
-    return res ? new Diagnosis(res) : null
+
+    if (!res) {
+      return null
+    }
+
+    const diagnosis = res[0]
+
+    if (shouldPopulateRecords) {
+      const records = await RecordRepository.instance.getByDiagnosisId(id)
+
+      diagnosis.piezoElectricRecords = records
+    }
+
+    return diagnosis
   }
 
   async getByDateRange({
     startDate,
     endDate,
   }: GetDiagnosisByRangeInputType): Promise<Diagnosis[]> {
-    const res = await this.db.query<DiagnosisDto[], string[]>(
+    const res = await this.db.query<Diagnosis[], string[]>(
       DiagnosisSqls.GET_BY_DATE_RANGE,
       [startDate, endDate],
     )
-    return res && res.length > 0
-      ? res.map((row: DiagnosisDto) => new Diagnosis(row))
-      : []
+
+    if (!res || res.length == 0) {
+      return []
+    }
+
+    return res
   }
   //#endregion
 }

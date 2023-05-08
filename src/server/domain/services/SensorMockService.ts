@@ -57,33 +57,33 @@ class SensorMockService {
   // Start Reading Values from Sensor
   start() {
     this.loopService.start()
-    ;(async () => {
-      while (this.loopService.isStarted) {
-        // When store length is 1000, swap the secondary store to use
-        if (this.store.length === 200) {
-          console.log('Switching Store')
-          this.swapStore()
-        }
+      ; (async () => {
+        while (this.loopService.isStarted) {
+          // When store length is 1000, swap the secondary store to use
+          if (this.store.length === 200) {
+            console.log('Switching Store')
+            this.swapStore()
+          }
 
-        // When length of main data storage big enough to maintain on its own,
-        // we save reset secondary
-        if (
-          this.store.length > this.BATCH_DATA_SIZE &&
-          this.secondaryStore.length > 0
-        ) {
-          console.log('Begin saving Record')
-          await this.recordRepo.create({
-            data: this.secondaryStore,
-            diagnosisID: this.diagnosis?.id as number,
-          })
-          console.log('Finish Saving Record')
-          this.secondaryStore = []
-        }
+          // When length of main data storage big enough to maintain on its own,
+          // we save reset secondary
+          if (
+            this.store.length > this.BATCH_DATA_SIZE &&
+            this.secondaryStore.length > 0
+          ) {
+            console.log('Begin saving Record')
+            await this.recordRepo.create({
+              data: this.secondaryStore,
+              diagnosisId: this.diagnosis?.id as number,
+            })
+            console.log('Finish Saving Record')
+            this.secondaryStore = []
+          }
 
-        const dataWithDateTime = await this.readData()
-        this.store.push(dataWithDateTime)
-      }
-    })()
+          const dataWithDateTime = await this.readData()
+          this.store.push(dataWithDateTime)
+        }
+      })()
   }
 
   stop() {

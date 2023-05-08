@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 import ISensorService from '../interfaces/ISensorService'
 
 class SensorDataServiceFactory {
+
   //#region properties
   private static _instance: SensorDataServiceFactory
   private runningEnv!: string

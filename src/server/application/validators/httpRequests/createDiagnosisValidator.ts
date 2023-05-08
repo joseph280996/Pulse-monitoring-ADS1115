@@ -6,17 +6,17 @@ const recordRepo = RecordRepository.instance
 //#endregion
 
 //#region public methods
-async function validateRecordID(recordID: number) {
-  const isRecordExist = await recordRepo.getByID(recordID)
+async function validateRecordId(recordId: number) {
+  const isRecordExist = await recordRepo.getById(recordId)
   if (!isRecordExist) {
-    throw new Error(`Cannot find Record with ID [${recordID}]`)
+    throw new Error(`Cannot find Record with Id [${recordId}]`)
   }
 }
 
 export default async (req: Request, res: Response, next: NextFunction) => {
-  const { recordID } = req.body
+  const { recordId } = req.body
   try {
-    await validateRecordID(recordID)
+    await validateRecordId(recordId)
     next()
   } catch (error) {
     res.status(400).send((error as Error).message)

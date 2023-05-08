@@ -1,9 +1,9 @@
 import { config } from 'dotenv'
 import { MysqlError, Pool, createPool } from 'mysql'
-import IDb from '../interfaces/IDb'
+import Idb from '../interfaces/Idb'
 
 config()
-export class DB implements IDb {
+export class DB implements Idb {
   //#region properties
   private _pool?: Pool
   private static readonly DBConf = {

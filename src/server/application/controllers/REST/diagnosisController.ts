@@ -67,7 +67,7 @@ class DiagnosisController {
    * @param res Express Response object
    */
   createDiagnosis: RequestHandler = async (req, res) => {
-    const { patientName, recordID, pulseTypeID } = req.body
+    const { patientName, recordId, pulseTypeId } = req.body
     try {
       const [firstName, lastName] = splitNameForDB(patientName)
 
@@ -77,9 +77,9 @@ class DiagnosisController {
       })
 
       const newDiagnosis = new Diagnosis(
-        pulseTypeID,
+        pulseTypeId,
         patient?.id as number,
-        recordID
+        recordId
       )
       const savedDiagnosis = await this.diagnosisRepo.create(newDiagnosis)
 

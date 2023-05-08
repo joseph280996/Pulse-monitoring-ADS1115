@@ -1,11 +1,10 @@
 /* eslint-disable no-await-in-loop*/
 import dotenv from 'dotenv'
 import WS_MESSAGE_TYPE from '../../../infrastructure/variables/wsMessageType'
-import * as sensorHandler from '../../handlers/webSocket/sensorValueHandler'
-import SensorDataServiceFactory from 'src/server/domain/factories/sensorDataServiceFactory'
-import TimeIntervalService from 'src/server/infrastructure/services/TimeIntervalService'
+import SensorDataServiceFactory from '../../../domain/factories/sensorDataServiceFactory'
+import TimeIntervalService from '../../../infrastructure/services/TimeIntervalService'
 import WebSocket, { RawData } from 'ws'
-import ISensorService from 'src/server/domain/interfaces/ISensorService'
+import ISensorService from '../../../domain/interfaces/ISensorService'
 
 dotenv.config()
 class SensorController {
@@ -26,13 +25,16 @@ class SensorController {
     this.factoryInitPromise = sensorServiceFactory.init()
   }
 
-  public router(rawMessage: RawData){
-        const message = rawMessage.toString()
-        const [operation, data] = message.split(';')
-        console.log(`Received event to [${operation}] with data [${data}]`)
-        const handler = [operation]
-        handler(data, ws)
+  public router(rawMessage: RawData, ws: WebSocket) {
+    const message = rawMessage.toString()
+    const [operation, data] = message.split(';')
+    console.log(`Received event to [${operation}] with data [${data}]`)
 
+    if (operation == 'start') {
+      this.start(data, ws)
+    } else {
+      this.stop(data, ws)
+    }
   }
 
   public async start(_: string, ws: WebSocket) {

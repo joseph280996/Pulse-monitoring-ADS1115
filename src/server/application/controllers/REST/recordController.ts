@@ -10,14 +10,14 @@ class RecordController {
   }
 
   //#region public methods
-  getByID: RequestHandler = async (req, res) => {
-    const { id: recordID } = req.params
+  getById: RequestHandler = async (req, res) => {
+    const { id: recordId } = req.params
     try {
-      const record = await this.recordRepo.getById(Number(recordID))
+      const record = await this.recordRepo.getById(Number(recordId))
       res.status(200).send(record)
     } catch (err) {
-      console.error(`Record cannot be found with ID [${recordID}]`)
-      res.status(400).send(`Record cannot be found with ID [${recordID}]`)
+      console.error(`Record cannot be found with Id [${recordId}]`)
+      res.status(400).send(`Record cannot be found with Id [${recordId}]`)
     }
   }
 
@@ -32,7 +32,7 @@ class RecordController {
   }
 
   private registerRoutes() {
-    this.router.get('/:id', this.getByID)
+    this.router.get('/:id', this.getById)
   }
   //#endregion
 }

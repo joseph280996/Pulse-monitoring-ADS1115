@@ -114,7 +114,7 @@ class PiezoElectricSensorService implements ISensorService {
     this.swapStore()
     this.saveRecordPromise = this.recordRepo.create({
       data: this.secondaryStore,
-      diagnosisID: this.diagnosis?.id as number,
+      diagnosisId: this.diagnosis?.id as number,
     })
   }
 
