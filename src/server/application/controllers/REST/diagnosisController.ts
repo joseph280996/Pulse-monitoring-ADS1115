@@ -37,7 +37,6 @@ class DiagnosisController {
    */
   getAllDiagnoses: RequestHandler = async (_, res) => {
     const diagnoses = await this.diagnosisRepo.getAll()
-    console.log(diagnoses);
     res.status(200).send(diagnoses)
   }
 
