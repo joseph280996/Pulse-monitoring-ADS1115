@@ -5,14 +5,14 @@
 import i2c, { PromisifiedBus } from 'i2c-bus'
 import ADS1115 from 'ads1115'
 import moment from 'moment'
-import { RecordedData } from 'src/server/application/handlers/webSocket/sensorValueHandler.types'
 import LoopService from '../../infrastructure/services/LoopService'
 import getLastNElementsFromRecordedData from '../../infrastructure/utils/functions/getLastNElementsFromRecordedData'
 import DiagnosisRepository from '../repositories/DiagnosisRepository'
 import Diagnosis from '../models/Diagnosis'
 import RecordRepository from '../repositories/RecordRepository'
-import Record from '../models/Record'
+import RecordSession from '../models/RecordSession'
 import ISensorService from '../interfaces/ISensorService'
+import Record from '../models/Record'
 
 class PiezoElectricSensorService implements ISensorService {
   //#region properties
@@ -23,10 +23,10 @@ class PiezoElectricSensorService implements ISensorService {
 
   private readonly loopService: LoopService = new LoopService()
 
-  private store: RecordedData[] = []
-  private secondaryStore: RecordedData[] = []
+  private store: Record[] = []
+  private secondaryStore: Record[] = []
 
-  private saveRecordPromise: Promise<Record> | null = null
+  private saveRecordPromise: Promise<RecordSession> | null = null
   private bus: PromisifiedBus | null = null
   private ads1115: typeof ADS1115 = ADS1115
   private diagnosis: Diagnosis | null = null
@@ -118,12 +118,12 @@ class PiezoElectricSensorService implements ISensorService {
     })
   }
 
-  private async readADS1115Value(): Promise<RecordedData> {
+  private async readADS1115Value(): Promise<Record> {
     const data: number = await this.ads1115.measure('0+GND')
-    return {
-      timeStamp: moment.utc().valueOf(),
+    return new Record(
+      moment.utc().valueOf(),
       data,
-    }
+    )
   }
 
   private swapStore() {

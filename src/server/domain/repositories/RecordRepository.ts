@@ -1,11 +1,11 @@
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import RecordDto from 'src/server/application/dtos/RecordDto'
-import Record from '../models/Record'
+import RecordSession from '../models/RecordSession'
 import { RecordDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSqls'
 import IRepository from '../interfaces/IRepository'
 
-class RecordRepository implements IRepository<RecordDto, Record | null> {
+class RecordRepository implements IRepository<RecordDto, RecordSession | null> {
   //#region properties
   private static _instance: RecordRepository
   //#endregion
@@ -43,7 +43,7 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     if (!res) {
       throw new Error(`Cannot find Record with Id [${id}]`)
     }
-    return new Record({ ...res[0], data: JSON.parse(res[0].data) })
+    return new RecordSession({ ...res[0], data: JSON.parse(res[0].data) })
   }
 
   async getByDiagnosisId(recordTypeId: number, diagnosisId?: number): Promise<any> {
@@ -77,12 +77,12 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     return res && res.length > 0
       ? res.map(
         (row: RecordDataType) =>
-          new Record({ ...row, data: JSON.parse(row.data) }),
+          new RecordSession({ ...row, data: JSON.parse(row.data) }),
       )
       : []
   }
 
-  async create(record: RecordDto): Promise<Record> {
+  async create(record: RecordDto): Promise<RecordSession> {
     try {
       const serializedData = JSON.stringify(record.data)
       const result = await this.db.query<
@@ -90,10 +90,11 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
         [[string, number, number]]
       >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisId, 1]])
 
-      return new Record({
+      return new RecordSession({
         ...record,
         data: serializedData,
         id: result.insertId,
+        recordTypeId: 1
       })
     } catch (error) {
       throw new Error(`Error saving record: ${(error as Error).message}`)
@@ -120,12 +121,12 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     ])
   }
 
-  async getLatest(): Promise<Record | null> {
+  async getLatest(): Promise<RecordSession | null> {
     const result = await this.db.query<RecordDataType[], undefined>(
       RecordSqls.GET_LATEST,
     )
     return result?.length > 0
-      ? new Record({ ...result[0], data: JSON.parse(result[0].data) })
+      ? new RecordSession({ ...result[0], data: JSON.parse(result[0].data) })
       : null
   }
   //#endregion
@@ -133,10 +134,10 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
   //#region private methods
   private static guardAgaisntInvalidRecord(record: RecordDto | null) {
     if (!record) {
-      throw new Error(`Parameter is null (${Record.name})`)
+      throw new Error(`Parameter is null (${RecordSession.name})`)
     }
     if (!record.id) {
-      throw new Error(`Required field is missing for ${Record.name}`)
+      throw new Error(`Required field is missing for ${RecordSession.name}`)
     }
   }
   //#endregion
