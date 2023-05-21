@@ -94,9 +94,11 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
     const diagnosis = res[0]
 
     if (shouldPopulateRecords) {
-      const records = await RecordRepository.instance.getByDiagnosisId(id)
+      const piezoRecords = await RecordRepository.instance.getByDiagnosisId(id, 1)
+      const ecgRecords = await RecordRepository.instance.getByDiagnosisId(id, 2)
 
-      diagnosis.piezoElectricRecords = records
+      diagnosis.piezoElectricRecords = piezoRecords
+      diagnosis.ecgRecords = ecgRecords
     }
 
     return diagnosis

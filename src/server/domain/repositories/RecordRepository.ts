@@ -46,13 +46,13 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
     return new Record({ ...res[0], data: JSON.parse(res[0].data) })
   }
 
-  async getByDiagnosisId(diagnosisId?: number): Promise<any> {
+  async getByDiagnosisId(recordTypeId: number, diagnosisId?: number): Promise<any> {
     if (!diagnosisId) {
       return []
     }
-    const res = await this.db.query<RecordDataType[], [number]>(
-      RecordSqls.GET_BY_DIAGNOSIS_ID,
-      [diagnosisId],
+    const res = await this.db.query<RecordDataType[], [number, number]>(
+      RecordSqls.GET_PIEZO_RECORDS_BY_DIAGNOSIS_ID,
+      [diagnosisId, recordTypeId],
     )
 
     if (res && res.length > 0) {
@@ -87,8 +87,8 @@ class RecordRepository implements IRepository<RecordDto, Record | null> {
       const serializedData = JSON.stringify(record.data)
       const result = await this.db.query<
         { insertId: number },
-        [[string, number]]
-      >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisId]])
+        [[string, number, number]]
+      >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisId, 1]])
 
       return new Record({
         ...record,

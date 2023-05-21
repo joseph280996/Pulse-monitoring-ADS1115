@@ -2,6 +2,7 @@ import Record from './Record'
 
 class Diagnosis {
   public piezoElectricRecords?: Record[]
+  public ecgRecords?: Record[]
 
   //#region constructor
   constructor(
