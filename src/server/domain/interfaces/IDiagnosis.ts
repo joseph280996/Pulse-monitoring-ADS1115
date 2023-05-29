@@ -1,9 +1,9 @@
 import { DiagnosisDto } from '../dtos/DiagnosisDto'
-import Record from '../models/Record'
+import RecordSession from '../models/RecordSession'
 
 export interface Idiagnosis extends DiagnosisDto {
   id?: number
   pulseTypeId?: number
   patientId?: number
-  records?: [Record]
+  records?: [RecordSession]
 }

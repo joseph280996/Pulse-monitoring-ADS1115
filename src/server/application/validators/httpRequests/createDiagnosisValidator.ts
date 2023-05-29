@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import RecordRepository from '../../../domain/repositories/RecordRepository'
 
 //#region properties
-const recordRepo = RecordRepository.instance
+const recordRepo = new RecordRepository()
 //#endregion
 
 //#region public methods

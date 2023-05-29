@@ -1,11 +1,11 @@
-import { RecordedData } from '../../application/handlers/webSocket/sensorValueHandler.types'
+import Record from "../models/Record"
 
 interface PiezoElectricSensorService {
   name: string
   init(): Promise<unknown>
   start(): void
   stop(): void
-  getSingleBatchData(): RecordedData[]
+  getSingleBatchData(): Record[]
 }
 
 export default PiezoElectricSensorService

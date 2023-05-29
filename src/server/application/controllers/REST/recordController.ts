@@ -3,7 +3,7 @@ import RecordRepository from '../../../domain/repositories/RecordRepository'
 
 class RecordController {
   constructor(
-    private recordRepo: RecordRepository = RecordRepository.instance,
+    private recordRepo: RecordRepository = new RecordRepository(),
     private router: Router = express.Router(),
   ) {
     this.registerRoutes()

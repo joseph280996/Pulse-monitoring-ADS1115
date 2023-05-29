@@ -1,6 +1,8 @@
 import HandPosition from '../models/HandPosition'
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import IRepository from '../interfaces/IRepository'
+import * as HandPositionSqls from '../sqls/handPositionSqls'
+import { HandPositionType } from '../models/HandPosition.types'
 
 class HandPositionRepository
   implements IRepository<unknown, HandPosition | null> {
@@ -36,22 +38,19 @@ class HandPositionRepository
   //#region public methods
 
   async getAll(): Promise<HandPosition[]> {
-    const res: HandPosition[] = await this.db.query<DiagnosisDto[], []>(
-      DiagnosisSqls.GET_ALL,
+    const res: HandPositionType[] = await this.db.query<HandPositionType[], []>(
+      HandPositionSqls.GET_ALL,
       [],
     )
     return res && res.length > 0
-      ? res.map((row: DiagnosisDto) => new Diagnosis(row))
+      ? res.map((row: HandPositionType) => new HandPosition(row))
       : []
   }
 
-  async getById(id: number) {
-    const res: DiagnosisDto = await this.db.query<DiagnosisDto, [number]>(
-      DiagnosisSqls.GET_BY_ID,
-      [id],
-    )
-    return res ? new Diagnosis(res) : null
+  async getById(_: number): Promise<HandPosition | null> {
+    throw new Error("Not yet implemented")
   }
+
   //#endregion
 }
-export default DiagnosisRepository
+export default HandPositionRepository

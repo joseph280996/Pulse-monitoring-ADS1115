@@ -1,3 +1,4 @@
+import EcgSensorService from '../../infrastructure/services/EcgSensorService'
 import IRepository from '../interfaces/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import Diagnosis from '../models/Diagnosis'
@@ -8,25 +9,12 @@ import * as DiagnosisSqls from '../sqls/diagnosisSqls'
 import RecordRepository from './RecordRepository'
 
 class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
-  //#region properties
-  db!: DB
-
-  private static _instance: DiagnosisRepository
-  //#endregion
-
-  //#region getters
-  static get instance(): DiagnosisRepository {
-    if (!this._instance) {
-      this._instance = new DiagnosisRepository()
-    }
-    return this._instance
-  }
-  //#endregion
-
   //#region constructor
-  constructor(db = DBInstance) {
-    this.db = db
-  }
+  constructor(
+    private db: DB = DBInstance,
+    private ecgSensorService: EcgSensorService = EcgSensorService.instance,
+    private recordRepository: RecordRepository = new RecordRepository()
+  ) { }
   //#endregion
 
   //#region public methods
@@ -39,7 +27,12 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
         [diagnosis.pulseTypeId, diagnosis.patientId],
       ])
 
+      if (!result[0].insertId) {
+        return null;
+      }
+
       const insertedDiagnosis = result[1]
+      await this.ecgSensorService.notifyDiagnosisCreated(insertedDiagnosis.id as number);
       return new Diagnosis(
         insertedDiagnosis.patientId,
         insertedDiagnosis.handPositionId,
@@ -94,8 +87,8 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
     const diagnosis = res[0]
 
     if (shouldPopulateRecords) {
-      const piezoRecords = await RecordRepository.instance.getByDiagnosisId(id, 1)
-      const ecgRecords = await RecordRepository.instance.getByDiagnosisId(id, 2)
+      const piezoRecords = await this.recordRepository.getByDiagnosisId(id, 1)
+      const ecgRecords = await this.recordRepository.getByDiagnosisId(id, 2)
 
       diagnosis.piezoElectricRecords = piezoRecords
       diagnosis.ecgRecords = ecgRecords

@@ -1,3 +1,3 @@
-import { RecordedData } from '../../../application/handlers/webSocket/sensorValueHandler.types'
+import Record from "src/server/domain/models/Record";
 
-export default (store: RecordedData[], num: number) => store.slice(-num)
+export default (store: Record[], num: number) => store.slice(-num)
