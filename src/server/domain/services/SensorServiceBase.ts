@@ -15,8 +15,8 @@ abstract class SensorServiceBase implements ISensorService {
 
     //#region constructor
     constructor(
-        protected diagnosisRepo: DiagnosisRepository = DiagnosisRepository.instance,
-        private recordRepo: RecordRepository = RecordRepository.instance,
+        protected diagnosisRepo: DiagnosisRepository = new DiagnosisRepository(),
+        private recordRepo: RecordRepository = new RecordRepository(),
         private saveRecordPromise: Promise<RecordSession> | null = null,
         protected diagnosis: Diagnosis | null = null,
         private store: Record[] = [],

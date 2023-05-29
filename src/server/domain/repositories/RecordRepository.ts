@@ -6,22 +6,9 @@ import * as RecordSqls from '../sqls/recordSqls'
 import IRepository from '../interfaces/IRepository'
 
 class RecordRepository implements IRepository<RecordDto, RecordSession | null> {
-  //#region properties
-  private static _instance: RecordRepository
-  //#endregion
-
   //#region constructor
   constructor(private db: DB = DBInstance) {
     this.db = db
-  }
-  //#endregion
-
-  //#region getters
-  public static get instance() {
-    if (!this._instance) {
-      this._instance = new RecordRepository()
-    }
-    return this._instance
   }
   //#endregion
 

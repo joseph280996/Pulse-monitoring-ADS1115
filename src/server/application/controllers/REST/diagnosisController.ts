@@ -20,7 +20,7 @@ class DiagnosisController {
   //#region Constructors
   constructor(
     public router: Router = express.Router(),
-    private readonly diagnosisRepo = DiagnosisRepository.instance,
+    private readonly diagnosisRepo = new DiagnosisRepository(),
   ) {
     this.registerRoutes()
   }
