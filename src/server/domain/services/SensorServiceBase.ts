@@ -6,11 +6,12 @@ import RecordRepository from '../repositories/RecordRepository'
 import RecordSession from '../models/RecordSession'
 import ISensorService from '../interfaces/ISensorService'
 import Record from '../models/Record'
+import recordTypes from 'src/server/infrastructure/variables/recordTypes'
 
 abstract class SensorServiceBase implements ISensorService {
     //#region Abstract Methods
-    public abstract get name(): string;
-    protected abstract readADS1115Value(): Promise<Record>;
+    public abstract get name(): string
+    protected abstract readADS1115Value(): Promise<Record>
     //#endregion
 
     //#region constructor
@@ -22,7 +23,7 @@ abstract class SensorServiceBase implements ISensorService {
         private store: Record[] = [],
         private secondaryStore: Record[] = [],
         private readonly BATCH_DATA_SIZE = 20,
-        private readonly loopService: LoopService = new LoopService()
+        private readonly loopService: LoopService = new LoopService(),
     ) {
     }
     //#endregion
@@ -81,8 +82,9 @@ abstract class SensorServiceBase implements ISensorService {
     private async createRecordForPreviousStorage() {
         this.swapStore()
         this.saveRecordPromise = this.recordRepo.create({
-            data: this.secondaryStore,
+            records: this.secondaryStore,
             diagnosisId: this.diagnosis?.id as number,
+            recordTypeId: recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
         })
     }
 
@@ -94,4 +96,4 @@ abstract class SensorServiceBase implements ISensorService {
     //#endregion
 }
 
-export default SensorServiceBase;
+export default SensorServiceBase

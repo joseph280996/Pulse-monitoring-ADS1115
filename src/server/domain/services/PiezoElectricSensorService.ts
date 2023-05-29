@@ -1,4 +1,4 @@
-/// <reference path="../../../types/ads1115/index.d.ts"/>
+import '../../../types/ads1115/index.d'
 
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-unresolved
@@ -10,7 +10,7 @@ import SensorServiceBase from './SensorServiceBase'
 
 class PiezoElectricSensorService extends SensorServiceBase {
   //#region properties
-  private static _instance: PiezoElectricSensorService;
+  private static _instance: PiezoElectricSensorService
   //#endregion
 
   //#region getters
@@ -31,7 +31,7 @@ class PiezoElectricSensorService extends SensorServiceBase {
   constructor(
     private readonly SERVICE_NAME = 'piezoElectricService',
     private bus: PromisifiedBus | null = null,
-    private ads1115: typeof ADS1115 = ADS1115
+    private ads1115: typeof ADS1115 = ADS1115,
   ) {
     super()
   }

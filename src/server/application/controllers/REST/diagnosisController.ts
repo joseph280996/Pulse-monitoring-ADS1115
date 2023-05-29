@@ -78,7 +78,7 @@ class DiagnosisController {
       const newDiagnosis = new Diagnosis(
         pulseTypeId,
         patient?.id as number,
-        recordId
+        recordId,
       )
       const savedDiagnosis = await this.diagnosisRepo.create(newDiagnosis)
 

@@ -23,7 +23,7 @@ class SensorMockService extends SensorServiceBase {
 
   //#region constructor
   constructor(
-    private readonly SERVICE_NAME = 'mockSensorService'
+    private readonly SERVICE_NAME = 'mockSensorService',
   ) {
     super()
   }
