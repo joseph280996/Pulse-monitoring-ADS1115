@@ -47,8 +47,8 @@ class HandPositionRepository
       : []
   }
 
-  async getById(_: number): Promise<HandPosition | null> {
-    throw new Error("Not yet implemented")
+  async getById(): Promise<HandPosition | null> {
+    throw new Error('Not yet implemented')
   }
 
   //#endregion

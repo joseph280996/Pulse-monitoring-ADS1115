@@ -1,3 +1,4 @@
+import recordTypes from 'src/server/infrastructure/variables/recordTypes'
 import EcgSensorService from '../../infrastructure/services/EcgSensorService'
 import IRepository from '../interfaces/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
@@ -13,7 +14,7 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
   constructor(
     private db: DB = DBInstance,
     private ecgSensorService: EcgSensorService = EcgSensorService.instance,
-    private recordRepository: RecordRepository = new RecordRepository()
+    private recordRepository: RecordRepository = new RecordRepository(),
   ) { }
   //#endregion
 
@@ -28,11 +29,11 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
       ])
 
       if (!result[0].insertId) {
-        return null;
+        return null
       }
 
       const insertedDiagnosis = result[1]
-      await this.ecgSensorService.notifyDiagnosisCreated(insertedDiagnosis.id as number);
+      await this.ecgSensorService.notifyDiagnosisCreated(insertedDiagnosis.id as number)
       return new Diagnosis(
         insertedDiagnosis.patientId,
         insertedDiagnosis.handPositionId,
@@ -87,8 +88,8 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
     const diagnosis = res[0]
 
     if (shouldPopulateRecords) {
-      const piezoRecords = await this.recordRepository.getByDiagnosisId(id, 1)
-      const ecgRecords = await this.recordRepository.getByDiagnosisId(id, 2)
+      const piezoRecords = await this.recordRepository.getByDiagnosisIdAndType(recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE, id)
+      const ecgRecords = await this.recordRepository.getByDiagnosisIdAndType(recordTypes.ECG_SENSOR_TYPE, id)
 
       diagnosis.piezoElectricRecords = piezoRecords
       diagnosis.ecgRecords = ecgRecords

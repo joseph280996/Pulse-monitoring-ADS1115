@@ -1,11 +1,11 @@
 import DBInstance, { DB } from '../models/DbConnectionModel'
-import RecordDto from 'src/server/application/dtos/RecordDto'
 import RecordSession from '../models/RecordSession'
-import { RecordDataType } from '../models/Record.types'
+import { RecordSessionDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSqls'
 import IRepository from '../interfaces/IRepository'
+import { mapRecordDataToModel } from '../mappers/recordSessionDataMappers'
 
-class RecordRepository implements IRepository<RecordDto, RecordSession | null> {
+class RecordRepository implements IRepository<RecordSession, RecordSession | null> {
   //#region constructor
   constructor(private db: DB = DBInstance) {
     this.db = db
@@ -23,74 +23,49 @@ class RecordRepository implements IRepository<RecordDto, RecordSession | null> {
   }
 
   async getById(id: number) {
-    const res = await this.db.query<[RecordDataType], [number]>(
+    const res = await this.db.query<[RecordSessionDataType], [number]>(
       RecordSqls.GET_BY_ID,
       [id],
     )
     if (!res) {
       throw new Error(`Cannot find Record with Id [${id}]`)
     }
-    return new RecordSession({ ...res[0], data: JSON.parse(res[0].data) })
+    return mapRecordDataToModel(res[0])
   }
 
-  async getByDiagnosisId(recordTypeId: number, diagnosisId?: number): Promise<any> {
+  async getByDiagnosisIdAndType(recordTypeId: number, diagnosisId?: number): Promise<any> {
     if (!diagnosisId) {
       return []
     }
-    const res = await this.db.query<RecordDataType[], [number, number]>(
-      RecordSqls.GET_PIEZO_RECORDS_BY_DIAGNOSIS_ID,
+    const res = await this.db.query<RecordSessionDataType[], [number, number]>(
+      RecordSqls.GET_BY_DIAGNOSIS_ID_AND_TYPE,
       [diagnosisId, recordTypeId],
     )
 
     if (res && res.length > 0) {
-      return res.reduce(
-        (recordedData: any, row: RecordDataType) => {
-          const data = JSON.parse(row.data)
-          return [...recordedData, ...data]
-        }, []
-      )
+      return res.map(mapRecordDataToModel)
     }
     return []
   }
 
-  async getByDiagnosisIdAndType(diagnosisId: number) {
-    if (!diagnosisId) {
-      return []
-    }
-    const res = await this.db.query<RecordDataType[], number[]>(
-      RecordSqls.GET_BY_DIAGNOSIS_ID_AND_TYPE,
-      [diagnosisId],
-    )
-    return res && res.length > 0
-      ? res.map(
-        (row: RecordDataType) =>
-          new RecordSession({ ...row, data: JSON.parse(row.data) }),
-      )
-      : []
-  }
-
-  async create(record: RecordDto): Promise<RecordSession> {
+  async create(record: RecordSession): Promise<RecordSession> {
     try {
-      const serializedData = JSON.stringify(record.data)
+      const serializedData = JSON.stringify(record.records)
       const result = await this.db.query<
         { insertId: number },
         [[string, number, number]]
       >(RecordSqls.CREATE_RECORD_DATA, [[serializedData, record.diagnosisId, 1]])
 
-      return new RecordSession({
-        ...record,
-        data: serializedData,
-        id: result.insertId,
-        recordTypeId: 1
-      })
+      record.id = result.insertId
+
+      return record
     } catch (error) {
       throw new Error(`Error saving record: ${(error as Error).message}`)
     }
   }
 
-  async update(updatedRecord: RecordDto): Promise<boolean> {
-    RecordRepository.guardAgaisntInvalidRecord(updatedRecord)
-    await this.auditRecord(updatedRecord)
+  async update(updatedRecord: RecordSession): Promise<boolean> {
+    RecordRepository.guardAgainstInvalidRecord(updatedRecord)
 
     const result = await this.db.query<
       { changedRows: number },
@@ -99,27 +74,18 @@ class RecordRepository implements IRepository<RecordDto, RecordSession | null> {
     return result && result.changedRows > 1
   }
 
-  auditRecord(record: RecordDto): Promise<void> {
-    return this.db.query(RecordSqls.AUDIT_RECORD, [
-      record.id,
-      record.data,
-      record.dateTimeCreated,
-      record.dateTimeUpdated,
-    ])
-  }
-
   async getLatest(): Promise<RecordSession | null> {
-    const result = await this.db.query<RecordDataType[], undefined>(
+    const result = await this.db.query<RecordSessionDataType[], undefined>(
       RecordSqls.GET_LATEST,
     )
     return result?.length > 0
-      ? new RecordSession({ ...result[0], data: JSON.parse(result[0].data) })
+      ? mapRecordDataToModel(result[0])
       : null
   }
   //#endregion
 
   //#region private methods
-  private static guardAgaisntInvalidRecord(record: RecordDto | null) {
+  private static guardAgainstInvalidRecord(record: RecordSession | null) {
     if (!record) {
       throw new Error(`Parameter is null (${RecordSession.name})`)
     }

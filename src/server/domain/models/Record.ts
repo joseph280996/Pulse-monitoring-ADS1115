@@ -1,7 +1,7 @@
 class Record {
     constructor(
         public timeStamp: number,
-        public data: number
+        public data: number,
     ) { }
 }
 

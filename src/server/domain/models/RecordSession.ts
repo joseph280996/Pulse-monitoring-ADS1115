@@ -1,27 +1,15 @@
-import { RecordDataType } from './Record.types'
+import Record from './Record'
 
 class RecordSession {
-  //#region properties
-  public id?: number
-  public data!: string
-  public recordTypeId!: number
-  public dateTimeCreated?: string
-  public dateTimeUpdated?: string
-  //#endregion
-
   //#region constructor
-  constructor(record: RecordDataType) {
-    this.id = record.id
-    this.data = record.data
-    this.recordTypeId = record.recordTypeId
-    this.dateTimeCreated = record.dateTimeCreated
-    this.dateTimeUpdated = record.dateTimeUpdated
-  }
-  //#endregion
-
-  //#region public methods
-  clone() {
-    return new RecordSession(this)
+  constructor(
+    public records: Record[],
+    public diagnosisId: number,
+    public recordTypeId: number,
+    public id?: number,
+    public dateTimeCreated?: string,
+    public dateTimeUpdated?: string,
+  ) {
   }
   //#endregion
 }
