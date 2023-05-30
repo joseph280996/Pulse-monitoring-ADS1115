@@ -1,12 +1,12 @@
-export const fields = `
-  Id as id, data, DiagnosisId as diagnosisId, dateTimeCreated, dateTimeUpdated
-`
-export const GET_BY_ID = `SELECT ${fields} FROM Record WHERE Id = ?;`
-export const GET_BY_DIAGNOSIS_ID_AND_TYPE = `SELECT ${fields} FROM Record WHERE DiagnosisId = ? AND RecordTypeId = ?;`
-export const GET_LATEST = `SELECT ${fields} FROM Record WHERE id > 0 ORDER BY dateTimeCreated DESC LIMIT1;`
+const sqlFields =
+  'Id as id, RecordSessionId as recordSessionId, dateTimeCreated, dateTimeUpdated'
 
-export const CREATE_RECORD_DATA =
-  'INSERT INTO Record(data, DiagnosisId, RecordTypeId) VALUES (?);'
-export const UPDATE_DIAGNOSIS_ID = `
-  UPDATE Record SET DiagnosisId = ? WHERE Id = ?;
+export const CREATE_RECORD_DATA = `
+    INSERT INTO Record(data, RecordSessionId)
+    VALUES (?);
+`
+
+export const GET_BY_SESSION_ID = `
+    SELECT ${sqlFields} FROM Record
+    WHERE RecordSessionId = ?;
 `

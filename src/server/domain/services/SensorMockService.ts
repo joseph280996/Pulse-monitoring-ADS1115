@@ -1,5 +1,5 @@
 import moment from 'moment'
-import Record from '../models/Record'
+import RecordInstance from '../models/RecordInstance'
 import SensorServiceBase from './SensorServiceBase'
 
 class SensorMockService extends SensorServiceBase {
@@ -22,9 +22,7 @@ class SensorMockService extends SensorServiceBase {
   //#endregion
 
   //#region constructor
-  constructor(
-    private readonly SERVICE_NAME = 'mockSensorService',
-  ) {
+  constructor(private readonly SERVICE_NAME = 'mockSensorService') {
     super()
   }
   //#endregion
@@ -47,12 +45,9 @@ class SensorMockService extends SensorServiceBase {
     return promise
   }
 
-  override async readADS1115Value(): Promise<Record> {
+  override async readADS1115Value(): Promise<RecordInstance> {
     const data: number = await this.getMockData()
-    return new Record(
-      moment.utc().valueOf(),
-      data,
-    )
+    return new RecordInstance(moment.utc().valueOf(), data)
   }
   //#endregion
 }

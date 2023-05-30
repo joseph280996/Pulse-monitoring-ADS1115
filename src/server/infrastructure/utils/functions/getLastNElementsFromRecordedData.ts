@@ -1,3 +1,3 @@
-import Record from "src/server/domain/models/Record";
+import RecordInstance from 'src/server/domain/models/RecordInstance'
 
-export default (store: Record[], num: number) => store.slice(-num)
+export default (store: RecordInstance[], num: number) => store.slice(-num)

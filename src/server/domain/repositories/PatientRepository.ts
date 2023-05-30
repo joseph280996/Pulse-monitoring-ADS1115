@@ -1,11 +1,10 @@
-import { PatientDto } from 'src/server/application/dtos/PatientDto'
 import IRepository from '../interfaces/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import Patient from '../models/Patient'
 import { PatientDataType, PatientNameType } from '../models/Patient.types'
 import * as PatientSqls from '../sqls/patientSqls'
 
-class PatientRepository implements IRepository<PatientDto, Patient | null> {
+class PatientRepository implements IRepository<Patient, Patient | null> {
   //#region properties
   db!: DB
   //#endregion
@@ -17,7 +16,7 @@ class PatientRepository implements IRepository<PatientDto, Patient | null> {
   //#endregion
 
   //#region public methods
-  async create(patient: PatientDto) {
+  async create(patient: Patient) {
     try {
       const result = await this.db.query<
         { insertedId: number },
@@ -32,7 +31,7 @@ class PatientRepository implements IRepository<PatientDto, Patient | null> {
     }
   }
 
-  async update(_: PatientDto): Promise<boolean> {
+  async update(): Promise<boolean> {
     throw new Error('Method not implemented')
   }
 

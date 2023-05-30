@@ -5,7 +5,7 @@ import '../../../types/ads1115/index.d'
 import i2c, { PromisifiedBus } from 'i2c-bus'
 import ADS1115 from 'ads1115'
 import moment from 'moment'
-import Record from '../models/Record'
+import RecordInstance from '../models/RecordInstance'
 import SensorServiceBase from './SensorServiceBase'
 
 class PiezoElectricSensorService extends SensorServiceBase {
@@ -46,12 +46,9 @@ class PiezoElectricSensorService extends SensorServiceBase {
   //#endregion
 
   //#region private methods
-  override async readADS1115Value(): Promise<Record> {
+  override async readADS1115Value(): Promise<RecordInstance> {
     const data: number = await this.ads1115.measure('0+GND')
-    return new Record(
-      moment.utc().valueOf(),
-      data,
-    )
+    return new RecordInstance(moment.utc().valueOf(), data)
   }
   //#endregion
 }

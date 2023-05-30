@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import RecordRepository from '../../../domain/repositories/RecordRepository'
+import RecordSessionRepository from '../../../domain/repositories/RecordSessionRepository'
 
 //#region properties
-const recordRepo = new RecordRepository()
+const recordRepo = new RecordSessionRepository()
 //#endregion
 
 //#region public methods

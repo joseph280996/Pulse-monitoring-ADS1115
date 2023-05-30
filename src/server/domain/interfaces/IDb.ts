@@ -1,5 +1,5 @@
 export default interface IDb {
-  query(query: string, values: unknown): Promise<unknown>
+  query<TReturn, TInput>(query: string, values?: TInput): Promise<TReturn>
   hasPoolOpened(): boolean
   cleanUp(): void
 }
