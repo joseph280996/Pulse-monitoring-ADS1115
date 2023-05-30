@@ -1,5 +1,5 @@
 const sqlFields =
-  'Id as id, RecordSessionId as recordSessionId, dateTimeCreated, dateTimeUpdated'
+  'Id as id, RecordSessionId as recordSessionId, data, dateTimeCreated, dateTimeUpdated'
 
 export const CREATE_RECORD_DATA = `
     INSERT INTO Record(data, RecordSessionId)

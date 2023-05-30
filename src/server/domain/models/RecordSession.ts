@@ -1,7 +1,7 @@
-import Record from './Record'
+import RecordInstance from './RecordInstance'
 
 class RecordSession {
-  public records?: Record[]
+  public records?: RecordInstance[]
 
   //#region constructor
   constructor(

@@ -1,5 +1,5 @@
 export const fields = `
-  Id as id, data, DiagnosisId as diagnosisId, dateTimeCreated, dateTimeUpdated
+  Id as id, DiagnosisId as diagnosisId, RecordTypeId as recordTypeId, dateTimeCreated, dateTimeUpdated
 `
 export const GET_BY_ID = `SELECT ${fields} FROM RecordSession WHERE Id = ?;`
 

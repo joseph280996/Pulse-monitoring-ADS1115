@@ -1,4 +1,4 @@
-import recordTypes from 'src/server/infrastructure/variables/recordTypes'
+import recordTypes from '../../infrastructure/variables/recordTypes'
 import EcgSensorService from '../../infrastructure/services/EcgSensorService'
 import IRepository from '../interfaces/IRepository'
 import DBInstance, { DB } from '../models/DbConnectionModel'
@@ -59,7 +59,7 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
   }
 
   async getAll(): Promise<Diagnosis[]> {
-    const res: any[] = await this.db.query<Diagnosis[], []>(
+    const res: Diagnosis[] = await this.db.query<Diagnosis[], []>(
       DiagnosisSqls.GET_ALL,
       [],
     )
@@ -81,7 +81,7 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
       [id],
     )
 
-    if (!res) {
+    if (!res || res.length == 0) {
       return null
     }
 

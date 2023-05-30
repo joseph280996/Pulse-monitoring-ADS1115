@@ -1,7 +1,9 @@
 import IDb from '../interfaces/IDb'
 import IRepository from '../interfaces/IRepository'
+import { mapRecordDataToModel } from '../mappers/recordDataMapper'
 import DbConnectionModel from '../models/DbConnectionModel'
 import Record from '../models/Record'
+import { RecordDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSqls'
 
 class RecordRepository implements IRepository<Record, Record | null> {
@@ -16,7 +18,7 @@ class RecordRepository implements IRepository<Record, Record | null> {
   }
 
   async getBySessionId(id: number): Promise<Record[]> {
-    const res = await this.db.query<Record[], [number]>(
+    const res = await this.db.query<RecordDataType[], [number]>(
       RecordSqls.GET_BY_SESSION_ID,
       [id],
     )
@@ -24,16 +26,7 @@ class RecordRepository implements IRepository<Record, Record | null> {
       return []
     }
 
-    return res.map(
-      (row) =>
-        new Record(
-          row.data,
-          row.recordSessionId,
-          row.id,
-          row.dateTimeCreated,
-          row.dateTimeUpdated,
-        ),
-    )
+    return res.map(mapRecordDataToModel)
   }
 
   async create(record: Record): Promise<Record> {

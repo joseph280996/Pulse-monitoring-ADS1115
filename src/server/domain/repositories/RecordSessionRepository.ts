@@ -4,6 +4,8 @@ import { RecordSessionDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSessionSqls'
 import IRepository from '../interfaces/IRepository'
 import RecordRepository from './RecordRepository'
+import RecordInstance from '../models/RecordInstance'
+import Record from '../models/Record'
 
 class RecordSessionRepository
   implements IRepository<RecordSession, RecordSession | null>
@@ -70,9 +72,17 @@ class RecordSessionRepository
           row.dateTimeCreated,
           row.dateTimeUpdated,
         )
-        recordSession.records = await this.recordRepository.getBySessionId(
+        const records = await this.recordRepository.getBySessionId(
           row.id as number,
         )
+        const recordData = records.reduce(
+          (allRecordedData: RecordInstance[], record: Record) => {
+            return allRecordedData.concat(record.data)
+          },
+          [],
+        )
+
+        recordSession.records = recordData
 
         return recordSession
       }),
