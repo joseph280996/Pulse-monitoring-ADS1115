@@ -1,0 +1,3 @@
+RecordSession.sql
+IX_DiagnosisId_RecordTypeId.sql
+Record.sql

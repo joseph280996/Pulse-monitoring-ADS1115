@@ -1,1 +1,1 @@
-CREATE INDEX IX_DiagnosisId_RecordTypeId ON Record(DiagnosisId, RecordTypeId);
+CREATE INDEX IX_DiagnosisId_RecordTypeId ON RecordSession(DiagnosisId, RecordTypeId);
