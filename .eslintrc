@@ -48,6 +48,8 @@
       {
         "ignoreDeclarationSort": true
       }
-    ]
+    ],
+    "brace-style": "off",
+    "@typescript-eslint/brace-style": "off"
   }
 }
