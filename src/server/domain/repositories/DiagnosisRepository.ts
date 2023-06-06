@@ -20,28 +20,21 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
   async create(diagnosis: Diagnosis) {
     try {
       const result = await this.db.query<
-        [{ insertId: number }, Diagnosis],
+        { insertId: number },
         [Array<number | undefined>]
       >(DiagnosisSqls.CREATE_DIAGNOSIS, [
         [diagnosis.pulseTypeId, diagnosis.patientId],
       ])
 
-      if (!result[0].insertId) {
+      if (!result.insertId) {
         return null
       }
 
-      const insertedDiagnosis = result[1]
-      await this.ecgSensorService.notifyDiagnosisCreated(
-        insertedDiagnosis.id as number,
-      )
-      return new Diagnosis(
-        insertedDiagnosis.patientId,
-        insertedDiagnosis.handPositionId,
-        insertedDiagnosis.pulseTypeId,
-        insertedDiagnosis.id,
-        insertedDiagnosis.dateTimeCreated,
-        insertedDiagnosis.dateTimeUpdated,
-      )
+      diagnosis.id = result.insertId
+
+      await this.ecgSensorService.notifyDiagnosisCreated(diagnosis.id as number)
+
+      return diagnosis
     } catch (error) {
       throw new Error(`Error Creating Diagnosis: ${(error as Error).message}`)
     }
@@ -88,16 +81,18 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
     const diagnosis = res[0]
 
     if (shouldPopulateRecords) {
-      diagnosis.piezoElectricRecords =
+      diagnosis.piezoElectricRecords = (
         await this.recordRepository.getByDiagnosisIdAndType(
           recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
           id,
         )
-      diagnosis.ecgRecords =
+      )[0]
+      diagnosis.ecgRecords = (
         await this.recordRepository.getByDiagnosisIdAndType(
           recordTypes.ECG_SENSOR_TYPE,
           id,
         )
+      )[0]
     }
 
     return diagnosis

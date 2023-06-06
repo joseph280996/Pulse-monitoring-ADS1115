@@ -1,4 +1,4 @@
-import '../../../types/ads1115/index.d'
+/// <reference path="../../../types/ads1115/index.d.ts"/>
 
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-unresolved
@@ -7,6 +7,7 @@ import ADS1115 from 'ads1115'
 import moment from 'moment'
 import RecordInstance from '../models/RecordInstance'
 import SensorServiceBase from './SensorServiceBase'
+import recordTypes from '../../infrastructure/variables/recordTypes'
 
 class PiezoElectricSensorService extends SensorServiceBase {
   //#region properties
@@ -40,6 +41,10 @@ class PiezoElectricSensorService extends SensorServiceBase {
   //#region pulic methods
   override async init() {
     this.diagnosis = await this.diagnosisRepo.create({})
+    this.recordSession = await this.recordSessionRepo.create({
+      diagnosisId: this.diagnosis?.id as number,
+      recordTypeId: recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
+    })
     this.bus = await i2c.openPromisified(1)
     this.ads1115 = await ADS1115(this.bus)
   }

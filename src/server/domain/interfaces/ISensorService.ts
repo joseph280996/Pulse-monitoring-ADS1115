@@ -1,6 +1,6 @@
 import RecordInstance from '../models/RecordInstance'
 
-interface PiezoElectricSensorService {
+interface IPiezoElectricSensorService {
   name: string
   init(): Promise<unknown>
   start(): void
@@ -8,4 +8,4 @@ interface PiezoElectricSensorService {
   getSingleBatchData(): RecordInstance[]
 }
 
-export default PiezoElectricSensorService
+export default IPiezoElectricSensorService

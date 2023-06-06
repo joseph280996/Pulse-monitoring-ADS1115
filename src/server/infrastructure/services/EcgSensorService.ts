@@ -1,9 +1,11 @@
-import axios, { Axios } from 'axios'
+import axios, { Axios, CreateAxiosDefaults } from 'axios'
+
+
 class EcgSensorService {
     private static _instance: EcgSensorService;
 
-    private static readonly axiosConf = {
-        baseUrl: 'http://localhost:8080',
+    private static readonly axiosConf: CreateAxiosDefaults<any> = {
+        baseURL: 'http://localhost:8080/',
         timeout: 1000,
     }
 
@@ -19,10 +21,16 @@ class EcgSensorService {
 
     public async notifyDiagnosisCreated(diagnosisId: number) {
         try {
-            await this.ecgAxiosInstance.post('/diagnosis/notify', { diagnosisId })
+            console.log(`Notifying ECG service with DiagnosisId [${diagnosisId}]`)
+            this.ecgAxiosInstance.post('diagnosis/notify', { diagnosisId }).then((result)=> {
+                console.log(result)
+            }).catch((error)=> {
+                throw error
+            })
         }
         catch (error) {
             console.error("Error notifying ecg service");
+            throw error;
         }
     }
 }

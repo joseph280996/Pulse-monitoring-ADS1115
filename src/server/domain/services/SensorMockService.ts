@@ -27,14 +27,6 @@ class SensorMockService extends SensorServiceBase {
   }
   //#endregion
 
-  //#region public methods
-  override async init() {
-    this.diagnosis = await this.diagnosisRepo.create({})
-  }
-
-  // Start Reading Values from Sensor
-  //#endregion
-
   //#region private methods
   private async getMockData(): Promise<number> {
     const promise = new Promise<number>((resolve) => {

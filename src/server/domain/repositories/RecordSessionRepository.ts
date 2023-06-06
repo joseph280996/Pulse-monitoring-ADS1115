@@ -1,20 +1,15 @@
 import DBInstance, { DB } from '../models/DbConnectionModel'
 import RecordSession from '../models/RecordSession'
 import { RecordSessionDataType } from '../models/Record.types'
-import * as RecordSqls from '../sqls/recordSessionSqls'
+import * as RecordSessionSqls from '../sqls/recordSessionSqls'
 import IRepository from '../interfaces/IRepository'
-import RecordRepository from './RecordRepository'
-import RecordInstance from '../models/RecordInstance'
-import Record from '../models/Record'
+import { mapRecordDataToModel } from '../mappers/recordDataMapper'
 
 class RecordSessionRepository
   implements IRepository<RecordSession, RecordSession | null>
 {
   //#region constructor
-  constructor(
-    private db: DB = DBInstance,
-    private recordRepository: RecordRepository = new RecordRepository(),
-  ) {
+  constructor(private db: DB = DBInstance) {
     this.db = db
   }
 
@@ -32,7 +27,7 @@ class RecordSessionRepository
 
   async getById(id: number) {
     const res = await this.db.query<[RecordSessionDataType], [number]>(
-      RecordSqls.GET_BY_ID,
+      RecordSessionSqls.GET_BY_ID,
       [id],
     )
     if (!res) {
@@ -54,8 +49,9 @@ class RecordSessionRepository
     if (!diagnosisId) {
       return []
     }
+
     const res = await this.db.query<RecordSessionDataType[], [number, number]>(
-      RecordSqls.GET_BY_DIAGNOSIS_ID_AND_TYPE,
+      RecordSessionSqls.GET_WITH_RECORDS_BY_DIANGOSIS_ID_AND_TYPE,
       [diagnosisId, recordTypeId],
     )
 
@@ -63,30 +59,44 @@ class RecordSessionRepository
       return []
     }
 
-    return Promise.all(
-      res.map(async (row) => {
-        const recordSession = new RecordSession(
-          row.diagnosisId,
-          row.recordTypeId,
-          row.id,
-          row.dateTimeCreated,
-          row.dateTimeUpdated,
-        )
-        const records = await this.recordRepository.getBySessionId(
-          row.id as number,
-        )
-        const recordData = records.reduce(
-          (allRecordedData: RecordInstance[], record: Record) => {
-            return allRecordedData.concat(record.data)
-          },
-          [],
-        )
+    const sessions = res.reduce(
+      (sessions: Map<number, RecordSession>, row: any) => {
+        if (!sessions.has(row.sessionId)) {
+          sessions.set(
+            row.sessionId,
+            new RecordSession(
+              row.diagnosisId,
+              row.recordTypeId,
+              row.id,
+              row.dateTimeCreated,
+              row.dateTimeUpdated,
+            ),
+          )
+        }
 
-        recordSession.records = recordData
+        const session = sessions.get(row.sessionId)
+        if (session) {
+          const record = mapRecordDataToModel({
+            id: row.recordId,
+            recordSessionId: row.recordSessionId,
+            dateTimeCreated: row.recordDateTimeCreated,
+            dateTimeUpdated: row.recordDateTimeUpdated,
+            data: row.data,
+          })
 
-        return recordSession
-      }),
+          if (!session.records) {
+            session.records = []
+          }
+
+          session.records = session.records?.concat(record.data)
+        }
+
+        return sessions
+      },
+      new Map(),
     )
+
+    return Array.from(sessions, ([_, value]) => value)
   }
 
   async create(recordSession: RecordSession): Promise<RecordSession> {
@@ -94,7 +104,7 @@ class RecordSessionRepository
       const result = await this.db.query<
         { insertId: number },
         [[number, number]]
-      >(RecordSqls.CREATE_RECORD_DATA, [[recordSession.diagnosisId, 1]])
+      >(RecordSessionSqls.CREATE_RECORD_DATA, [[recordSession.diagnosisId, 1]])
 
       recordSession.id = result.insertId
 

@@ -18,10 +18,6 @@ export const GET_BY_DATE_RANGE = `SELECT ${fields} FROM Diagnosis WHERE dateTime
 export const CREATE_DIAGNOSIS = `
   INSERT INTO Diagnosis(PulseTypeId, PatientId)
   VALUES (?);
-  SELECT 
-    ${fields}
-  FROM Diagnosis
-  WHERE Id = LAST_INSERT_ID();
 `
 
 export const UPDATE_DIAGNOSIS = `

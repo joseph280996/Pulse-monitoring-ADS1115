@@ -1,8 +1,8 @@
 import RecordSession from './RecordSession'
 
 class Diagnosis {
-  public piezoElectricRecords?: RecordSession[]
-  public ecgRecords?: RecordSession[]
+  public piezoElectricRecords?: RecordSession
+  public ecgRecords?: RecordSession
 
   //#region constructor
   constructor(
@@ -12,7 +12,7 @@ class Diagnosis {
     public id?: number,
     public dateTimeCreated?: string,
     public dateTimeUpdated?: string,
-  ) { }
+  ) {}
   //#endregion
 }
 

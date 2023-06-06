@@ -50,7 +50,7 @@ class SensorController {
   public async stop(_: string, ws: WebSocket) {
     await this.factoryInitPromise
     const service = this.sensorServiceFactory.getService()
-    service.stop()
+    await service.stop()
     this.intervalService.clear(service.name)
     ws.send(
       JSON.stringify({

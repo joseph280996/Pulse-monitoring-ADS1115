@@ -6,7 +6,7 @@ import RecordSessionRepository from '../repositories/RecordSessionRepository'
 import RecordSession from '../models/RecordSession'
 import ISensorService from '../interfaces/ISensorService'
 import RecordInstance from '../models/RecordInstance'
-import recordTypes from 'src/server/infrastructure/variables/recordTypes'
+import recordTypes from '../../infrastructure/variables/recordTypes'
 import Record from '../models/Record'
 import RecordRepository from '../repositories/RecordRepository'
 
@@ -19,7 +19,7 @@ abstract class SensorServiceBase implements ISensorService {
   //#region constructor
   constructor(
     protected diagnosisRepo: DiagnosisRepository = new DiagnosisRepository(),
-    private recordSessionRepo: RecordSessionRepository = new RecordSessionRepository(),
+    protected recordSessionRepo: RecordSessionRepository = new RecordSessionRepository(),
     private recordRepo: RecordRepository = new RecordRepository(),
     private saveRecordPromise: Promise<Record> | null = null,
     protected diagnosis: Diagnosis | null = null,
@@ -67,7 +67,15 @@ abstract class SensorServiceBase implements ISensorService {
     })()
   }
 
-  stop() {
+  async stop() {
+    if(this.secondaryStore.length > 0){
+      await this.createRecordForPreviousStorage()
+    }
+    if(this.store.length > 0){
+      await this.recordRepo.create(
+       new Record(this.secondaryStore, this.recordSession?.id as number),
+      )
+    }
     this.loopService.stop()
   }
 
