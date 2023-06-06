@@ -8,6 +8,7 @@ import DiagnosisController from './controllers/REST/diagnosisController'
 import HandPositionsController from './controllers/REST/handPositionsController'
 import PulseTypesController from './controllers/REST/pulseTypesController'
 import SensorController from './controllers/WebSocket/sensorController'
+import PatientController from './controllers/REST/patientController'
 
 interface ServerInterface {
   cleanUp: () => void
@@ -41,6 +42,7 @@ class Server implements ServerInterface {
     this.app.use('/diagnosis', DiagnosisController.instance.router)
     this.app.use('/hand-position', HandPositionsController.instance.router)
     this.app.use('/pulse-types', PulseTypesController.instance.router)
+    this.app.use('/patient', PatientController.instance.router)
   }
 
   registerWebsocketMessageTypes() {

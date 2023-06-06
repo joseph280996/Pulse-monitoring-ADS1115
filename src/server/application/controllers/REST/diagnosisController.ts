@@ -2,9 +2,7 @@ import express, { RequestHandler, Router } from 'express'
 import Diagnosis from '../../../domain/models/Diagnosis'
 import FileSystemService from '../../../infrastructure/services/FileSystemService'
 import DiagnosisRepository from '../../../domain/repositories/DiagnosisRepository'
-import PatientRepository from '../../../domain/repositories/PatientRepository'
 import formatInputDateForExport from '../../../infrastructure/utils/functions/formatInputDateForExport'
-import splitNameForDB from '../../../infrastructure/utils/functions/splitNameForDB'
 
 class DiagnosisController {
   //#region Properties
@@ -50,43 +48,14 @@ class DiagnosisController {
   getByIdWithRecord: RequestHandler = async (req, res) => {
     const { id: diagnosisId } = req.params
 
-    const records = await this.diagnosisRepo.getByIdWithRecord(Number(diagnosisId))
+    const records = await this.diagnosisRepo.getByIdWithRecord(
+      Number(diagnosisId),
+    )
     if (!records) {
       res.status(400).send('The request diagnosis id does not exist')
     }
 
     res.status(200).send(records)
-  }
-
-  /**
-   * Diagnosis Creation Request Handler
-   * Handles creating patient, new diagnosis + update record with new diagnosis id
-   *
-   * @param req HTTP Request with information to create Diagnosis
-   * @param res Express Response object
-   */
-  createDiagnosis: RequestHandler = async (req, res) => {
-    const { patientName, recordId, pulseTypeId } = req.body
-    try {
-      const [firstName, lastName] = splitNameForDB(patientName)
-
-      const patient = await PatientRepository.createIfNotExist({
-        firstName,
-        lastName,
-      })
-
-      const newDiagnosis = new Diagnosis(
-        pulseTypeId,
-        patient?.id as number,
-        recordId,
-      )
-      const savedDiagnosis = await this.diagnosisRepo.create(newDiagnosis)
-
-      res.status(200).send(savedDiagnosis)
-    } catch (err) {
-      console.error(err)
-      res.status(500).send('Internal Error')
-    }
   }
 
   /**
@@ -120,14 +89,13 @@ class DiagnosisController {
       res.status(500).send('Internal Error')
     }
   }
-
   //#endregion
+
   //#region Private Methods
   private registerRoutes() {
     this.router.get('/', this.getAllDiagnoses)
     this.router.get('/:id', this.getByIdWithRecord)
 
-    this.router.post('/', this.createDiagnosis)
     this.router.post('/export', this.exportData)
   }
   //#endregion

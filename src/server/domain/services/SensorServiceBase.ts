@@ -32,6 +32,15 @@ abstract class SensorServiceBase implements ISensorService {
   //#endregion
 
   //#region pulic methods
+  get diagosisId(): number {
+    if (!this.diagnosis) {
+      console.error('Service was not initialized before used.')
+      return 0
+    }
+
+    return this.diagnosis.id as number
+  }
+
   async init() {
     this.diagnosis = await this.diagnosisRepo.create({})
     this.recordSession = await this.recordSessionRepo.create({
@@ -42,38 +51,24 @@ abstract class SensorServiceBase implements ISensorService {
 
   start() {
     this.store = []
-    console.log('Start Reading Values from Sensor')
-    this.loopService.start()
-    ;(async () => {
-      while (this.loopService.isStarted) {
-        // When store length is 1000, swap the secondary store to use
-        if (this.store.length === 1000) {
-          this.createRecordForPreviousStorage()
-        }
+    this.startReadingValueLoop()
+  }
 
-        // When length of main data storage big enough to maintain on its own,
-        // we save reset secondary
-        if (
-          this.store.length > this.BATCH_DATA_SIZE &&
-          this.saveRecordPromise
-        ) {
-          await this.saveRecordPromise
-          this.secondaryStore = []
-        }
+  pause() {
+    this.loopService.stop()
+  }
 
-        const dataWithDateTime = await this.readADS1115Value()
-        this.store.push(dataWithDateTime)
-      }
-    })()
+  resume() {
+    this.startReadingValueLoop()
   }
 
   async stop() {
-    if(this.secondaryStore.length > 0){
+    if (this.secondaryStore.length > 0) {
       await this.createRecordForPreviousStorage()
     }
-    if(this.store.length > 0){
+    if (this.store.length > 0) {
       await this.recordRepo.create(
-       new Record(this.secondaryStore, this.recordSession?.id as number),
+        new Record(this.secondaryStore, this.recordSession?.id as number),
       )
     }
     this.loopService.stop()
@@ -99,6 +94,32 @@ abstract class SensorServiceBase implements ISensorService {
     this.saveRecordPromise = this.recordRepo.create(
       new Record(this.secondaryStore, this.recordSession?.id as number),
     )
+  }
+
+  private startReadingValueLoop() {
+    console.log('Start Reading Values from Sensor')
+    this.loopService.start()
+    ;(async () => {
+      while (this.loopService.isStarted) {
+        // When store length is 1000, swap the secondary store to use
+        if (this.store.length === 1000) {
+          this.createRecordForPreviousStorage()
+        }
+
+        // When length of main data storage big enough to maintain on its own,
+        // we save reset secondary
+        if (
+          this.store.length > this.BATCH_DATA_SIZE &&
+          this.saveRecordPromise
+        ) {
+          await this.saveRecordPromise
+          this.secondaryStore = []
+        }
+
+        const dataWithDateTime = await this.readADS1115Value()
+        this.store.push(dataWithDateTime)
+      }
+    })()
   }
 
   private swapStore() {

@@ -81,4 +81,4 @@ class PatientRepository implements IRepository<Patient, Patient | null> {
   //#endregion
 }
 
-export default new PatientRepository()
+export default PatientRepository

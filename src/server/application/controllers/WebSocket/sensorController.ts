@@ -5,12 +5,25 @@ import SensorDataServiceFactory from '../../../domain/factories/sensorDataServic
 import TimeIntervalService from '../../../infrastructure/services/TimeIntervalService'
 import WebSocket, { RawData } from 'ws'
 import ISensorService from '../../../domain/interfaces/ISensorService'
+import wsOperationTypes from 'src/server/infrastructure/variables/wsOperationTypes'
 
 dotenv.config()
 class SensorController {
+  //#region Private Properties
   private static _instance: SensorController
   private factoryInitPromise: Promise<any>
+  //#endregion
 
+  //#region Constructors
+  constructor(
+    private sensorServiceFactory: SensorDataServiceFactory = SensorDataServiceFactory.instance,
+    private intervalService: TimeIntervalService = TimeIntervalService.instance,
+  ) {
+    this.factoryInitPromise = sensorServiceFactory.init()
+  }
+  //#endregion
+
+  //#region Public Methods
   public static get instance() {
     if (!SensorController._instance) {
       SensorController._instance = new SensorController()
@@ -18,22 +31,26 @@ class SensorController {
     return SensorController._instance
   }
 
-  constructor(
-    private sensorServiceFactory: SensorDataServiceFactory = SensorDataServiceFactory.instance,
-    private intervalService: TimeIntervalService = TimeIntervalService.instance,
-  ) {
-    this.factoryInitPromise = sensorServiceFactory.init()
-  }
-
   public router(rawMessage: RawData, ws: WebSocket) {
     const message = rawMessage.toString()
     const [operation, data] = message.split(';')
     console.log(`Received event to [${operation}] with data [${data}]`)
 
-    if (operation == 'start') {
-      this.start(data, ws)
-    } else {
-      this.stop(data, ws)
+    switch (operation) {
+      case wsOperationTypes.START:
+        this.start(data, ws)
+        break
+      case wsOperationTypes.STOP:
+        this.stop(data, ws)
+        break
+      case wsOperationTypes.RESUME:
+        this.resume()
+        break
+      case wsOperationTypes.PAUSE:
+        this.pause()
+        break
+      default:
+        this.stop(data, ws)
     }
   }
 
@@ -47,18 +64,32 @@ class SensorController {
     this.sendData(ws, service)
   }
 
+  public async pause() {
+    await this.factoryInitPromise
+    const service = this.sensorServiceFactory.getService()
+    service.pause()
+  }
+
+  public async resume() {
+    await this.factoryInitPromise
+    const service = this.sensorServiceFactory.getService()
+    service.resume()
+  }
+
   public async stop(_: string, ws: WebSocket) {
     await this.factoryInitPromise
     const service = this.sensorServiceFactory.getService()
-    await service.stop()
+    service.stop()
     this.intervalService.clear(service.name)
     ws.send(
       JSON.stringify({
-        type: WS_MESSAGE_TYPE.RECORD_ID,
+        diagnosisId: service.diagnosisId,
       }),
     )
   }
+  //#endregion
 
+  //#region Private Methods
   private async sendData(ws: WebSocket, service: ISensorService) {
     try {
       console.log('Registering interval to send data every cycle')
@@ -83,6 +114,7 @@ class SensorController {
       )
     }
   }
+  //#endregion
 }
 
 export default SensorController
