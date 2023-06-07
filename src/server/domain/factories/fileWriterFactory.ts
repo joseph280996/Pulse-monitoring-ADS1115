@@ -3,7 +3,7 @@ import fastCSV from 'fast-csv'
 import { FORMAT_TYPE } from '../../infrastructure/variables/fileTypes'
 
 class FileWriterFactory {
-  //#region properties
+  //#region Properties
   private static _instance: FileWriterFactory
   //#endregion
 
@@ -16,7 +16,7 @@ class FileWriterFactory {
   }
   //#endregion
 
-  //#region public method
+  //#region Public Methods
   getFileWriter(fileType: string) {
     if (fileType === FORMAT_TYPE.JSON) {
       return this.writeJSONFile
@@ -26,7 +26,7 @@ class FileWriterFactory {
   }
   //#endregion
 
-  //#region private methods
+  //#region Private Methods
   private writeJSONFile(filePath: string, data: any) {
     const stringifiedRecords = JSON.stringify(data)
     fs.writeFile(filePath, stringifiedRecords, (err) => {

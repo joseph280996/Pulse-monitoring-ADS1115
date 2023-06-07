@@ -9,7 +9,7 @@ class RecordController {
     this.registerRoutes()
   }
 
-  //#region public methods
+  //#region Public Methods
   getById: RequestHandler = async (req, res) => {
     const { id: recordId } = req.params
     try {

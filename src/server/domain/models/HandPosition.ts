@@ -1,12 +1,12 @@
 import { HandPositionType } from './HandPosition.types'
 
 class HandPosition {
-  //#region properties
+  //#region Properties
   public id!: number
   public name!: string
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(obj: HandPositionType) {
     this.id = obj.id
     this.name = obj.name

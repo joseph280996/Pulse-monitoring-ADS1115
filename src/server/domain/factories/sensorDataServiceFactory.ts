@@ -2,8 +2,7 @@ import dotenv from 'dotenv'
 import ISensorService from '../interfaces/ISensorService'
 
 class SensorDataServiceFactory {
-
-  //#region properties
+  //#region Properties
   private static _instance: SensorDataServiceFactory
   private runningEnv!: string
   private service!: ISensorService
@@ -19,13 +18,13 @@ class SensorDataServiceFactory {
   }
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(runningEnv: string) {
     this.runningEnv = runningEnv
   }
   //#endregion
 
-  //#region public methods
+  //#region Public Methods
   async init() {
     let serviceImport
     if (this.runningEnv === 'development') {

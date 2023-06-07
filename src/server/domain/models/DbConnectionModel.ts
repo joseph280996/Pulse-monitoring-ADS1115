@@ -4,7 +4,7 @@ import IDb from '../interfaces/IDb'
 
 config()
 export class DB implements IDb {
-  //#region properties
+  //#region Properties
   private _pool?: Pool
   private static readonly DBConf = {
     database: process.env.DATABASE_NAME || '',
@@ -18,7 +18,7 @@ export class DB implements IDb {
 
   //#endregion
 
-  //#region public methods
+  //#region Public Methods
   hasPoolOpened = () => Boolean(this._pool)
 
   query<TReturn, TInput>(query: string, values?: TInput) {
@@ -44,7 +44,7 @@ export class DB implements IDb {
   }
   //#endregion
 
-  //#region private methods
+  //#region Private Methods
   private createPool() {
     try {
       const newPool = createPool({

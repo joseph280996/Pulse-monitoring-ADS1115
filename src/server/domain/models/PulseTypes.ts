@@ -1,14 +1,14 @@
 import { PulseTypeDataType } from './PulseTypes.types'
 
 class PulseType {
-  //#region properties
+  //#region Properties
   id!: number
   name!: string
   chineseName!: string
   features!: string
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(obj: PulseTypeDataType) {
     this.chineseName = obj.chineseName
     this.id = obj.id

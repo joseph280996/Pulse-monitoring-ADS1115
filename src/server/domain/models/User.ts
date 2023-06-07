@@ -16,7 +16,7 @@ class User implements IUser {
     'id as userId, passwordHash, firstName, lastName'
   //#endregion
 
-  //#region properties
+  //#region Properties
   private passwordHash?: string
   public id?: number
   public password: string
@@ -24,7 +24,7 @@ class User implements IUser {
   public lastName?: string
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(obj: UserInputType) {
     this.password = obj.password
     this.id = obj.id
@@ -33,7 +33,7 @@ class User implements IUser {
   }
   //#endregion
 
-  //#region public methods
+  //#region Public Methods
   static async getUserById(id: number): Promise<User | null> {
     const result = await DB.query<User, Array<number>>(
       `SELECT ${User.sqlFields} FROM User WHERE id=?;`,
@@ -68,7 +68,7 @@ class User implements IUser {
   }
   //#endregion
 
-  //#region private methods
+  //#region Public Methods
   private async encryptPassword() {
     try {
       if (!this.password) {

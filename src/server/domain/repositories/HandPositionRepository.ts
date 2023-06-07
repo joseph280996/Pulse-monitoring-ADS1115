@@ -5,23 +5,22 @@ import * as HandPositionSqls from '../sqls/handPositionSqls'
 import { HandPositionType } from '../models/HandPosition.types'
 
 class HandPositionRepository
-  implements IRepository<unknown, HandPosition | null> {
-  //#region properties
+  implements IRepository<unknown, HandPosition | null>
+{
+  //#region Properties
   db!: DB
 
   private static _instance: HandPositionRepository
-  //#endregion
-
-  //#region getters
   static get instance(): HandPositionRepository {
     if (!this._instance) {
       this._instance = new HandPositionRepository()
     }
     return this._instance
   }
+
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(db = DBInstance) {
     this.db = db
   }
@@ -35,7 +34,7 @@ class HandPositionRepository
   }
   //#endregion
 
-  //#region public methods
+  //#region Public Methods
 
   async getAll(): Promise<HandPosition[]> {
     const res: HandPositionType[] = await this.db.query<HandPositionType[], []>(

@@ -1,9 +1,6 @@
 class TimeIntervalService {
-  //#region properties
+  //#region Properties
   private static _instance: TimeIntervalService
-  private intervals: Map<string, NodeJS.Timeout | null> = new Map()
-  //#endregion
-
   static get instance() {
     if (!this._instance) {
       this._instance = new TimeIntervalService()
@@ -11,7 +8,9 @@ class TimeIntervalService {
     return this._instance
   }
 
-  //#region public methods
+  private intervals: Map<string, NodeJS.Timeout | null> = new Map()
+
+  //#region Public Methods
   registerInterval(name: string, interval: NodeJS.Timeout): void {
     if (this.intervals.has(name)) {
       console.warn(

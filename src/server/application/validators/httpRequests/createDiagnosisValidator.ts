@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import RecordSessionRepository from '../../../domain/repositories/RecordSessionRepository'
 
-//#region properties
+//#region Properties
 const recordRepo = new RecordSessionRepository()
 //#endregion
 
-//#region public methods
+//#region Public Methods
 async function validateRecordId(recordId: number) {
   const isRecordExist = await recordRepo.getById(recordId)
   if (!isRecordExist) {

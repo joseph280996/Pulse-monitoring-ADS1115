@@ -10,15 +10,8 @@ import SensorServiceBase from './SensorServiceBase'
 import recordTypes from '../../infrastructure/variables/recordTypes'
 
 class PiezoElectricSensorService extends SensorServiceBase {
-  //#region properties
+  //#region Properties
   private static _instance: PiezoElectricSensorService
-  //#endregion
-
-  //#region getters
-  override get name() {
-    return this.SERVICE_NAME
-  }
-
   static get instance() {
     if (!this._instance) {
       this._instance = new PiezoElectricSensorService()
@@ -26,9 +19,14 @@ class PiezoElectricSensorService extends SensorServiceBase {
 
     return this._instance
   }
+
+  override get name() {
+    return this.SERVICE_NAME
+  }
+
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(
     private readonly SERVICE_NAME = 'piezoElectricService',
     private bus: PromisifiedBus | null = null,
@@ -50,7 +48,7 @@ class PiezoElectricSensorService extends SensorServiceBase {
   }
   //#endregion
 
-  //#region private methods
+  //#region Private Methods
   override async readADS1115Value(): Promise<RecordInstance> {
     const data: number = await this.ads1115.measure('0+GND')
     return new RecordInstance(moment.utc().valueOf(), data)

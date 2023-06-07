@@ -2,14 +2,14 @@ import IPatient from '../interfaces/IPatient'
 import { PatientDataType } from './Patient.types'
 
 class Patient implements IPatient {
-  //#region properties
+  //#region Properties
   public id?: number | undefined
   public userId?: number
   public firstName?: string
   public lastName?: string
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(obj: PatientDataType) {
     this.id = obj.id
     this.userId = obj.userId

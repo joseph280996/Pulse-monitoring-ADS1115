@@ -8,7 +8,7 @@ import * as DiagnosisSqls from '../sqls/diagnosisSqls'
 import RecordSessionRepository from './RecordSessionRepository'
 
 class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
-  //#region constructor
+  //#region Constructor
   constructor(
     private db: DB = DBInstance,
     private ecgSensorService: EcgSensorService = EcgSensorService.instance,
@@ -16,7 +16,7 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
   ) {}
   //#endregion
 
-  //#region public methods
+  //#region Public Methods
   async create(diagnosis: Diagnosis) {
     try {
       const result = await this.db.query<

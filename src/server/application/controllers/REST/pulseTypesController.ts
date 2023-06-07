@@ -5,23 +5,23 @@ import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
 import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
 
 class PulseTypesController {
-  private static _instance: PulseTypesController;
+  private static _instance: PulseTypesController
 
-  public static get instance(){
-    if (!PulseTypesController._instance){
-      PulseTypesController._instance = new PulseTypesController();
+  public static get instance() {
+    if (!PulseTypesController._instance) {
+      PulseTypesController._instance = new PulseTypesController()
     }
-    return PulseTypesController._instance;
+    return PulseTypesController._instance
   }
 
   constructor(
     public router: Router = express.Router(),
-    private db: DB = DBInstance
-  ){
-    router.get("/", this.getPulseTypes)
+    private db: DB = DBInstance,
+  ) {
+    router.get('/', this.getPulseTypes)
   }
 
-  //#region public methods
+  //#region Public Methods
   getPulseTypes: RequestHandler = async (_req, res) => {
     const pulseTypes = await this.db
       .query<PulseTypeDataType[], void>(PulseTypeSqls.GET_ALL)

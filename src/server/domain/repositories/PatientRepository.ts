@@ -5,17 +5,17 @@ import { PatientDataType, PatientNameType } from '../models/Patient.types'
 import * as PatientSqls from '../sqls/patientSqls'
 
 class PatientRepository implements IRepository<Patient, Patient | null> {
-  //#region properties
+  //#region Properties
   db!: DB
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(db = DBInstance) {
     this.db = db
   }
   //#endregion
 
-  //#region public methods
+  //#region Public methods
   async create(patient: Patient) {
     try {
       const result = await this.db.query<

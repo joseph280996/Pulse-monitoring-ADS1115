@@ -8,14 +8,14 @@ import { mapRecordDataToModel } from '../mappers/recordDataMapper'
 class RecordSessionRepository
   implements IRepository<RecordSession, RecordSession | null>
 {
-  //#region constructor
+  //#region Constructor
   constructor(private db: DB = DBInstance) {
     this.db = db
   }
 
   //#endregion
 
-  //#region public methods
+  //#region Public Methods
   async exist(id: number) {
     try {
       await this.getById(id)

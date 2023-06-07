@@ -16,7 +16,7 @@ abstract class SensorServiceBase implements ISensorService {
   protected abstract readADS1115Value(): Promise<RecordInstance>
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor(
     protected diagnosisRepo: DiagnosisRepository = new DiagnosisRepository(),
     protected recordSessionRepo: RecordSessionRepository = new RecordSessionRepository(),
@@ -88,7 +88,7 @@ abstract class SensorServiceBase implements ISensorService {
   }
   //#endregion
 
-  //#region private methods
+  //#region Private Methods
   private async createRecordForPreviousStorage() {
     this.swapStore()
     this.saveRecordPromise = this.recordRepo.create(

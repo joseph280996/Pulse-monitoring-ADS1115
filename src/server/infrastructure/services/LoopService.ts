@@ -2,23 +2,20 @@ import ILoopService from '../interfaces/ILoopService'
 import { SENSOR_LOOP_STATUS } from './LoopService.types'
 
 class SensorLoopService implements ILoopService {
-  //#region properties
+  //#region Properties
   private started: boolean
-  //#endregion
-
-  //#region getters
   get isStarted() {
     return this.started
   }
   //#endregion
 
-  //#region constructor
+  //#region Constructor
   constructor() {
     this.started = false
   }
   //#endregion
 
-  //#region public methods
+  //#region Public Methods
   start() {
     this.started = true
   }

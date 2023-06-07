@@ -5,23 +5,23 @@ import { HandPositionType } from '../../../domain/models/HandPosition.types'
 import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
 
 class HandPositionsController {
-  private static _instance: HandPositionsController;
+  private static _instance: HandPositionsController
 
-  public static get instance(): HandPositionsController{
+  public static get instance(): HandPositionsController {
     if (!HandPositionsController._instance) {
-      HandPositionsController._instance = new HandPositionsController();
+      HandPositionsController._instance = new HandPositionsController()
     }
-    return HandPositionsController._instance;
+    return HandPositionsController._instance
   }
 
   constructor(
     public router: Router = express.Router(),
-    private db: DB = DBInstance
-  ){
+    private db: DB = DBInstance,
+  ) {
     this.registerRoutes()
   }
 
-  //#region public methods
+  //#region Public Methods
   getHandPositions: RequestHandler = async (_req, res) => {
     try {
       const result = await this.db.query<HandPositionType[], void>(
@@ -38,8 +38,11 @@ class HandPositionsController {
     }
   }
   //#endregion
-  private registerRoutes(){
+
+  //#region Private Methods
+  private registerRoutes() {
     this.router.get('/', this.getHandPositions)
   }
+  //#endregion
 }
 export default HandPositionsController

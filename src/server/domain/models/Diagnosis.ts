@@ -4,7 +4,7 @@ class Diagnosis {
   public piezoElectricRecords?: RecordSession
   public ecgRecords?: RecordSession
 
-  //#region constructor
+  //#region Constructor
   constructor(
     public patientId?: number,
     public handPositionId?: number,

@@ -3,7 +3,7 @@ import RecordInstance from './RecordInstance'
 class RecordSession {
   public records?: RecordInstance[]
 
-  //#region constructor
+  //#region Constructor
   constructor(
     public diagnosisId: number,
     public recordTypeId: number,
