@@ -32,7 +32,7 @@ abstract class SensorServiceBase implements ISensorService {
   //#endregion
 
   //#region pulic methods
-  get diagosisId(): number {
+  get diagosisId() {
     if (!this.diagnosis) {
       console.error('Service was not initialized before used.')
       return 0

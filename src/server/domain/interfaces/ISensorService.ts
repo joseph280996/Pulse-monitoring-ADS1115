@@ -2,7 +2,7 @@ import RecordInstance from '../models/RecordInstance'
 
 interface ISensorService {
   name: string
-  diagnosisId: number
+  readonly diagnosisId: number
   init(): Promise<unknown>
   start(): void
   stop(): void

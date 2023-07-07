@@ -5,7 +5,7 @@ import SensorDataServiceFactory from '../../../domain/factories/sensorDataServic
 import TimeIntervalService from '../../../infrastructure/services/TimeIntervalService'
 import WebSocket, { RawData } from 'ws'
 import ISensorService from '../../../domain/interfaces/ISensorService'
-import wsOperationTypes from 'src/server/infrastructure/variables/wsOperationTypes'
+import wsOperationTypes from '../../../infrastructure/variables/wsOperationTypes'
 
 dotenv.config()
 class SensorController {

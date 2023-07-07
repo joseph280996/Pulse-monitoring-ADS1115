@@ -1,7 +1,7 @@
 import express, { RequestHandler, Router } from 'express'
-import DiagnosisRepository from 'src/server/domain/repositories/DiagnosisRepository'
-import PatientRepository from 'src/server/domain/repositories/PatientRepository'
-import splitNameForDB from 'src/server/infrastructure/utils/functions/splitNameForDB'
+import DiagnosisRepository from '../../../domain/repositories/DiagnosisRepository'
+import PatientRepository from '../../../domain/repositories/PatientRepository'
+import splitNameForDB from '../../../infrastructure/utils/functions/splitNameForDB'
 
 class PatientController {
   //#region Private Properties
