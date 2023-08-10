@@ -11,15 +11,13 @@ dotenv.config()
 class SensorController {
   //#region Private Properties
   private static _instance: SensorController
-  private factoryInitPromise: Promise<any>
   //#endregion
 
   //#region Constructors
   constructor(
-    private sensorServiceFactory: SensorDataServiceFactory = SensorDataServiceFactory.instance,
+    private sensorServiceFactoryPromise: Promise<SensorDataServiceFactory> = SensorDataServiceFactory.instance,
     private intervalService: TimeIntervalService = TimeIntervalService.instance,
   ) {
-    this.factoryInitPromise = sensorServiceFactory.init()
   }
   //#endregion
 
@@ -31,6 +29,9 @@ class SensorController {
     return SensorController._instance
   }
 
+  /**
+   * The router registration that will perform action based on receiving message
+   */
   public router(rawMessage: RawData, ws: WebSocket) {
     const message = rawMessage.toString()
     const [operation, data] = message.split(';')
@@ -54,9 +55,12 @@ class SensorController {
     }
   }
 
+  /**
+   * Initialize the sensor reading and sensor communication loop
+   */
   public async start(_: string, ws: WebSocket) {
-    await this.factoryInitPromise
-    const service = this.sensorServiceFactory.getService()
+    const sensorServiceFactory = await this.sensorServiceFactoryPromise
+    const service = sensorServiceFactory.getService()
 
     // Initialize service to create diagnosis
     await service.init()
@@ -64,21 +68,31 @@ class SensorController {
     this.sendData(ws, service)
   }
 
+  /**
+   * Pause the current reading sensor reading and sending data loop
+   */
   public async pause() {
-    await this.factoryInitPromise
-    const service = this.sensorServiceFactory.getService()
+    const sensorServiceFactory = await this.sensorServiceFactoryPromise
+    const service = sensorServiceFactory.getService()
+    this.intervalService.clear(service.name)
     service.pause()
   }
 
+  /**
+   * Resume the reading sensor and sending data loop
+   */
   public async resume() {
-    await this.factoryInitPromise
-    const service = this.sensorServiceFactory.getService()
+    const sensorServiceFactory = await this.sensorServiceFactoryPromise
+    const service = sensorServiceFactory.getService()
     service.resume()
   }
 
+  /**
+   * Stop the reading sensor and sending data loop
+   */
   public async stop(_: string, ws: WebSocket) {
-    await this.factoryInitPromise
-    const service = this.sensorServiceFactory.getService()
+    const sensorServiceFactory = await this.sensorServiceFactoryPromise
+    const service = sensorServiceFactory.getService()
     service.stop()
     this.intervalService.clear(service.name)
     ws.send(

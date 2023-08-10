@@ -1,40 +1,32 @@
 import dotenv from 'dotenv'
-import ISensorService from '../interfaces/ISensorService'
+import SensorServiceBase from '../services/SensorServiceBase';
 
 class SensorDataServiceFactory {
   //#region Properties
   private static _instance: SensorDataServiceFactory
-  private runningEnv!: string
-  private service!: ISensorService
+  private service!: SensorServiceBase
   //#endregion
 
   //#region getters
-  static get instance() {
+  static get instance(): Promise<SensorDataServiceFactory> {
     dotenv.config()
-    if (!this._instance && process.env.RUNNING_ENV) {
-      this._instance = new SensorDataServiceFactory(process.env.RUNNING_ENV)
-    }
-    return this._instance
+    const importPath = process.env.RUNNING_ENV === 'development' ? '../services/SensorMockService' : '../services/PiezoElectricSensorService'
+    return import(importPath).then((service:SensorServiceBase) => {
+      if (!SensorDataServiceFactory._instance) {
+        SensorDataServiceFactory._instance = new SensorDataServiceFactory(service)
+      }
+      return SensorDataServiceFactory._instance
+    })
   }
   //#endregion
 
   //#region Constructor
-  constructor(runningEnv: string) {
-    this.runningEnv = runningEnv
+  constructor(sensorService: SensorServiceBase) {
+    this.service = sensorService
   }
   //#endregion
 
   //#region Public Methods
-  async init() {
-    let serviceImport
-    if (this.runningEnv === 'development') {
-      serviceImport = await import('../services/SensorMockService')
-    } else {
-      serviceImport = await import('../services/PiezoElectricSensorService')
-    }
-    this.service = serviceImport.default.instance
-  }
-
   getService() {
     if (!this.service) {
       throw new Error('Please call init() before calling getService().')
