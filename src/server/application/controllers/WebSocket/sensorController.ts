@@ -6,6 +6,7 @@ import TimeIntervalService from '../../../infrastructure/services/TimeIntervalSe
 import WebSocket, { RawData } from 'ws'
 import ISensorService from '../../../domain/interfaces/ISensorService'
 import wsOperationTypes from '../../../infrastructure/variables/wsOperationTypes'
+import { messageValidator } from '../../validators/websocketMessages/websocketMessageValidator'
 
 dotenv.config()
 class SensorController {
@@ -34,8 +35,9 @@ class SensorController {
    */
   public router(rawMessage: RawData, ws: WebSocket) {
     const message = rawMessage.toString()
-    const [operation, data] = message.split(';')
-    console.log(`Received event to [${operation}] with data [${data}]`)
+    const [operation, data] = messageValidator(message)
+
+    console.log(`Started executing operation [${operation}] with data [${data}]`)
 
     switch (operation) {
       case wsOperationTypes.START:
