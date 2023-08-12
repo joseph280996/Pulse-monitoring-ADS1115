@@ -1,12 +1,12 @@
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
+import fastCSV from 'fast-csv'
 import { WriteToFileConfigType } from './FileSystemService.types'
-import FileWriterFactory from '../../domain/factories/fileWriterFactory'
+import { FORMAT_TYPE } from '../variables/fileTypes';
 
 class FileSystemService<T> {
   //#region Properties
-  private readonly fileWriterFactory: FileWriterFactory
   private filePath!: string
   //#endregion
 
@@ -15,7 +15,6 @@ class FileSystemService<T> {
     fileName: string,
     rootPath: string = path.join(os.homedir(), 'Desktop'),
   ) {
-    this.fileWriterFactory = FileWriterFactory.instance
     this.createIfNotExistFolder(path.join(rootPath, 'exported-data'))
     this.filePath = path.join(rootPath, 'exported-data', `${fileName}.json`)
   }
@@ -23,8 +22,11 @@ class FileSystemService<T> {
 
   //#region Public Methods
   async write(data: T, { formatType }: WriteToFileConfigType): Promise<void> {
-    const fileWriter = this.fileWriterFactory.getFileWriter(formatType)
-    fileWriter(this.filePath, data)
+    if (formatType === FORMAT_TYPE.JSON) {
+      this.writeJSONFile(this.filePath, data)
+    } else {
+      this.writeCSVFile(this.filePath, data)
+    }
   }
   //#endregion
 
@@ -35,6 +37,21 @@ class FileSystemService<T> {
         recursive: true,
       })
     }
+  }
+
+  private writeJSONFile(filePath: string, data: any) {
+    const stringifiedRecords = JSON.stringify(data)
+    fs.writeFile(filePath, stringifiedRecords, (err) => {
+      if (err) {
+        throw err
+      }
+      console.log('Exported!')
+    })
+  }
+
+  private writeCSVFile(filePath: string, data: any) {
+    const writeStream = fs.createWriteStream(filePath)
+    fastCSV.write(data, { headers: true }).pipe(writeStream)
   }
   //#endregion
 }
