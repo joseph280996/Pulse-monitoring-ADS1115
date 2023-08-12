@@ -4,6 +4,12 @@ import FileSystemService from '../../../infrastructure/services/FileSystemServic
 import DiagnosisRepository from '../../../domain/repositories/DiagnosisRepository'
 import formatInputDateForExport from '../../../infrastructure/utils/functions/formatInputDateForExport'
 
+/**
+ * Diagnosis API Controller
+ *
+ * A list of all HTTP request handler for diagnosis with top level try-catch clause
+ * for appropriate status code return
+ */
 class DiagnosisController {
   //#region Properties
   private static _instance: DiagnosisController
@@ -29,8 +35,8 @@ class DiagnosisController {
   /**
    * Get All Diagnoses.
    *
-   * @param req HTTP Request with information to create Diagnosis.
-   * @param res Express Response object.
+   * Returns all the diagnosis in the system to the front end for display.
+   *
    * @returns All Diagnoses.
    */
   getAllDiagnoses: RequestHandler = async (_, res) => {
@@ -41,8 +47,8 @@ class DiagnosisController {
   /**
    * Get Diagnosis By Id.
    *
-   * @param req HTTP Request with information to create Diagnosis.
-   * @param res Express Response object.
+   * Return the diagnosis with the provided id.
+   *
    * @returns Diagnosis with given Id.
    */
   getByIdWithRecord: RequestHandler = async (req, res) => {
@@ -60,10 +66,9 @@ class DiagnosisController {
 
   /**
    * Export Data Request Handler
-   * Handles exporting data within date range
    *
-   * @param req HTTP Request with information to create Diagnosis
-   * @param res Express Response object
+   * Handles exporting data within date range to a JSON file in 
+   * the file system
    */
   exportData: RequestHandler = async (req, res) => {
     try {

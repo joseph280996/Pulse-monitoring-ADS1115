@@ -3,6 +3,13 @@ import DiagnosisRepository from '../../../domain/repositories/DiagnosisRepositor
 import PatientRepository from '../../../domain/repositories/PatientRepository'
 import splitNameForDB from '../../../infrastructure/utils/functions/splitNameForDB'
 
+/**
+ * Patient API controller
+ *
+ * List of all the HTTP requests that will be accepted by the endpoint
+ * with a top level try-catch clause for appropriate status code update 
+ * and error handler
+ */
 class PatientController {
   //#region Private Properties
   private static _instance: PatientController

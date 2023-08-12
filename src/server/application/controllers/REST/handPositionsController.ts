@@ -4,6 +4,13 @@ import HandPosition from '../../../domain/models/HandPosition'
 import { HandPositionType } from '../../../domain/models/HandPosition.types'
 import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
 
+/**
+ * Hand Positions API controller
+ *
+ * List of all the HTTP requests that will be accepted by the endpoint
+ * with a top level try-catch clause for appropriate status code update 
+ * and error handler
+ */
 class HandPositionsController {
   private static _instance: HandPositionsController
 
@@ -22,6 +29,11 @@ class HandPositionsController {
   }
 
   //#region Public Methods
+
+  /**
+   * Returns all the possible hand positions
+   * @returns A list of known hand positions in the database
+   */
   getHandPositions: RequestHandler = async (_req, res) => {
     try {
       const result = await this.db.query<HandPositionType[], void>(

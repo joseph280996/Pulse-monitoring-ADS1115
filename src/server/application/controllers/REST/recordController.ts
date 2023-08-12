@@ -1,6 +1,13 @@
 import express, { RequestHandler, Router } from 'express'
 import RecordSessionRepository from '../../../domain/repositories/RecordSessionRepository'
 
+/**
+ * Record API controller
+ *
+ * List of all the HTTP requests that will be accepted by the endpoint
+ * with a top level try-catch clause for appropriate status code update 
+ * and error handler
+ */
 class RecordController {
   constructor(
     private recordRepo: RecordSessionRepository = new RecordSessionRepository(),

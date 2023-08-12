@@ -4,6 +4,12 @@ import PulseType from '../../../domain/models/PulseTypes'
 import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
 import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
 
+ /** Pulse Types API controller
+ *
+ * List of all the HTTP requests that will be accepted by the endpoint
+ * with a top level try-catch clause for appropriate status code update 
+ * and error handler
+ */
 class PulseTypesController {
   private static _instance: PulseTypesController
 
