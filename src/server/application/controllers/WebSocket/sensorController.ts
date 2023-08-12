@@ -9,6 +9,16 @@ import wsOperationTypes from '../../../infrastructure/variables/wsOperationTypes
 import { messageValidator } from '../../validators/websocketMessages/websocketMessageValidator'
 
 dotenv.config()
+
+/**
+ * Sensor Value Websocket Controller
+ *
+ * List of all the possible operation can be performed on the sensor data:
+ *  1. Start
+ *  2. Stop
+ *  3. Resume
+ *  4. Pause
+ */
 class SensorController {
   //#region Private Properties
   private static _instance: SensorController
