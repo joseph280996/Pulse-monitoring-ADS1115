@@ -64,11 +64,11 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
     return res
   }
 
-  public async getById(id: number) {
-    return this.getByIdWithRecord(id, false)
+  public async getByIdWithNoRecord(id: number) {
+    return this.getById(id, false)
   }
 
-  public async getByIdWithRecord(id: number, shouldPopulateRecords = true) {
+  public async getById(id: number, shouldPopulateRecords = true) {
     const res = await this.db.query<Diagnosis[], [number]>(
       DiagnosisSqls.GET_BY_ID,
       [id],
@@ -82,13 +82,13 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
 
     if (shouldPopulateRecords) {
       diagnosis.piezoElectricRecords = (
-        await this.recordRepository.getByDiagnosisIdAndType(
+        await this.recordRepository.getWithRecordByDiagnosisIdAndType(
           recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
           id,
         )
       )[0]
       diagnosis.ecgRecords = (
-        await this.recordRepository.getByDiagnosisIdAndType(
+        await this.recordRepository.getWithRecordByDiagnosisIdAndType(
           recordTypes.ECG_SENSOR_TYPE,
           id,
         )

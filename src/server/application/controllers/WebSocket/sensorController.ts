@@ -37,6 +37,7 @@ class SensorController {
     if (!SensorController._instance) {
       SensorController._instance = new SensorController()
     }
+
     return SensorController._instance
   }
 

@@ -8,7 +8,7 @@ import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
  * Hand Positions API controller
  *
  * List of all the HTTP requests that will be accepted by the endpoint
- * with a top level try-catch clause for appropriate status code update 
+ * with a top level try-catch clause for appropriate status code update
  * and error handler
  */
 class HandPositionsController {
@@ -25,6 +25,12 @@ class HandPositionsController {
     public router: Router = express.Router(),
     private db: DB = DBInstance,
   ) {
+    if (HandPositionsController._instance) {
+      throw new Error(
+        'This is a singleton class. Called instance property instead of initializing a new instance',
+      )
+    }
+
     this.registerRoutes()
   }
 

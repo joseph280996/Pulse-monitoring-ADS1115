@@ -26,6 +26,12 @@ class DiagnosisController {
     public router: Router = express.Router(),
     private readonly diagnosisRepo = new DiagnosisRepository(),
   ) {
+    if (DiagnosisController._instance) {
+      throw new Error(
+        'This is a singleton class. Called instance property instead of initializing a new instance',
+      )
+    }
+
     this.registerRoutes()
   }
   //#endregion
@@ -54,9 +60,7 @@ class DiagnosisController {
   getByIdWithRecord: RequestHandler = async (req, res) => {
     const { id: diagnosisId } = req.params
 
-    const records = await this.diagnosisRepo.getByIdWithRecord(
-      Number(diagnosisId),
-    )
+    const records = await this.diagnosisRepo.getById(Number(diagnosisId))
     if (!records) {
       res.status(400).send('The request diagnosis id does not exist')
     }
@@ -67,7 +71,7 @@ class DiagnosisController {
   /**
    * Export Data Request Handler
    *
-   * Handles exporting data within date range to a JSON file in 
+   * Handles exporting data within date range to a JSON file in
    * the file system
    */
   exportData: RequestHandler = async (req, res) => {

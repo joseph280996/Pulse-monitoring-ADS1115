@@ -4,6 +4,7 @@ import { RecordSessionDataType } from '../models/Record.types'
 import * as RecordSessionSqls from '../sqls/recordSessionSqls'
 import IRepository from '../interfaces/IRepository'
 import { mapRecordDataToModel } from '../mappers/recordDataMapper'
+import { mapRecordSessionDataToModel } from '../mappers/recordSessionDataMapper'
 
 class RecordSessionRepository
   implements IRepository<RecordSession, RecordSession | null>
@@ -25,7 +26,14 @@ class RecordSessionRepository
     }
   }
 
-  async getById(id: number) {
+  /**
+   * Get RecordSession by id
+   *
+   * Retrieve the RecordSession with the provided id
+   *
+   * @returns the record session that was requested
+  */
+  async getById(id: number):Promise<RecordSession> {
     const res = await this.db.query<[RecordSessionDataType], [number]>(
       RecordSessionSqls.GET_BY_ID,
       [id],
@@ -33,16 +41,18 @@ class RecordSessionRepository
     if (!res) {
       throw new Error(`Cannot find Record with Id [${id}]`)
     }
-    return new RecordSession(
-      res[0].diagnosisId,
-      res[0].recordTypeId,
-      res[0].id,
-      res[0].dateTimeCreated,
-      res[0].dateTimeUpdated,
-    )
+
+    return mapRecordSessionDataToModel(res[0])
   }
 
-  async getByDiagnosisIdAndType(
+  /**
+   * Get RecordSession by diagnosisId and typeId
+   *
+   * Retrieve the RecordSession associated with the diagnosisId and sensorTypeId
+   *
+   * @returns the record session that matched the filter
+  */
+  async getWithRecordByDiagnosisIdAndType(
     recordTypeId: number,
     diagnosisId?: number,
   ): Promise<RecordSession[]> {
@@ -64,13 +74,7 @@ class RecordSessionRepository
         if (!sessions.has(row.sessionId)) {
           sessions.set(
             row.sessionId,
-            new RecordSession(
-              row.diagnosisId,
-              row.recordTypeId,
-              row.id,
-              row.dateTimeCreated,
-              row.dateTimeUpdated,
-            ),
+            mapRecordSessionDataToModel(row),
           )
         }
 

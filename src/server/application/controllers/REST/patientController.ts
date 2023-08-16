@@ -7,7 +7,7 @@ import splitNameForDB from '../../../infrastructure/utils/functions/splitNameFor
  * Patient API controller
  *
  * List of all the HTTP requests that will be accepted by the endpoint
- * with a top level try-catch clause for appropriate status code update 
+ * with a top level try-catch clause for appropriate status code update
  * and error handler
  */
 class PatientController {
@@ -27,6 +27,12 @@ class PatientController {
     private readonly diagnosisRepo = new DiagnosisRepository(),
     private readonly patientRepo = new PatientRepository(),
   ) {
+    if (PatientController._instance) {
+      throw new Error(
+        'This is a singleton class. Called instance property instead of initializing a new instance',
+      )
+    }
+
     this.registerRoutes()
   }
   //#endregion

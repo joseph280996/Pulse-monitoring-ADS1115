@@ -4,10 +4,10 @@ import PulseType from '../../../domain/models/PulseTypes'
 import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
 import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
 
- /** Pulse Types API controller
+/** Pulse Types API controller
  *
  * List of all the HTTP requests that will be accepted by the endpoint
- * with a top level try-catch clause for appropriate status code update 
+ * with a top level try-catch clause for appropriate status code update
  * and error handler
  */
 class PulseTypesController {
@@ -24,6 +24,12 @@ class PulseTypesController {
     public router: Router = express.Router(),
     private db: DB = DBInstance,
   ) {
+    if (PulseTypesController._instance) {
+      throw new Error(
+        'This is a singleton class. Called instance property instead of initializing a new instance',
+      )
+    }
+
     router.get('/', this.getPulseTypes)
   }
 
