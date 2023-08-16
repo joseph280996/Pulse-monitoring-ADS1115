@@ -9,15 +9,6 @@ class HandPositionRepository
 {
   //#region Properties
   db!: DB
-
-  private static _instance: HandPositionRepository
-  static get instance(): HandPositionRepository {
-    if (!this._instance) {
-      this._instance = new HandPositionRepository()
-    }
-    return this._instance
-  }
-
   //#endregion
 
   //#region Constructor

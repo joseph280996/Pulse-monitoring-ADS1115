@@ -29,6 +29,11 @@ class SensorController {
     private sensorServiceFactoryPromise: Promise<SensorDataServiceFactory> = SensorDataServiceFactory.instance,
     private intervalService: TimeIntervalService = TimeIntervalService.instance,
   ) {
+    if (SensorController._instance) {
+      throw new Error(
+        'This is a singleton class. Called instance property instead of initializing a new instance',
+      )
+    }
   }
   //#endregion
 
@@ -48,7 +53,9 @@ class SensorController {
     const message = rawMessage.toString()
     const [operation, data] = messageValidator(message)
 
-    console.log(`Started executing operation [${operation}] with data [${data}]`)
+    console.log(
+      `Started executing operation [${operation}] with data [${data}]`,
+    )
 
     switch (operation) {
       case wsOperationTypes.START:

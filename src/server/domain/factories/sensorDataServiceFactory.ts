@@ -22,6 +22,12 @@ class SensorDataServiceFactory {
 
   //#region Constructor
   constructor(sensorService: SensorServiceBase) {
+    if (SensorDataServiceFactory._instance) {
+      throw new Error(
+        'This is a singleton class. Called instance property instead of initializing a new instance',
+      )
+    }
+
     this.service = sensorService
   }
   //#endregion
