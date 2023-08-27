@@ -1,9 +1,9 @@
 import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import RecordSession from '../models/RecordSession'
-import { RecordSessionDataType } from '../models/Record.types'
+import { RecordSessionDataType } from '../models/RecordSession.types'
 import * as RecordSessionSqls from '../sqls/recordSessionSqls'
 import IRepository from '../interfaces/IRepository'
-import { mapRecordDataToModel } from '../mappers/recordDataMapper'
+import { mapRecordSession, mapRecordSessionWithRecord } from '../mappers/recordSessionMapper'
 
 class RecordSessionRepository
   implements IRepository<RecordSession, RecordSession | null>
@@ -33,16 +33,10 @@ class RecordSessionRepository
     if (!res) {
       throw new Error(`Cannot find Record with Id [${id}]`)
     }
-    return new RecordSession(
-      res[0].diagnosisId,
-      res[0].recordTypeId,
-      res[0].id,
-      res[0].dateTimeCreated,
-      res[0].dateTimeUpdated,
-    )
+    return mapRecordSession(res[0])
   }
 
-  async getByDiagnosisIdAndType(
+  async getByDiagnosisId(
     recordTypeId: number,
     diagnosisId?: number,
   ): Promise<RecordSession[]> {
@@ -59,44 +53,7 @@ class RecordSessionRepository
       return []
     }
 
-    const sessions = res.reduce(
-      (sessions: Map<number, RecordSession>, row: any) => {
-        if (!sessions.has(row.sessionId)) {
-          sessions.set(
-            row.sessionId,
-            new RecordSession(
-              row.diagnosisId,
-              row.recordTypeId,
-              row.id,
-              row.dateTimeCreated,
-              row.dateTimeUpdated,
-            ),
-          )
-        }
-
-        const session = sessions.get(row.sessionId)
-        if (session) {
-          const record = mapRecordDataToModel({
-            id: row.recordId,
-            recordSessionId: row.recordSessionId,
-            dateTimeCreated: row.recordDateTimeCreated,
-            dateTimeUpdated: row.recordDateTimeUpdated,
-            data: row.data,
-          })
-
-          if (!session.records) {
-            session.records = []
-          }
-
-          session.records = session.records?.concat(record.data)
-        }
-
-        return sessions
-      },
-      new Map(),
-    )
-
-    return Array.from(sessions, ([_, value]) => value)
+    return mapRecordSessionWithRecord(res)
   }
 
   async create(recordSession: RecordSession): Promise<RecordSession> {

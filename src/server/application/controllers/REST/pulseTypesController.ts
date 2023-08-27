@@ -1,33 +1,34 @@
 import express, { RequestHandler, Router } from 'express'
-import DBInstance, { DB } from '../../../domain/models/DbConnectionModel'
 import PulseType from '../../../domain/models/PulseTypes'
 import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
 import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
+import DbService, { DB } from 'src/server/infrastructure/services/DbService'
 
- /** Pulse Types API controller
+/** Pulse Types API controller
  *
  * List of all the HTTP requests that will be accepted by the endpoint
- * with a top level try-catch clause for appropriate status code update 
- * and error handler
+ * with a top level try-catch clause for appropriate status code update
+ * and error handler.
+ *
+ * NOTE: For simplicity, this endpoint doesn't need repository + mapper which is the 
+ * design pattern that this project is following
  */
 class PulseTypesController {
-  private static _instance: PulseTypesController
-
-  public static get instance() {
-    if (!PulseTypesController._instance) {
-      PulseTypesController._instance = new PulseTypesController()
-    }
-    return PulseTypesController._instance
-  }
-
   constructor(
     public router: Router = express.Router(),
-    private db: DB = DBInstance,
+    private db: DB = DbService,
   ) {
     router.get('/', this.getPulseTypes)
   }
 
   //#region Public Methods
+
+  /**
+   * Get all available pulse types handler
+   *
+   * @param request The Express request object
+   * @param res The Express response object
+   */
   getPulseTypes: RequestHandler = async (_req, res) => {
     const pulseTypes = await this.db
       .query<PulseTypeDataType[], void>(PulseTypeSqls.GET_ALL)
