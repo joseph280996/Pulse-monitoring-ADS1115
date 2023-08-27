@@ -1,13 +1,12 @@
-import IDb from '../interfaces/IDb'
 import IRepository from '../interfaces/IRepository'
 import { mapRecordDataToModel } from '../mappers/recordDataMapper'
-import DbConnectionModel from '../models/DbConnectionModel'
+import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import Record from '../models/Record'
 import { RecordDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSqls'
 
 class RecordRepository implements IRepository<Record, Record | null> {
-  constructor(private db: IDb = DbConnectionModel) {}
+  constructor(private db: DB = DBInstance) {}
 
   update(): Promise<boolean> {
     throw new Error('Method not implemented.')

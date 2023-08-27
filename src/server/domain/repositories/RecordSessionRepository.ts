@@ -1,4 +1,4 @@
-import DBInstance, { DB } from '../models/DbConnectionModel'
+import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import RecordSession from '../models/RecordSession'
 import { RecordSessionDataType } from '../models/Record.types'
 import * as RecordSessionSqls from '../sqls/recordSessionSqls'
