@@ -39,10 +39,10 @@ class Server implements ServerInterface {
   }
 
   registerRouter() {
-    this.app.use('/diagnosis', DiagnosisController.instance.router)
-    this.app.use('/hand-position', HandPositionsController.instance.router)
-    this.app.use('/pulse-types', PulseTypesController.instance.router)
-    this.app.use('/patient', PatientController.instance.router)
+    this.app.use('/diagnosis', (new DiagnosisController()).router)
+    this.app.use('/hand-position', (new HandPositionsController()).router)
+    this.app.use('/pulse-types', (new PulseTypesController).router)
+    this.app.use('/patient', (new PatientController()).router)
   }
 
   registerWebsocketMessageTypes() {

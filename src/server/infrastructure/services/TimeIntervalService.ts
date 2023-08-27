@@ -1,13 +1,7 @@
-class TimeIntervalService {
-  //#region Properties
-  private static _instance: TimeIntervalService
-  static get instance() {
-    if (!this._instance) {
-      this._instance = new TimeIntervalService()
-    }
-    return this._instance
-  }
+import Singleton from '../utils/classes/Singleton'
 
+class TimeIntervalService extends Singleton {
+  //#region Properties
   private intervals: Map<string, NodeJS.Timeout | null> = new Map()
 
   //#region Public Methods

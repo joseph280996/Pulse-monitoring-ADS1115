@@ -8,19 +8,10 @@ import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
  * Hand Positions API controller
  *
  * List of all the HTTP requests that will be accepted by the endpoint
- * with a top level try-catch clause for appropriate status code update 
+ * with a top level try-catch clause for appropriate status code update
  * and error handler
  */
 class HandPositionsController {
-  private static _instance: HandPositionsController
-
-  public static get instance(): HandPositionsController {
-    if (!HandPositionsController._instance) {
-      HandPositionsController._instance = new HandPositionsController()
-    }
-    return HandPositionsController._instance
-  }
-
   constructor(
     public router: Router = express.Router(),
     private db: DB = DBInstance,

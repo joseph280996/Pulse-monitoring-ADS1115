@@ -7,20 +7,10 @@ import splitNameForDB from '../../../infrastructure/utils/functions/splitNameFor
  * Patient API controller
  *
  * List of all the HTTP requests that will be accepted by the endpoint
- * with a top level try-catch clause for appropriate status code update 
+ * with a top level try-catch clause for appropriate status code update
  * and error handler
  */
 class PatientController {
-  //#region Private Properties
-  private static _instance: PatientController
-  public static get instance() {
-    if (!PatientController._instance) {
-      PatientController._instance = new PatientController()
-    }
-    return PatientController._instance
-  }
-  //#endregion
-
   //#region Constructors
   constructor(
     public router: Router = express.Router(),
