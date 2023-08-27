@@ -6,20 +6,11 @@ import i2c, { PromisifiedBus } from 'i2c-bus'
 import ADS1115 from 'ads1115'
 import moment from 'moment'
 import RecordInstance from '../models/RecordInstance'
-import SensorServiceBase from './SensorServiceBase'
+import SensorServiceBase from './SensorManagerBase'
 import recordTypes from '../../infrastructure/variables/recordTypes'
 
 class PiezoElectricSensorService extends SensorServiceBase {
   //#region Properties
-  private static _instance: PiezoElectricSensorService
-  static get instance() {
-    if (!this._instance) {
-      this._instance = new PiezoElectricSensorService()
-    }
-
-    return this._instance
-  }
-
   override get name() {
     return this.SERVICE_NAME
   }

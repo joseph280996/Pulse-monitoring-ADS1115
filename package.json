@@ -55,7 +55,7 @@
     "typescript": "^5.0.4"
   },
   "optionalDependencies": {
-    "ads1115": "^1.2.0",
+    "node-ads1x15": "^1.0.3",
     "i2c-bus": "^5.2.2"
   }
 }

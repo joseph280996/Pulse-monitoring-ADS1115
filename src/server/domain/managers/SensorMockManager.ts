@@ -1,20 +1,11 @@
 import moment from 'moment'
 import RecordInstance from '../models/RecordInstance'
-import SensorServiceBase from './SensorServiceBase'
+import SensorServiceBase from './SensorManagerBase'
 
 class SensorMockService extends SensorServiceBase {
   //#region Properties
   get name() {
     return this.SERVICE_NAME
-  }
-
-  private static _instance: SensorMockService
-  static get instance() {
-    if (!this._instance) {
-      this._instance = new SensorMockService()
-    }
-
-    return this._instance
   }
   //#endregion
 

@@ -9,8 +9,9 @@ import RecordInstance from '../models/RecordInstance'
 import recordTypes from '../../infrastructure/variables/recordTypes'
 import Record from '../models/Record'
 import RecordRepository from '../repositories/RecordRepository'
+import Singleton from '../../infrastructure/utils/classes/Singleton'
 
-abstract class SensorServiceBase implements ISensorService {
+abstract class SensorServiceBase extends Singleton implements ISensorService {
   //#region Abstract Methods
   public abstract get name(): string
   protected abstract readADS1115Value(): Promise<RecordInstance>
@@ -28,7 +29,9 @@ abstract class SensorServiceBase implements ISensorService {
     private secondaryStore: RecordInstance[] = [],
     private readonly BATCH_DATA_SIZE = 20,
     private readonly loopService: LoopService = new LoopService(),
-  ) {}
+  ) {
+    super()
+  }
   //#endregion
 
   //#region pulic methods

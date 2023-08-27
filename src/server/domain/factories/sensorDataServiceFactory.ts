@@ -1,37 +1,14 @@
 import dotenv from 'dotenv'
-import SensorServiceBase from '../services/SensorServiceBase';
+import SensorManagerBase from '../managers/SensorManagerBase';
 
 class SensorDataServiceFactory {
-  //#region Properties
-  private static _instance: SensorDataServiceFactory
-  private service!: SensorServiceBase
-  //#endregion
-
-  //#region getters
-  static get instance(): Promise<SensorDataServiceFactory> {
+  //#region Public Methods
+  static async getService() {
     dotenv.config()
     const importPath = process.env.RUNNING_ENV === 'development' ? '../services/SensorMockService' : '../services/PiezoElectricSensorService'
-    return import(importPath).then((service:SensorServiceBase) => {
-      if (!SensorDataServiceFactory._instance) {
-        SensorDataServiceFactory._instance = new SensorDataServiceFactory(service)
-      }
-      return SensorDataServiceFactory._instance
+    return import(importPath).then((service:SensorManagerBase) => {
+      return service;
     })
-  }
-  //#endregion
-
-  //#region Constructor
-  constructor(sensorService: SensorServiceBase) {
-    this.service = sensorService
-  }
-  //#endregion
-
-  //#region Public Methods
-  getService() {
-    if (!this.service) {
-      throw new Error('Please call init() before calling getService().')
-    }
-    return this.service
   }
   //#endregion
 }
