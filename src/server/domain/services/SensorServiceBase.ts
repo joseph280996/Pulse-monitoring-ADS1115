@@ -23,7 +23,6 @@ abstract class SensorServiceBase implements ISensorService {
     private recordRepo: RecordRepository = new RecordRepository(),
     private saveRecordPromise: Promise<Record> | null = null,
     protected diagnosis: Diagnosis | null = null,
-    protected recordSession: RecordSession | null = null,
     private store: RecordInstance[] = [],
     private secondaryStore: RecordInstance[] = [],
     private readonly BATCH_DATA_SIZE = 20,
@@ -43,10 +42,6 @@ abstract class SensorServiceBase implements ISensorService {
 
   async init() {
     this.diagnosis = await this.diagnosisRepo.create({})
-    this.recordSession = await this.recordSessionRepo.create({
-      diagnosisId: this.diagnosis?.id as number,
-      recordTypeId: recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
-    })
   }
 
   start() {
@@ -68,7 +63,7 @@ abstract class SensorServiceBase implements ISensorService {
     }
     if (this.store.length > 0) {
       await this.recordRepo.create(
-        new Record(this.secondaryStore, this.recordSession?.id as number),
+        new Record(this.secondaryStore, recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE),
       )
     }
     this.loopService.stop()
@@ -92,7 +87,7 @@ abstract class SensorServiceBase implements ISensorService {
   private async createRecordForPreviousStorage() {
     this.swapStore()
     this.saveRecordPromise = this.recordRepo.create(
-      new Record(this.secondaryStore, this.recordSession?.id as number),
+      new Record(this.secondaryStore, recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE),
     )
   }
 

@@ -25,7 +25,7 @@ class SensorController {
   //#endregion
 
   //#region Constructors
-  constructor(
+  private constructor(
     private sensorServiceFactoryPromise: Promise<SensorDataServiceFactory> = SensorDataServiceFactory.instance,
     private intervalService: TimeIntervalService = TimeIntervalService.instance,
   ) {
