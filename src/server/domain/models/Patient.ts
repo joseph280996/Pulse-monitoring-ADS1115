@@ -1,7 +1,6 @@
-import IPatient from '../interfaces/IPatient'
 import { PatientDataType } from './Patient.types'
 
-class Patient implements IPatient {
+class Patient {
   //#region Properties
   public id?: number | undefined
   public userId?: number

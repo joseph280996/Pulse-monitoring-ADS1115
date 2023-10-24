@@ -48,14 +48,14 @@
     "eslint-config-prettier": "^8.6.0",
     "eslint-import-resolver-typescript": "^3.5.3",
     "eslint-plugin-import": "^2.27.5",
-    "nodemon": "^2.0.20",
+    "nodemon": "^3.0.1",
     "prettier": "^2.8.1",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
     "typescript": "^5.0.4"
   },
   "optionalDependencies": {
-    "ads1115": "^1.2.0",
+    "node-ads1x15": "^1.0.3",
     "i2c-bus": "^5.2.2"
   }
 }

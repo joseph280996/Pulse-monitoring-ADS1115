@@ -1,7 +1,7 @@
 import recordTypes from '../../infrastructure/variables/recordTypes'
 import EcgSensorService from '../../infrastructure/services/EcgSensorService'
 import IRepository from '../interfaces/IRepository'
-import DBInstance, { DB } from '../models/DbConnectionModel'
+import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import Diagnosis from '../models/Diagnosis'
 import { GetDiagnosisByRangeInputType } from '../models/Diagnosis.types'
 import * as DiagnosisSqls from '../sqls/diagnosisSqls'
@@ -11,7 +11,7 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
   //#region Constructor
   constructor(
     private db: DB = DBInstance,
-    private ecgSensorService: EcgSensorService = EcgSensorService.instance,
+    private ecgSensorService: EcgSensorService = EcgSensorService.instance as EcgSensorService,
     private recordRepository: RecordSessionRepository = new RecordSessionRepository(),
   ) {}
   //#endregion

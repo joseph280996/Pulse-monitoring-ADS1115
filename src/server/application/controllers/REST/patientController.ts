@@ -11,16 +11,6 @@ import splitNameForDB from '../../../infrastructure/utils/functions/splitNameFor
  * and error handler
  */
 class PatientController {
-  //#region Private Properties
-  private static _instance: PatientController
-  public static get instance() {
-    if (!PatientController._instance) {
-      PatientController._instance = new PatientController()
-    }
-    return PatientController._instance
-  }
-  //#endregion
-
   //#region Constructors
   constructor(
     public router: Router = express.Router(),

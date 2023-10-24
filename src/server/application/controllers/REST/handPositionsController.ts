@@ -12,15 +12,6 @@ import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
  * and error handler
  */
 class HandPositionsController {
-  private static _instance: HandPositionsController
-
-  public static get instance(): HandPositionsController {
-    if (!HandPositionsController._instance) {
-      HandPositionsController._instance = new HandPositionsController()
-    }
-    return HandPositionsController._instance
-  }
-
   constructor(
     public router: Router = express.Router(),
     private db: DB = DBInstance,

@@ -1,19 +1,24 @@
 import dotenv from 'dotenv'
-import SensorServiceBase from '../services/SensorServiceBase';
+import SensorManagerBase from '../managers/SensorManagerBase'
 
 class SensorDataServiceFactory {
   //#region Properties
   private static _instance: SensorDataServiceFactory
-  private service!: SensorServiceBase
+  private service!: SensorManagerBase
   //#endregion
 
-  //#region getters
-  static get instance(): Promise<SensorDataServiceFactory> {
+  //#region Public Methods
+  static async getService() {
     dotenv.config()
-    const importPath = process.env.RUNNING_ENV === 'development' ? '../services/SensorMockService' : '../services/PiezoElectricSensorService'
-    return import(importPath).then((service:SensorServiceBase) => {
+    const importPath =
+      process.env.RUNNING_ENV === 'development'
+        ? '../services/SensorMockService'
+        : '../services/PiezoElectricSensorService'
+    return import(importPath).then((service: SensorManagerBase) => {
       if (!SensorDataServiceFactory._instance) {
-        SensorDataServiceFactory._instance = new SensorDataServiceFactory(service)
+        SensorDataServiceFactory._instance = new SensorDataServiceFactory(
+          service,
+        )
       }
       return SensorDataServiceFactory._instance
     })
@@ -21,7 +26,7 @@ class SensorDataServiceFactory {
   //#endregion
 
   //#region Constructor
-  constructor(sensorService: SensorServiceBase) {
+  constructor(sensorService: SensorManagerBase) {
     if (SensorDataServiceFactory._instance) {
       throw new Error(
         'This is a singleton class. Called instance property instead of initializing a new instance',

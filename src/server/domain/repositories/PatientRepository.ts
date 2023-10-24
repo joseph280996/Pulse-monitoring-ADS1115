@@ -1,5 +1,5 @@
 import IRepository from '../interfaces/IRepository'
-import DBInstance, { DB } from '../models/DbConnectionModel'
+import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import Patient from '../models/Patient'
 import { PatientDataType, PatientNameType } from '../models/Patient.types'
 import * as PatientSqls from '../sqls/patientSqls'

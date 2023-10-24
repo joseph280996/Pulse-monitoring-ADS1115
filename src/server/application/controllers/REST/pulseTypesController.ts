@@ -1,8 +1,8 @@
 import express, { RequestHandler, Router } from 'express'
-import DBInstance, { DB } from '../../../domain/models/DbConnectionModel'
 import PulseType from '../../../domain/models/PulseTypes'
 import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
 import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
+import DbService, { DB } from 'src/server/infrastructure/services/DbService'
 
 /** Pulse Types API controller
  *
@@ -22,7 +22,7 @@ class PulseTypesController {
 
   constructor(
     public router: Router = express.Router(),
-    private db: DB = DBInstance,
+    private db: DB = DbService,
   ) {
     if (PulseTypesController._instance) {
       throw new Error(
@@ -34,6 +34,13 @@ class PulseTypesController {
   }
 
   //#region Public Methods
+
+  /**
+   * Get all available pulse types handler
+   *
+   * @param request The Express request object
+   * @param res The Express response object
+   */
   getPulseTypes: RequestHandler = async (_req, res) => {
     const pulseTypes = await this.db
       .query<PulseTypeDataType[], void>(PulseTypeSqls.GET_ALL)

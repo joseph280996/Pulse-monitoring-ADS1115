@@ -1,6 +1,6 @@
-import DBInstance, { DB } from '../models/DbConnectionModel'
+import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import RecordSession from '../models/RecordSession'
-import { RecordSessionDataType } from '../models/Record.types'
+import { RecordSessionDataType } from '../models/RecordSession.types'
 import * as RecordSessionSqls from '../sqls/recordSessionSqls'
 import IRepository from '../interfaces/IRepository'
 import { mapRecordDataToModel } from '../mappers/recordDataMapper'
@@ -32,8 +32,8 @@ class RecordSessionRepository
    * Retrieve the RecordSession with the provided id
    *
    * @returns the record session that was requested
-  */
-  async getById(id: number):Promise<RecordSession> {
+   */
+  async getById(id: number): Promise<RecordSession> {
     const res = await this.db.query<[RecordSessionDataType], [number]>(
       RecordSessionSqls.GET_BY_ID,
       [id],
@@ -51,7 +51,7 @@ class RecordSessionRepository
    * Retrieve the RecordSession associated with the diagnosisId and sensorTypeId
    *
    * @returns the record session that matched the filter
-  */
+   */
   async getWithRecordByDiagnosisIdAndType(
     recordTypeId: number,
     diagnosisId?: number,
@@ -69,13 +69,10 @@ class RecordSessionRepository
       return []
     }
 
-    const sessions = res.reduce(
+    const mappedSessions = res.reduce(
       (sessions: Map<number, RecordSession>, row: any) => {
         if (!sessions.has(row.sessionId)) {
-          sessions.set(
-            row.sessionId,
-            mapRecordSessionDataToModel(row),
-          )
+          sessions.set(row.sessionId, mapRecordSessionDataToModel(row))
         }
 
         const session = sessions.get(row.sessionId)
@@ -100,7 +97,7 @@ class RecordSessionRepository
       new Map(),
     )
 
-    return Array.from(sessions, ([_, value]) => value)
+    return Array.from(mappedSessions, ([_, value]) => value)
   }
 
   async create(recordSession: RecordSession): Promise<RecordSession> {

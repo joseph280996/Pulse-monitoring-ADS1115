@@ -1,6 +1,6 @@
 import { config } from 'dotenv'
 import { MysqlError, Pool, createPool } from 'mysql'
-import IDb from '../interfaces/IDb'
+import IDb from './interfaces/IDb';
 
 config()
 export class DB implements IDb {

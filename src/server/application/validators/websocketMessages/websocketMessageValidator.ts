@@ -1,4 +1,4 @@
-import wsOperationTypes from 'src/server/infrastructure/variables/wsOperationTypes'
+import wsOperationTypes from '../../../infrastructure/variables/wsOperationTypes'
 
 export const messageValidator = (message: string) => {
   const separatorIdx = message.indexOf(';')

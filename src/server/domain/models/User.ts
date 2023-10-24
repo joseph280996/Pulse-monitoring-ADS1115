@@ -1,6 +1,7 @@
 import { genSalt, hash } from 'bcrypt'
-import IUser from '../interfaces/IUser'
-import DB from './DbConnectionModel'
+import DB from '../../infrastructure/services/DbService'
+
+// TODO: Clean this up
 
 type UserInputType = {
   id?: number
@@ -9,7 +10,7 @@ type UserInputType = {
   password: string
 }
 
-class User implements IUser {
+class User {
   //#region constant properties
   private readonly saltRounds = 12
   private static readonly sqlFields =

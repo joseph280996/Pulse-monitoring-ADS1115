@@ -1,5 +1,5 @@
 import HandPosition from '../models/HandPosition'
-import DBInstance, { DB } from '../models/DbConnectionModel'
+import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import IRepository from '../interfaces/IRepository'
 import * as HandPositionSqls from '../sqls/handPositionSqls'
 import { HandPositionType } from '../models/HandPosition.types'
