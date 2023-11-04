@@ -5,6 +5,7 @@ services:
     ports:
       - "8000:8000"
   mysql-db:
+    platform: linux/amd64
     image: "mysql:5.7"
     environment:
       - MYSQL_DATABASE=${DATABASE_NAME}

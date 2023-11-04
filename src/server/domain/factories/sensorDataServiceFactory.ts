@@ -11,7 +11,7 @@ class SensorDataServiceFactory {
         : '../managers/PiezoElectricSensorManager'
     console.log(`Importing ${importPath}`)
     return import(importPath).then((module) => {
-      return new module.default()
+      return module.instance
     })
   }
   //#endregion

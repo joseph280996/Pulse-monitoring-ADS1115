@@ -21,9 +21,12 @@ class PiezoElectricSensorService extends SensorServiceBase {
 
   //#region pulic methods
   override async init() {
+    if (!this.ads1115 && !this.bus) {
+      this.bus = await i2c.openPromisified(1)
+      this.ads1115 = await ADS1115(this.bus)
+    }
+
     this.diagnosis = await this.diagnosisRepo.create({})
-    this.bus = await i2c.openPromisified(1)
-    this.ads1115 = await ADS1115(this.bus)
   }
   //#endregion
 

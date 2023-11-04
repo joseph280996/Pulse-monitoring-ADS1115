@@ -9,7 +9,7 @@ import Record from '../models/Record'
 import RecordRepository from '../repositories/RecordRepository'
 import moment from 'moment'
 
-abstract class SensorServiceBase implements ISensorService {
+class SensorServiceBase implements ISensorService {
   //#region Methods to override
   protected async readADS1115Value(): Promise<RecordInstance> {
     const data: number = await this.getMockData()
@@ -17,9 +17,11 @@ abstract class SensorServiceBase implements ISensorService {
   }
 
   //#endregion
-
+  //#region Properties
+  private static __instance: SensorServiceBase
+  //#endregion
   //#region Constructor
-  constructor(
+  protected constructor(
     protected SERVICE_NAME: string = 'SensorServiceBase',
     protected diagnosisRepo: DiagnosisRepository = new DiagnosisRepository(),
     private recordRepo: RecordRepository = new RecordRepository(),
@@ -32,7 +34,14 @@ abstract class SensorServiceBase implements ISensorService {
   ) {}
   //#endregion
 
-  //#region pulic methods
+  //#region Pulic Methods
+  static get instance() {
+    if (!SensorServiceBase.instance) {
+      SensorServiceBase.__instance = new SensorServiceBase()
+    }
+    return SensorServiceBase.__instance
+  }
+
   public get name(): string {
     return this.SERVICE_NAME
   }
@@ -108,7 +117,7 @@ abstract class SensorServiceBase implements ISensorService {
         }
 
         // When length of main data storage big enough to maintain on its own,
-        // we reset secondary storage but we needs to make sure that secondary 
+        // we reset secondary storage but we needs to make sure that secondary
         // storage has been saved to be database, therefore, we await the promise
         // here but usually, the promise should have resolved.
         if (
