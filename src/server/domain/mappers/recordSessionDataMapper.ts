@@ -1,4 +1,4 @@
-import { RecordSessionDataType } from '../models/Record.types'
+import { RecordSessionDataType } from '../models/RecordSession.types'
 import RecordSession from '../models/RecordSession'
 
 export const mapRecordSessionDataToModel = (recordSessionData: RecordSessionDataType):RecordSession => {

@@ -11,17 +11,21 @@ import formatInputDateForExport from '../../../infrastructure/utils/functions/fo
  * for appropriate status code return
  */
 class DiagnosisController {
+  //#region Properties
+  private static _instance: DiagnosisController
+  public static get instance() {
+    if (!DiagnosisController._instance) {
+      DiagnosisController._instance = new DiagnosisController()
+    }
+    return DiagnosisController._instance
+  }
+
+  //#endregion
   //#region Constructors
-  constructor(
+  private constructor(
     public router: Router = express.Router(),
     private readonly diagnosisRepo = new DiagnosisRepository(),
   ) {
-    if (DiagnosisController._instance) {
-      throw new Error(
-        'This is a singleton class. Called instance property instead of initializing a new instance',
-      )
-    }
-
     this.registerRoutes()
   }
   //#endregion

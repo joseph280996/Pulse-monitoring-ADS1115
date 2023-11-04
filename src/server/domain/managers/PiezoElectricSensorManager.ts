@@ -7,33 +7,21 @@ import ADS1115 from 'ads1115'
 import moment from 'moment'
 import RecordInstance from '../models/RecordInstance'
 import SensorServiceBase from './SensorManagerBase'
-import recordTypes from '../../infrastructure/variables/recordTypes'
 
 class PiezoElectricSensorService extends SensorServiceBase {
-  //#region Properties
-  override get name() {
-    return this.SERVICE_NAME
-  }
-
-  //#endregion
-
   //#region Constructor
   constructor(
-    private readonly SERVICE_NAME = 'piezoElectricService',
+    protected readonly SERVICE_NAME = 'PiezoElectricService',
     private bus: PromisifiedBus | null = null,
     private ads1115: typeof ADS1115 = ADS1115,
   ) {
-    super()
+    super(SERVICE_NAME)
   }
   //#endregion
 
   //#region pulic methods
   override async init() {
     this.diagnosis = await this.diagnosisRepo.create({})
-    this.recordSession = await this.recordSessionRepo.create({
-      diagnosisId: this.diagnosis?.id as number,
-      recordTypeId: recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
-    })
     this.bus = await i2c.openPromisified(1)
     this.ads1115 = await ADS1115(this.bus)
   }

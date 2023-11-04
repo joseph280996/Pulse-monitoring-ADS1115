@@ -2,7 +2,7 @@ import express, { RequestHandler, Router } from 'express'
 import PulseType from '../../../domain/models/PulseTypes'
 import { PulseTypeDataType } from '../../../domain/models/PulseTypes.types'
 import * as PulseTypeSqls from '../../../domain/sqls/pulseTypeSqls'
-import DbService, { DB } from 'src/server/infrastructure/services/DbService'
+import DbService, { DB } from '../../../infrastructure/services/DbService'
 
 /** Pulse Types API controller
  *
@@ -20,16 +20,10 @@ class PulseTypesController {
     return PulseTypesController._instance
   }
 
-  constructor(
+  private constructor(
     public router: Router = express.Router(),
     private db: DB = DbService,
   ) {
-    if (PulseTypesController._instance) {
-      throw new Error(
-        'This is a singleton class. Called instance property instead of initializing a new instance',
-      )
-    }
-
     router.get('/', this.getPulseTypes)
   }
 

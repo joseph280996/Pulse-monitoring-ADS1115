@@ -4,6 +4,7 @@ import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import Record from '../models/Record'
 import { RecordDataType } from '../models/Record.types'
 import * as RecordSqls from '../sqls/recordSqls'
+import recordTypes from '../../infrastructure/variables/recordTypes'
 
 class RecordRepository implements IRepository<Record, Record | null> {
   constructor(private db: DB = DBInstance) {}
@@ -16,18 +17,6 @@ class RecordRepository implements IRepository<Record, Record | null> {
     throw new Error('Method not implemented.')
   }
 
-  async getBySessionId(id: number): Promise<Record[]> {
-    const res = await this.db.query<RecordDataType[], [number]>(
-      RecordSqls.GET_BY_SESSION_ID,
-      [id],
-    )
-    if (!res || res.length == 0) {
-      return []
-    }
-
-    return res.map(mapRecordDataToModel)
-  }
-
   async create(record: Record): Promise<Record> {
     try {
       const serializedRecords = JSON.stringify(record.data)
@@ -35,7 +24,7 @@ class RecordRepository implements IRepository<Record, Record | null> {
         { insertId: number },
         [[string, number]]
       >(RecordSqls.CREATE_RECORD_DATA, [
-        [serializedRecords, record.recordSessionId as number],
+        [serializedRecords, recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE],
       ])
 
       record.id = result.insertId
@@ -43,6 +32,22 @@ class RecordRepository implements IRepository<Record, Record | null> {
       return record
     } catch (error) {
       throw new Error(`Error saving record: ${(error as Error).message}`)
+    }
+  }
+
+  async getByDiagnosisId(diagnosisId: number): Promise<Record[]> {
+    try {
+      const res = await this.db.query<RecordDataType[], [number]>(
+        RecordSqls.GET_BY_DIAGNOSIS_ID,
+        [diagnosisId],
+      )
+      if (!res || res.length == 0) {
+        return []
+      }
+
+      return res.map(mapRecordDataToModel)
+    } catch (error) {
+      throw new Error(`Error getting record with diagnosisId [${diagnosisId}]`)
     }
   }
 }

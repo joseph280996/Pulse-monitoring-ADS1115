@@ -1,8 +1,9 @@
 export type RecordDataType = {
   id?: number
   data: string
-  recordSessionId: number
+  diagnosisId: number
   dateTimeCreated?: string
   dateTimeUpdated?: string
+  recordTypeId: number
 }
 

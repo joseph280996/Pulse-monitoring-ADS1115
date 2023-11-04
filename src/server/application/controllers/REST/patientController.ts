@@ -11,18 +11,22 @@ import splitNameForDB from '../../../infrastructure/utils/functions/splitNameFor
  * and error handler
  */
 class PatientController {
+  //#region Private Properties
+  private static _instance: PatientController
+  public static get instance() {
+    if (!PatientController._instance) {
+      PatientController._instance = new PatientController()
+    }
+    return PatientController._instance
+  }
+
+  //#endregion
   //#region Constructors
-  constructor(
+  private constructor(
     public router: Router = express.Router(),
     private readonly diagnosisRepo = new DiagnosisRepository(),
     private readonly patientRepo = new PatientRepository(),
   ) {
-    if (PatientController._instance) {
-      throw new Error(
-        'This is a singleton class. Called instance property instead of initializing a new instance',
-      )
-    }
-
     this.registerRoutes()
   }
   //#endregion

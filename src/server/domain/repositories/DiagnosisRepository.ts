@@ -5,14 +5,14 @@ import DBInstance, { DB } from '../../infrastructure/services/DbService'
 import Diagnosis from '../models/Diagnosis'
 import { GetDiagnosisByRangeInputType } from '../models/Diagnosis.types'
 import * as DiagnosisSqls from '../sqls/diagnosisSqls'
-import RecordSessionRepository from './RecordSessionRepository'
+import RecordRepository from './RecordRepository'
 
 class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
   //#region Constructor
   constructor(
     private db: DB = DBInstance,
     private ecgSensorService: EcgSensorService = EcgSensorService.instance as EcgSensorService,
-    private recordRepository: RecordSessionRepository = new RecordSessionRepository(),
+    private recordRepository: RecordRepository = new RecordRepository(),
   ) {}
   //#endregion
 
@@ -32,7 +32,14 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
 
       diagnosis.id = result.insertId
 
-      await this.ecgSensorService.notifyDiagnosisCreated(diagnosis.id as number)
+      // We may don't have to notify but instead once finished, since we only have 1 
+      // doctor use this at a time, we can just find those that do not have diagnosis and
+      // assign the diagnosis for those record
+      try{
+        await this.ecgSensorService.notifyDiagnosisCreated(diagnosis.id as number)
+      } catch(error) {
+        console.log("Failed to notify ecg service of new diagnosis created")
+      }
 
       return diagnosis
     } catch (error) {
@@ -81,18 +88,16 @@ class DiagnosisRepository implements IRepository<Diagnosis, Diagnosis | null> {
     const diagnosis = res[0]
 
     if (shouldPopulateRecords) {
-      diagnosis.piezoElectricRecords = (
-        await this.recordRepository.getWithRecordByDiagnosisIdAndType(
-          recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
-          id,
-        )
-      )[0]
-      diagnosis.ecgRecords = (
-        await this.recordRepository.getWithRecordByDiagnosisIdAndType(
-          recordTypes.ECG_SENSOR_TYPE,
-          id,
-        )
-      )[0]
+      const records = await this.recordRepository.getByDiagnosisId(
+        diagnosis.id as number,
+      )
+      diagnosis.piezoElectricRecords = records.filter(
+        (record) =>
+          record.recordTypeId == recordTypes.PIEZO_ELECTRIC_SENSOR_TYPE,
+      )
+      diagnosis.ecgRecords = records.filter(
+        (record) => record.recordTypeId == recordTypes.ECG_SENSOR_TYPE,
+      )
     }
 
     return diagnosis

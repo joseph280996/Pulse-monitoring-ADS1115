@@ -1,8 +1,8 @@
-import RecordSession from './RecordSession'
+import Record from "./Record";
 
 class Diagnosis {
-  public piezoElectricRecords?: RecordSession
-  public ecgRecords?: RecordSession
+  public piezoElectricRecords?: Record[]
+  public ecgRecords?: Record[]
 
   //#region Constructor
   constructor(

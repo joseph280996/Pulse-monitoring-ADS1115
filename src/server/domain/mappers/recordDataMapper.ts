@@ -13,7 +13,7 @@ export const mapRecordDataToModel = (record: RecordDataType): Record => {
   )
   return new Record(
     recordData,
-    record.recordSessionId,
+    record.recordTypeId,
     record.id,
     record.dateTimeCreated,
     record.dateTimeUpdated,

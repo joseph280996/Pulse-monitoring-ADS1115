@@ -26,15 +26,9 @@ class SensorController {
 
   //#region Constructors
   private constructor(
-    private sensorServiceFactoryPromise: Promise<SensorDataServiceFactory> = SensorDataServiceFactory.instance,
+    private getServicePromise: Promise<ISensorService> = SensorDataServiceFactory.getService(),
     private intervalService: TimeIntervalService = TimeIntervalService.instance,
-  ) {
-    if (SensorController._instance) {
-      throw new Error(
-        'This is a singleton class. Called instance property instead of initializing a new instance',
-      )
-    }
-  }
+  ) {}
   //#endregion
 
   //#region Public Methods
@@ -82,9 +76,10 @@ class SensorController {
    * Initialize the sensor reading and sensor communication loop
    */
   public async start(_: string, ws: WebSocket) {
-    const service = await SensorDataServiceFactory.getService()
+    const service = await this.getServicePromise
 
     // Initialize service to create diagnosis
+    console.log(typeof(service))
     await service.init()
     service.start()
     this.sendData(ws, service)
@@ -94,7 +89,7 @@ class SensorController {
    * Pause the current reading sensor reading and sending data loop
    */
   public async pause() {
-    const service = await SensorDataServiceFactory.getService()
+    const service = await this.getServicePromise
     this.intervalService.clear(service.name)
     service.pause()
   }
@@ -103,7 +98,7 @@ class SensorController {
    * Resume the reading sensor and sending data loop
    */
   public async resume() {
-    const service = await SensorDataServiceFactory.getService()
+    const service = await this.getServicePromise
     service.resume()
   }
 
@@ -111,7 +106,7 @@ class SensorController {
    * Stop the reading sensor and sending data loop
    */
   public async stop(_: string, ws: WebSocket) {
-    const service = await SensorDataServiceFactory.getService()
+    const service = await this.getServicePromise
     service.stop()
     this.intervalService.clear(service.name)
     ws.send(

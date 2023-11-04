@@ -2,25 +2,26 @@ import LoopService from '../../infrastructure/services/LoopService'
 import getLastNElementsFromRecordedData from '../../infrastructure/utils/functions/getLastNElementsFromRecordedData'
 import DiagnosisRepository from '../repositories/DiagnosisRepository'
 import Diagnosis from '../models/Diagnosis'
-import RecordSessionRepository from '../repositories/RecordSessionRepository'
-import RecordSession from '../models/RecordSession'
 import ISensorService from '../interfaces/ISensorService'
 import RecordInstance from '../models/RecordInstance'
 import recordTypes from '../../infrastructure/variables/recordTypes'
 import Record from '../models/Record'
 import RecordRepository from '../repositories/RecordRepository'
-import Singleton from '../../infrastructure/utils/classes/Singleton'
+import moment from 'moment'
 
-abstract class SensorServiceBase extends Singleton implements ISensorService {
-  //#region Abstract Methods
-  public abstract get name(): string
-  protected abstract readADS1115Value(): Promise<RecordInstance>
+abstract class SensorServiceBase implements ISensorService {
+  //#region Methods to override
+  protected async readADS1115Value(): Promise<RecordInstance> {
+    const data: number = await this.getMockData()
+    return new RecordInstance(moment.utc().valueOf(), data)
+  }
+
   //#endregion
 
   //#region Constructor
   constructor(
+    protected SERVICE_NAME: string = 'SensorServiceBase',
     protected diagnosisRepo: DiagnosisRepository = new DiagnosisRepository(),
-    protected recordSessionRepo: RecordSessionRepository = new RecordSessionRepository(),
     private recordRepo: RecordRepository = new RecordRepository(),
     private saveRecordPromise: Promise<Record> | null = null,
     protected diagnosis: Diagnosis | null = null,
@@ -28,13 +29,15 @@ abstract class SensorServiceBase extends Singleton implements ISensorService {
     private secondaryStore: RecordInstance[] = [],
     private readonly BATCH_DATA_SIZE = 20,
     private readonly loopService: LoopService = new LoopService(),
-  ) {
-    super()
-  }
+  ) {}
   //#endregion
 
   //#region pulic methods
-  get diagnosisId() {
+  public get name(): string {
+    return this.SERVICE_NAME
+  }
+
+  get diagnosisId(): number {
     if (!this.diagnosis) {
       console.error('Service was not initialized before used.')
       return 0
@@ -43,7 +46,7 @@ abstract class SensorServiceBase extends Singleton implements ISensorService {
     return this.diagnosis.id as number
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.diagnosis = await this.diagnosisRepo.create({})
   }
 
@@ -105,7 +108,9 @@ abstract class SensorServiceBase extends Singleton implements ISensorService {
         }
 
         // When length of main data storage big enough to maintain on its own,
-        // we save reset secondary
+        // we reset secondary storage but we needs to make sure that secondary 
+        // storage has been saved to be database, therefore, we await the promise
+        // here but usually, the promise should have resolved.
         if (
           this.store.length > this.BATCH_DATA_SIZE &&
           this.saveRecordPromise
@@ -125,6 +130,16 @@ abstract class SensorServiceBase extends Singleton implements ISensorService {
     this.store = this.secondaryStore
     this.secondaryStore = temp
   }
+
+  private async getMockData(): Promise<number> {
+    const promise = new Promise<number>((resolve) => {
+      setTimeout(() => {
+        resolve(Math.random())
+      }, 5)
+    })
+    return promise
+  }
+
   //#endregion
 }
 

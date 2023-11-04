@@ -1,5 +1,5 @@
 import express, { RequestHandler, Router } from 'express'
-import DBInstance, { DB } from '../../../domain/models/DbConnectionModel'
+import DBInstance, { DB } from '../../../infrastructure/services/DbService'
 import HandPosition from '../../../domain/models/HandPosition'
 import { HandPositionType } from '../../../domain/models/HandPosition.types'
 import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
@@ -12,16 +12,19 @@ import * as HandPositionSqls from '../../../domain/sqls/handPositionSqls'
  * and error handler
  */
 class HandPositionsController {
-  constructor(
+  private static _instance: HandPositionsController
+
+  public static get instance(): HandPositionsController {
+    if (!HandPositionsController._instance) {
+      HandPositionsController._instance = new HandPositionsController()
+    }
+    return HandPositionsController._instance
+  }
+
+  private constructor(
     public router: Router = express.Router(),
     private db: DB = DBInstance,
   ) {
-    if (HandPositionsController._instance) {
-      throw new Error(
-        'This is a singleton class. Called instance property instead of initializing a new instance',
-      )
-    }
-
     this.registerRoutes()
   }
 
